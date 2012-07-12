@@ -39,17 +39,19 @@ int main(void) {
 	int32_t BP_12b_avg_uV, BP_12b_min_uV, BP_12b_max_uV, BP_12b_delta_uV, BP_12b_diff1_uV, BP_12b_diff2_uV;
 	int32_t BP_13a_avg_uV, BP_13a_min_uV, BP_13a_max_uV, BP_13a_delta_uV, BP_13a_diff1_uV, BP_13a_diff2_uV;
 	int32_t BP_13b_avg_uV, BP_13b_min_uV, BP_13b_max_uV, BP_13b_delta_uV, BP_13b_diff1_uV, BP_13b_diff2_uV;
-	
-
+	uint8_t DATA = {0x05,0x10,0x01,0x05};
+	uint8_t RDATA[512];
 	uint8_t filterSettings;
-	
 	// set system clock
-	set_32MHz();  // for RC clock
+	//set_32MHz();  // for RC clock
 	//setXOSC_32MHz();  // for crystal when installed
 	// breakpoint 1a - collect room temperature
-	CO_collectTemp(&BP_1a_avg_mV, &BP_1a_min_mV, &BP_1a_max_mV);
+	//CO_collectTemp(&BP_1a_avg_mV, &BP_1a_min_mV, &BP_1a_max_mV);
 	// avg 830mV +/- 25% with min/max +/- 1% of avg 
 	SD_init();	//initialize SD Card
+	SD_write_block(4,DATA,4);
+	SD_read_block(4,RDATA);
+	SD_disable();
 	// breakpoint 1b - collect body temperature
 	CO_collectTemp(&BP_1b_avg_mV, &BP_1b_min_mV, &BP_1b_max_mV);
 	// avg should increase from breakpoint 1a

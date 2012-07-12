@@ -220,3 +220,14 @@ void SDHC_write_block(uint8_t *buffer, uint16_t address, uint16_t numBlocks);
 void SDHC_read_register(uint8_t *buffer, uint8_t cmd);
 void SDHC_CS(uint8_t enable);
 void FRAMWriteKnowns();
+
+//function prototypes for SD card
+uint8_t SPI_write(uint8_t byteToSend);
+void SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read);
+void SD_write_block(uint32_t sector,uint8_t data[], int lengthOfData);
+void SD_read_block(uint32_t sector,uint8_t arrayOf512Bytes[]);
+void SD_init(void);
+void SD_write_multiple_blocks(uint32_t sector,uint32_t* data,int lengthOfData);
+void SD_read_multiple_blocks(uint32_t sector,uint32_t* data,int numOfBlocks);
+void SD_disable();
+

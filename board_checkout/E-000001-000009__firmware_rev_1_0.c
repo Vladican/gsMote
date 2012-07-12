@@ -15,7 +15,8 @@ volatile uint8_t checksumFRAM[3] = {0};  // checksum for FRAM test
 volatile int64_t sumFRAM[3];  // sum of all FRAM samples for averaging
 volatile uint8_t bankA_DIR, bankA_OUT, bankB_DIR, bankB_OUT;  // status of port expander current configurations to allow bit level changes
 volatile uint8_t Buffer[13];
-
+//volatile uint8_t readTestData[512];
+//uint8_t TestData[8] = {0xAA,0xBB,0xCC,0xDD,0xEE,0x11,0x22,0x44};
 // Sets the external 16MHz crystal on XTAL1 and XTAL2 as the system clock.
 // There was a problem with some of the hardware modules not having the crystal
 // so this function will fail until the oscillator is installed.
@@ -347,7 +348,7 @@ void PortEx_OUTCLR(uint8_t pins, uint8_t bank) {
 	portExCS(TRUE);
 	
 	if(bank) bankA_OUT = (uint8_t) (bankA_OUT & ~pins);
-	else bankB_DIR = (uint8_t) (bankB_OUT & ~pins);
+	else bankB_OUT = (uint8_t) (bankB_OUT & ~pins);
 	
 	SPIBuffer[0] = PS_WRITE;
 	if(bank) {
@@ -650,6 +651,28 @@ void SPIInit(uint8_t mode) {
 	PORTC.DIRSET  = PIN5_bm | PIN7_bm;
 
 	
+}
+//use this if using a prescalar
+void SPIInit2(uint8_t mode, uint8_t prescalar) {
+	// init SPI SS pin
+	PORTC.DIRSET = PIN4_bm;
+	PORTC.PIN4CTRL = PORT_OPC_WIREDANDPULL_gc;
+	PORTC.OUTSET = PIN4_bm;
+	
+
+	// init SPI
+	SPIC.CTRL =	prescalar |  // set clock speed
+	0x00 |  // disable clock double
+	SPI_ENABLE_bm | // Enable SPI module
+	0x00 |  // set data order msb first
+	SPI_MASTER_bm | // set SPI master
+	mode; // set SPI mode
+
+	// disable SPI Interrupts
+	SPIC.INTCTRL = SPI_INTLVL_OFF_gc;
+
+	// set SPI-MOSI and SPI-SCK as output
+	PORTC.DIRSET  = PIN5_bm | PIN7_bm;
 }
 
 void SPICS(uint8_t enable) {
@@ -1265,28 +1288,16 @@ void SDHC_read_register(uint8_t *buffer, uint8_t cmd);
 void SDHC_CS(uint8_t enable) {
 		
 }
-/*
-uint8_t SD_get_status(void){
-	SPIInit(SPI_MODE_1_gc); //start SPIC
-	//insert required handshaking 
-	SPIC.DATA = 0xAA; //dummy byte
-	while(!(SPIC.STATUS & SPI_IF_bm)); //wait for byte to be sent
-	return SPIC.DATA; //return the retrieved status of SD card
-}
-*/
 
-//	ADCPower(FALSE);
 
-/*
-#define SD_COMMAND_0 {0x40,0x00,0x00,0x00,0x00,0x95};
-#define SD_COMMAND_1 {0x41,0x00,0x00,0x00,0x00,0x00};
-#define SD_COMMAND_WRITE_BYTES {0x58,
-	*/
+
 
 uint8_t SPI_write(uint8_t byteToSend){
+	uint8_t data;
 	SPIC.DATA = byteToSend;
 	while(!(SPIC.STATUS & SPI_IF_bm)); //wait for byte to be sent
-	return SPIC.DATA; //read SPI data register to reset status flag
+	data = SPIC.DATA; //read SPI data register to reset status flag
+	return data;
 }
 void SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read) {
 	
@@ -1298,62 +1309,107 @@ void SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read) {
 	SPI_write(crc);
 	
 	for(int i=0; i<read; i++){
-		Buffer[i] = SPI_write(0xFF);
+		Buffer[i%13] = SPI_write(0xFF);
+		if (Buffer[i%13] != 0xFF){
+			 Buffer[1] = Buffer[i%13];
+			 break;
+		}			
 	}	
 }
-void SD_init(void){
-//	ADCPower(TRUE);
-	PORTC.DIRSET |= PIN0_bm;
-	PORTF.DIRSET |= PIN6_bm;
-	PORTC.OUTSET |= PIN0_bm;	//turn on power for PortEx
-	PORTF.OUTSET |= PIN6_bm;
-	
-	Ext1Power(TRUE);			//power up SD card
-	//uint8_t status = SD_get_status();
-	SPIInit(SPI_MODE_0_gc);
+void SD_write_block(uint32_t sector,uint8_t data[], int lengthOfData){
+	SPIInit2(SPI_MODE_0_gc,0x03);
 	SPICS(TRUE);
-	/*
+	int fillerBytes = 512 - lengthOfData;
+	if (fillerBytes==512) fillerBytes = 0;
+	SD_command(24,sector,0xFF,8);	//write to specified sector
+	Buffer[0] = SPI_write(0xFF);	//send 1 dummy byte as spacer
+	SPI_write(0xFE);	//send data token
+	for (int i=0;i<lengthOfData;i++){	//write the data segment 1 byte at a time
+		Buffer[i%13] = SPI_write(data[i]);
+	}
+	for (int i=0;i<fillerBytes;i++){	//fill the rest of the sector with filler bytes
+	Buffer[i%13] = SPI_write(0x00);
+	} 
+	Buffer[0] = 0xFF;
+	for(int i=0; i<2 | (Buffer[0] == 0xFF);i++){
+		Buffer[0] = SPI_write(0xFF);	//send 2 CRC dummy bytes and keep reading bytes until a response is seen 	
+	}
+	if ((Buffer[0] & 0x0E) == 0x02){
+		//data was written successfully
+	}
+	while(Buffer[0] != 0xFF) Buffer[0] = SPI_write(0xFF);	//wait for card to finish internal processes
+	SPICS(FALSE);
+	SPIDisable();	
+}
+
+
+void SD_read_block(uint32_t sector,uint8_t arrayOf512Bytes[]){
+	SPIInit2(SPI_MODE_0_gc,0x03);
+	SPICS(TRUE);
+	SD_command(17,sector,0xFF,8);	//send command to read data
+	while(Buffer[0] != 0xFE){
+		Buffer[0] = SPI_write(0xFF);
+	}		
+	for (int i=0;i<512;i++){
+		arrayOf512Bytes[i] = SPI_write(0xFF);	//read in the data
+	}
+	Buffer[12] = 0x00;
+	while (Buffer[12] != 0xFF){
+		Buffer[12] = SPI_write(0xFF);	
+	}
+
+	SPICS(FALSE);
+	SPIDisable();
+}
+
+
+void SD_init(void){
+	ADCPower(TRUE);				//power up portEX
+	Ext1Power(TRUE);			//power up SD card
+	_delay_ms(100);				//wait for bootup
+
+	
+	PortEx_DIRSET(BIT3_bm, PS_BANKB);  //SD card CS	
+	PortEx_OUTSET(BIT3_bm, PS_BANKB);	//pull SD cs high
+
+	SPIInit2(SPI_MODE_0_gc,0x03);
+	SPICS(TRUE);
+	
 	for(int i=0; i<10; i++){ // idle for 10 bytes / 80 clocks
 		SPIC.DATA=0xFF;
 		while(!(SPIC.STATUS & SPI_IF_bm)); //wait for byte to be sent
 		Buffer[12] = SPIC.DATA; //read SPI data register to reset status flag
 	}
-	*/
-	//SPIC.DATA = NULL;
+	
 	SPICS(FALSE);
 	SPIDisable();
 	
-	 
-	PortEx_DIRSET(BIT3_bm, PS_BANKB);  //SD card CS
-	PortEx_OUTSET(BIT3_bm, PS_BANKB);
-	/*
-	SPIC.DATA = 0x40;					//send the first initialization command
-	while(!(SPIC.STATUS & SPI_IF_bm)); //wait for byte to be sent
-	SPIBuffer[12] = SPIC.DATA; //read SPI data register to reset status flag
-	for(int i=0; i<4; i++){ // send 4 dummy bytes
-		SPIC.DATA=0x00;
-		while(!(SPIC.STATUS & SPI_IF_bm)); //wait for byte to be sent
-		SPIBuffer[12] = SPIC.DATA; //read SPI data register to reset status flag
-	}
-	SPIC.DATA = 0x95;	//send checksum of command (needed when sd card is still in native mode)
-	while(!(SPIC.STATUS & SPI_IF_bm));
-	SPIBuffer[12] = SPIC.DATA;
-	for(int i=0; i<2; i++){ // idle for 2 bytes / 16 clocks
-		SPIC.DATA=0xFF;
-		while(!(SPIC.STATUS & SPI_IF_bm)); //wait for byte to be sent
-		SPIBuffer[12] = SPIC.DATA; //read SPI data register to reset status flag
-	}
-	*/
-	SPIInit(SPI_MODE_0_gc);
+
+	PortEx_OUTCLR(BIT3_bm, PS_BANKB);	//pull SD cs low
+	
+	SPIInit2(SPI_MODE_0_gc,0x03);
 	SPICS(TRUE);
-	SD_command(0x00,0x00000000,0x95,2);		//send command 0 and read 2 next bytes sent back
-	if (Buffer[2] != 0x01) {
+	for(int i=0; (Buffer[1] != 0x01) & i<10; i++){
+		SD_command(0x00,0x00000000,0x95,8);		//send command 0 and read 2 next bytes sent back
+		_delay_ms(100);
+	}	
+	if (Buffer[1] != 0x01) {
+		Buffer[1] = 0x01;
 		//there was no response to the first command
 	}
-	//send second initialization command until card returns a non-busy signal (0x00)
-	while(Buffer[2] != 0x00){
-		SD_command(0x01,0x00000000,0x00,2);
-		/*
+	SD_command(8,0x000001AA,0x87,8);		//check voltage range
+	for(int i=0;i<4;i++){
+		Buffer[i+2] = SPI_write(0xFF);
+	}
+	if(Buffer[4] != 0x01 | Buffer[5] != 0xAA){
+		//broken card or voltage out of operating range bounds
+	}
+	/*
+	used for standard (low capacity) cards
+	while(Buffer[1] != 0x00){
+		SD_command(0x01,0x00000000,0xFF,8);
+		_delay_ms(100);
+		
 		SPIC.DATA = 0x41;
 		while(!(SPIC.STATUS & SPI_IF_bm)); //wait for byte to be sent
 		SPIBuffer[12] = SPIC.DATA; //read SPI data register to reset status flag
@@ -1362,47 +1418,82 @@ void SD_init(void){
 			while(!(SPIC.STATUS & SPI_IF_bm)); //wait for byte to be sent
 			SPIBuffer[12] = SPIC.DATA; //read SPI data register to reset status flag
 		}
-		*/
+		
 	}
-	//SD_command(8,0x000001AA,0xAA,2);		//check voltage range
-	Buffer[2] = 0xAA;
-	while(Buffer[2]!= 0x00){
-		SD_command(55,0x00000000,0x00,2);	//next command will be advanced
-		SD_command(41,0x40000000,0x00,2);
+	*/
+	//send second initialization command
+	while(Buffer[1]!= 0x00){
+		SD_command(55,0x00000000,0xFF,8);	//next command will be advanced
+		SD_command(1,0x40000000,0xFF,8);
 	}
-	SD_command(58,0x00000000,0x00,6);
-	if((Buffer[3] & 0x40)>>6){				//if bit 30 of OCR register is set
-		SD_command(16,0x00000200,0x00,2);	//set block size to 512 bytes
+	SD_command(58,0x00000000,0xFF,8);		//check OCR register
+	for (int i=0;i<4;i++){
+		Buffer[i] = SPI_write(0xFF);
+	}
+	if (Buffer[0] & 0x40){
+		//the card is addressed in 512 byte sectors
 	}
 	SPICS(FALSE);
-	SPIDisable();		
+	SPIDisable();	
+	//SD_write_block(4,TestData,8);
+	//SD_read_block(4,readTestData);
+	//SD_disable();	
 }	
-/*	
-void SD_write_block(){
-	SD_command(17,1,0xFF,2);	//write to first sector
-	SPI_write(0xFE);	//send data token
-	for (int i=0;i<512;i++){	//write the data segment 1 byte at a time
-		SPIBuffer[i%12] = SPI_write(data[i]);
-	}
-	SPIBuffer[0] = 0xFF;
-	while(SPIBuffer[0] == 0xFF){
-		SPIBuffer[0] = SPI_write(0xFF);	//send 2 CRC dummy bytes and keep reading bytes until a response is seen 	
-	}
-	if (SPIBuffer[0] & 0x0E == 0x02){
-		//data was written successfully
-	}	
-}
-*/
-/*	
-void writeCommand(uint8_t Command[], int length, int repeat){
-	for (int r=0;r<repeat;r++) {		//send the specified command 'repeat' number of times
-		for(int i=0;i<8;i++) {		//send the 8 bytes of the command via spi
-			SPIC.DATA=Command[i];
-			while(!(SPIC.STATUS & SPI_IF_bm));
-			SPIBuffer[12] = SPIC.DATA;
+
+void SD_write_multiple_blocks(uint32_t sector,uint32_t* data,int lengthOfData){
+	int numSectors = lengthOfData/512;
+	int fillerBytes = 512 - lengthOfData%512;
+	if (fillerBytes==512) fillerBytes = 0;
+	else numSectors++;
+	SD_command(25,sector,0xFF,8);	//write starting at specified sector
+	SPI_write(0xFC);	//send data token
+	for (int j=0;j<numSectors;j++){
+		if(j == (numSectors-1)){
+			for (int i=0;i<(512-fillerBytes);i++){
+				Buffer[i%12] = SPI_write(data[i]);
+			}
+			for (int i=0;i<fillerBytes;i++){
+				Buffer[i%12] = SPI_write(0x00);
+			}
 		}
-	}	
+		else{
+			for (int i=0;i<512;i++){
+				Buffer[i%12] = SPI_write(data[i]);
+			}
+		}
+		while(SPI_write(0xFF) != 0xFF);	//wait for card to store the data it received		
+	}
+	SPI_write(0xFD);	//write stop token
+	while (SPI_write(0xFF) != 0xFF); //wait for card to finish internal processes		
 }
-*/	
+void SD_read_multiple_blocks(uint32_t sector,uint32_t* data,int numOfBlocks){
+	SD_command(18,sector,0xFF,2);	//send command to read data
+	for (int j=0;j<numOfBlocks;j++){
+		while(SPI_write(0xFF) != 0xFE);	//wait for start of data token
+		for (int i=0;i<512;i++){
+			data[j] = SPI_write(0xFF);	//read in the data
+		}
+	//don't think the next is necessary
+	/*
+	for (int i=0;i<2;i++){
+		Buffer[i] = SPI_write(0xFF);	//read in the 2 CRC bytes
+	}
+	*/
+	}	
+	SD_command(12,0x00000000,0xFF,2);	//send command to stop reading data
+	Buffer[0] = SPI_write(0xFF);	//read the stuff byte
+	while(SPI_write(0xFF) != 0xFF); //wait for internal processes in SD card to finish
+}
 
-
+void SD_disable(){
+	PortEx_DIRCLR(BIT3_bm, PS_BANKB);  //pull SD card CS high
+	PortEx_OUTCLR(BIT3_bm, PS_BANKB);
+	SPIInit(SPI_MODE_0_gc);
+	SPICS(TRUE);
+	SPI_write(0xFF);
+	SPICS(FALSE);	//stop spi
+	SPIDisable();
+	
+	ADCPower(FALSE);		//turn off portEX power
+	Ext1Power(FALSE);			//power down SD card
+}
