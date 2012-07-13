@@ -133,7 +133,7 @@
 #define SDHC_CMD_START_INITIALIZATION 0x01
 #define SDHC_CMD_SEND_CSD 0x09
 #define SDHC_CMD_SEND_CID 0x0A
-#define SDHC_CMD_STOP_TRANSMISSION 0x0C     12
+#define SDHC_CMD_STOP_TRANSMISSION 12
 #define SDHC_CMD_SEND_STATUS 0x0           13
 #define SDHC_CMD_SET_BLOCK_SIZE        16
 #define SDHC_CMD_READ_SINGLE_BLOCK     17
@@ -160,6 +160,23 @@
 #define SDHC_RESPONSE_WRITE_ERROR     0x0D
 #define SDHC_RESPONSE_MASK            0x1F
 
+#define SDHC_COMMAND_START	0x40
+#define SDHC_DUMMY_BYTE 0xFF
+#define LSBYTE_MASK 0xFF
+#define SPI_LOWEST_CLOCKRATE_PRESCALAR 0x03
+#define FILLER_BYTE 0x00
+#define SDHC_RESPONSE_STATUS_MASK 0x0E
+#define SDHC_CMD_RESET_CRC 0x95
+#define SDHC_NO_ARGUMENTS 0x00000000
+#define SDHC_IDLE_STATE 0x01
+#define SDHC_CHECK_VOLTAGE_CMD 8
+#define SDHC_CHECK_VOLTAGE_ARGUMENT 0x000001AA
+#define SDHC_CHECK_VOLTAGE_CRC 0x87
+#define SDHC_ADV_COMMAND 55
+#define SDHC_INITIALIZATION_CMD 1
+#define SDHC_INITIALIZATION_CMD_ARGUMENT 0x40000000
+#define SDHC_MULT_WRITE_DATA_TOKEN 0xFC
+#define SDHC_MULT_WRITE_STOP_TOKEN 0xFD
 // Function Prototypes
 // breakpoint check functions
 void CO_collectTemp(uint16_t *avgV, uint16_t *minV, uint16_t *maxV);
@@ -224,10 +241,10 @@ void FRAMWriteKnowns();
 //function prototypes for SD card
 uint8_t SPI_write(uint8_t byteToSend);
 void SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read);
-void SD_write_block(uint32_t sector,uint8_t data[], int lengthOfData);
-void SD_read_block(uint32_t sector,uint8_t arrayOf512Bytes[]);
+void SD_write_block(uint32_t sector,uint8_t* data, int lengthOfData);
+void SD_read_block(uint32_t sector,uint8_t* arrayOf512Bytes);
 void SD_init(void);
-void SD_write_multiple_blocks(uint32_t sector,uint32_t* data,int lengthOfData);
-void SD_read_multiple_blocks(uint32_t sector,uint32_t* data,int numOfBlocks);
+void SD_write_multiple_blocks(uint32_t sector,uint8_t* data,int lengthOfData);
+void SD_read_multiple_blocks(uint32_t sector,uint8_t* data,int numOfBlocks);
 void SD_disable();
-
+void SD_write_and_read_knowns();
