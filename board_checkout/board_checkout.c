@@ -49,7 +49,9 @@ int main(void) {
 	CO_collectTemp(&BP_1a_avg_mV, &BP_1a_min_mV, &BP_1a_max_mV);
 	// avg 830mV +/- 25% with min/max +/- 1% of avg 
 	SD_init();	//initialize SD Card
-	SD_write_and_read_knowns();
+	//SD_write_and_read_knowns();
+	error = getBootSectorData();
+	SD_write_and_read_knowns_FAT();
 	SD_disable();
 	// breakpoint 1b - collect body temperature
 	CO_collectTemp(&BP_1b_avg_mV, &BP_1b_min_mV, &BP_1b_max_mV);

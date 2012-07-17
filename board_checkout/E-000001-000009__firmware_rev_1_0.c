@@ -6,7 +6,9 @@ volatile uint16_t sampleCount;  // sample and discard counter for array offset
 volatile int32_t data24Bit[NUM_SAMPLES];  // storage for ADC samples
 volatile uint8_t SPIBuffer[13];  // space for 24-bit ADC conversion plus dummy byte
 volatile uint16_t FRAMAddress;  // address counters for FRAM write/read
-volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
+//volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
+volatile uint8_t newFile[15] = {'n','e','w','F','I','L','E','.',' ',' ',' ',' ',' ',' ',' '}; //must be no more than 8 letters before the extension "." 
+volatile uint8_t newFileR[15] = {'n','e','w','F','I','L','E','.',' ',' ',' ',' ',' ',' ',' '};
 volatile uint8_t SPICount, discardCount;
 volatile int32_t *temp32;  // for parsing SPI transactions
 volatile int64_t *temp64; // for parsing SPI transactions from 8bit pieces to 64bit whole
@@ -1523,11 +1525,19 @@ void SD_disable(){
 //command to check reading and writing to sd card
 void SD_write_and_read_knowns(){
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = i;	//write 24 values to the FRAM buffer
-	SD_write_block(2,FRAMReadBuffer,24);	//write those values to the card
+	SD_write_block(20,FRAMReadBuffer,24);	//write those values to the card
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = 0;	//clear the FRAM buffer
-	SD_read_block(2,FRAMReadBuffer);	//read into the FRAM buffer from the SD card
+	SD_read_block(20,FRAMReadBuffer);	//read into the FRAM buffer from the SD card
 	for(int i=0;i<1250;i++) FRAMReadBuffer[i] = i%100;	//write 1250 values to the FRAM buffer	
-	SD_write_multiple_blocks(8,FRAMReadBuffer,1250);	//write those values to sd card
+	SD_write_multiple_blocks(80,FRAMReadBuffer,1250);	//write those values to sd card
 	for(int i=0;i<1250;i++) FRAMReadBuffer[i] = 0;	//clear FRAM buffer
-	SD_read_multiple_blocks(8,FRAMReadBuffer,3);	//read in 3 blocks of data from the memory card
+	SD_read_multiple_blocks(80,FRAMReadBuffer,3);	//read in 3 blocks of data from the memory card
+}
+
+void SD_write_and_read_knowns_FAT(){
+	for (int i=0;i<24;i++) FRAMReadBuffer[i] = i;	//write 24 values to the FRAM buffer
+	//error = convertFileName(newFile);
+	error = writeFile(newFile);
+	for (int i=0;i<24;i++) FRAMReadBuffer[i] = 0;	//clear the FRAM buffer
+	error = readFile(READ,newFileR);		//read the data into the buffer from file
 }

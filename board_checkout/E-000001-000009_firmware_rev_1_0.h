@@ -4,6 +4,7 @@
 #include <util/delay.h>
 #include "adc_driver.h"
 #include "clksys_driver.h"
+#include "FAT32.h"
 
 // Hardware Defines
 // General SPI Prescaler
@@ -177,6 +178,11 @@
 #define SDHC_INITIALIZATION_CMD_ARGUMENT 0x40000000
 #define SDHC_MULT_WRITE_DATA_TOKEN 0xFC
 #define SDHC_MULT_WRITE_STOP_TOKEN 0xFD
+
+volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
+//volatile uint8_t newFile[15] = {'n','e','w','F','I','L','E',' ',' ',' ',' ',' ',' ',' ',' '};
+volatile uint8_t error;
+volatile uint8_t SDBuffer[512];
 // Function Prototypes
 // breakpoint check functions
 void CO_collectTemp(uint16_t *avgV, uint16_t *minV, uint16_t *maxV);
@@ -248,3 +254,4 @@ void SD_write_multiple_blocks(uint32_t sector,uint8_t* data,int lengthOfData);
 void SD_read_multiple_blocks(uint32_t sector,uint8_t* data,int numOfBlocks);
 void SD_disable();
 void SD_write_and_read_knowns();
+void SD_write_and_read_knowns_FAT();
