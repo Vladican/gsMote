@@ -35,10 +35,16 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../chb.c \
+../chb_buf.c \
+../chb_drvr.c \
+../chb_eeprom.c \
+../chb_spi.c \
 ../board_checkout.c \
 ../adc_driver.c \
 ../clksys_driver.c \
-../E-000001-000009__firmware_rev_1_0.c
+../E-000001-000009__firmware_rev_1_0.c \
+../FAT32.c
 
 
 PREPROCESSING_SRCS += 
@@ -48,31 +54,55 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+chb.o \
+chb_buf.o \
+chb_drvr.o \
+chb_eeprom.o \
+chb_spi.o \
 board_checkout.o \
 adc_driver.o \
 clksys_driver.o \
-E-000001-000009__firmware_rev_1_0.o
+E-000001-000009__firmware_rev_1_0.o \
+FAT32.o
 
 
 OBJS_AS_ARGS +=  \
+chb.o \
+chb_buf.o \
+chb_drvr.o \
+chb_eeprom.o \
+chb_spi.o \
 board_checkout.o \
 adc_driver.o \
 clksys_driver.o \
-E-000001-000009__firmware_rev_1_0.o
+E-000001-000009__firmware_rev_1_0.o \
+FAT32.o
 
 
 C_DEPS +=  \
+chb.d \
+chb_buf.d \
+chb_drvr.d \
+chb_eeprom.d \
+chb_spi.d \
 board_checkout.d \
 adc_driver.d \
 clksys_driver.d \
-E-000001-000009__firmware_rev_1_0.d
+E-000001-000009__firmware_rev_1_0.d \
+FAT32.d
 
 
 C_DEPS_AS_ARGS +=  \
+chb.d \
+chb_buf.d \
+chb_drvr.d \
+chb_eeprom.d \
+chb_spi.d \
 board_checkout.d \
 adc_driver.d \
 clksys_driver.d \
-E-000001-000009__firmware_rev_1_0.d
+E-000001-000009__firmware_rev_1_0.d \
+FAT32.d
 
 
 OUTPUT_FILE_PATH +=board_checkout.elf
@@ -84,6 +114,18 @@ ADDITIONAL_DEPENDENCIES:=
 OUTPUT_FILE_DEP:= ./makedep.mk
 
 # AVR32/GNU C Compiler
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

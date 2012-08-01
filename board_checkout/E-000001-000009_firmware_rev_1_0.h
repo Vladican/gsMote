@@ -5,6 +5,8 @@
 #include "adc_driver.h"
 #include "clksys_driver.h"
 #include "FAT32.h"
+#include "chb.h"
+#include "chb_drvr.h"
 
 // Hardware Defines
 // General SPI Prescaler
@@ -178,11 +180,12 @@
 #define SDHC_INITIALIZATION_CMD_ARGUMENT 0x40000000
 #define SDHC_MULT_WRITE_DATA_TOKEN 0xFC
 #define SDHC_MULT_WRITE_STOP_TOKEN 0xFD
+#define SDHC_CMD_SUCCESS 0x00
 
 volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
-//volatile uint8_t newFile[15] = {'n','e','w','F','I','L','E',' ',' ',' ',' ',' ',' ',' ',' '};
 volatile uint8_t error;
 volatile uint8_t SDBuffer[512];
+//volatile uint8_t header[9];
 // Function Prototypes
 // breakpoint check functions
 void CO_collectTemp(uint16_t *avgV, uint16_t *minV, uint16_t *maxV);
@@ -246,7 +249,7 @@ void FRAMWriteKnowns();
 
 //function prototypes for SD card
 uint8_t SPI_write(uint8_t byteToSend);
-void SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read);
+uint8_t SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read);
 void SD_write_block(uint32_t sector,uint8_t* data, int lengthOfData);
 void SD_read_block(uint32_t sector,uint8_t* arrayOf512Bytes);
 void SD_init(void);
@@ -255,3 +258,60 @@ void SD_read_multiple_blocks(uint32_t sector,uint8_t* data,int numOfBlocks);
 void SD_disable();
 void SD_write_and_read_knowns();
 void SD_write_and_read_knowns_FAT();
+
+//functions for radio
+void RadioCS(uint8_t state);
+uint8_t SPID_write(uint8_t data);
+/*
+void WriteRadioRegister(uint8_t registerAddress, uint8_t data);
+uint8_t ReadRadioRegister(uint8_t registerAddress);
+void WriteFrameBuffer(uint8_t* data,uint8_t dataLength,uint16_t headerLength);
+void ReadFrameBuffer(uint8_t* data);
+void TransmitData(uint8_t* data,uint8_t dataLength);
+void ReceiveData(uint8_t* data);
+void SPIDInit(uint8_t mode);
+void RadioCS(uint8_t state);
+uint8_t SPID_write(uint8_t data);
+void SPID_disable();
+void TestRadio();
+void RadioListen();
+
+
+#define RADIOCTRLRGSTR 0x02
+#define STARTTRAN 0x02
+#define STATREG 0x01
+#define RADIOIDLE 0x00
+#define SET_RADIOIDLE 0x09
+#define RWRITECMD 0xC0
+#define RREADCMD 0x80
+#define WRITE_RADIO_BUFFER_CMD 0x60
+#define READ_RADIO_BUFFER_CMD 0x20
+#define DUMMY_BYTE 0xFF
+#define READ_RADIO_SRAM_CMD 0x00
+#define WRITE_RADIO_SRAM_CMD 0x40
+#define TRX_OFF 0x08
+#define PLL_ON 0x09
+#define RX_ON 0x06
+#define FORCE_TRX_OFF 0x03
+#define FORCE_PLL_ON 0x04
+#define RX_START 0x02
+#define TRX_END_FLAG 0x08
+#define RISING_EDGE 0x01
+#define ENABLE_ALL_INTERRUPT_LEVELS 0x07
+#define IRQ_STATUS 0x0F
+#define IRQ_MASK_REGISTER 0x0E
+#define ENABLE_TRX_INTERRUPTS 0x0C
+#define TRX_CTRL_2 0x0C
+#define PHY_TX_PWR 0x05
+
+void ReadSRAM(uint8_t* data,uint8_t address,uint8_t dataLength);
+void WriteSRAM(uint8_t* data,uint8_t address,uint8_t dataLength);
+*/
+void checkMote();
+void chibi_test_radio();
+/*
+uint8_t gen_hdr(uint8_t *hdr, uint16_t addr, uint8_t len);
+
+#define SHRT_ADDR_REG0 0x20
+#define SHRT_ADDR_REG1 0x21
+*/

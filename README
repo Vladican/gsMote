@@ -1,0 +1,27 @@
+To use sd card in FAT format, first call the SD_init() function, then the getBootSectorData() function. After that, the writeFile() and readFile() functions can be used
+to access the data on the sd card. Alternatively, the card can be used without a filesystem structure by first initializing it with SD_init() and then writing and reading
+to/from the 512 byte sectors on the card using the SD_read_block, SD_write_block, SD_read_multiple_blocks and SD_write_multiple_blocks functions.
+
+When reading data from a file, since a single cluster used by files in the FAT32 file system is bigger than the FRAMBuffer, the data needs to be either transmitted or processed
+some other way as it is being read inside the readFile function to avoid data loss.
+
+Make sure to turn off power to the sd card with SD_disable when the card is not in use in order to avoid wasting energy (if the card is disabled it needs to be reinitialized 
+with SD_init() ). 
+
+To use the radio, first initialize the radio stack with chb_init(). Then you can set varius radio parameters like transmit power, radio address, radio channel, etc. with the 
+corresponding configuration methods available in chb_drvr.h . The radio initializes into listen mode so unless a transmition has been send from the radio (using the chb_write 
+command which is defined in chb.h), transition into listen mode is not necessary. When a message is received, it is written to the first part of the FRAMBuffer array so to receive
+consecutive messages without loss of data, that data has to be moved and/or processed as soon as it is received (i.e. somewhere in the interrupt service routine).
+
+Max payload of data is 100 bytes per radio transmission. If more than that is provided as argument to chb_write then it will get broken up into several transmission. However, 
+this data has to be properly handled on the receiving end as it comes in or else it will be lost (as explained above) because of the consecutive messages.
+
+The default transmission power level seems to be pretty low so that it needs to be increased for field testing.
+
+known bugs/limitations:
+
+- the radio cannot process a heavy stream of consecutive messages and will hang if a message is received while it is doing some internal processes in the receive state.
+		- possible fix for this would be to clear the interrupt register in the radio when a message has not been received in 'x' seconds while the radio 
+		  was in the receive state. This will at least avoid the radio hanging indefinetly. 
+
+   

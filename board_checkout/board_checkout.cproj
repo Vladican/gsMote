@@ -22,7 +22,7 @@
       </OverrideVtorValue>
       <Channel>
         <host>127.0.0.1</host>
-        <port>49382</port>
+        <port>49838</port>
         <ssl>False</ssl>
       </Channel>
       <ToolOptions>
@@ -49,6 +49,21 @@
     <eraseonlaunchrule>0</eraseonlaunchrule>
     <Name>board_checkout</Name>
     <AsfVersion>3.1.3</AsfVersion>
+    <com_atmel_avrdbg_tool_simulator>
+      <ToolType xmlns="">com.atmel.avrdbg.tool.simulator</ToolType>
+      <ToolName xmlns="">AVR Simulator</ToolName>
+      <ToolNumber xmlns="">
+      </ToolNumber>
+      <KeepTimersRunning xmlns="">true</KeepTimersRunning>
+      <OverrideVtor xmlns="">false</OverrideVtor>
+      <OverrideVtorValue xmlns="">
+      </OverrideVtorValue>
+      <Channel xmlns="">
+        <host>127.0.0.1</host>
+        <port>49434</port>
+        <ssl>False</ssl>
+      </Channel>
+    </com_atmel_avrdbg_tool_simulator>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'default' ">
     <OutputPath>bin\default\</OutputPath>
@@ -83,6 +98,36 @@
     <Compile Include="adc_driver.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="chb.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="chb.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="chb_buf.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="chb_buf.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="chb_drvr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="chb_drvr.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="chb_eeprom.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="chb_eeprom.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="chb_spi.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="chb_spi.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="clksys_driver.h">
       <SubType>compile</SubType>
     </Compile>
@@ -99,6 +144,15 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="E-000001-000009__firmware_rev_1_0.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="FAT32.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="FAT32.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="types.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

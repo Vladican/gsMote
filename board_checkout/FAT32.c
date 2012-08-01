@@ -129,7 +129,7 @@ return (0);
 unsigned long getSetFreeCluster(unsigned char totOrNext, unsigned char get_set, unsigned long FSEntry)
 {
 struct FSInfo_Structure *FS = (struct FSInfo_Structure *) &SDBuffer;
-unsigned char error;
+//unsigned char error;
 
 SD_read_block(unusedSectors + 1,SDBuffer);
 
@@ -287,7 +287,7 @@ unsigned char readFile (unsigned char flag, unsigned char *fileName)
 {
 struct dir_Structure *dir;
 unsigned long cluster, byteCounter = 0, fileSize, firstSector;
-unsigned int k;
+//unsigned int k;
 unsigned char j, error;
 
 error = convertFileName (fileName); //convert fileName into FAT format
@@ -317,6 +317,7 @@ while(1)
   for(j=0; j<sectorPerCluster; j++)
   {
     SD_read_block(firstSector + j,FRAMReadBuffer);
+	/********************************************************************************* IMPORTANT!!!!!!!!!!!!!!! **********************************************************************************************/
 	//put in code here to send the read data sector over Radio since the FRAM buffer is not big enough to hold even one cluster of data
 	
     /*

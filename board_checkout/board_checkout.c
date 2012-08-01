@@ -53,6 +53,9 @@ int main(void) {
 	error = getBootSectorData();
 	SD_write_and_read_knowns_FAT();
 	SD_disable();
+	
+	//TestRadio();
+	chibi_test_radio();
 	// breakpoint 1b - collect body temperature
 	CO_collectTemp(&BP_1b_avg_mV, &BP_1b_min_mV, &BP_1b_max_mV);
 	// avg should increase from breakpoint 1a

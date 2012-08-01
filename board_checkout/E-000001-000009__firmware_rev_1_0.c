@@ -17,6 +17,7 @@ volatile uint8_t checksumFRAM[3] = {0};  // checksum for FRAM test
 volatile int64_t sumFRAM[3];  // sum of all FRAM samples for averaging
 volatile uint8_t bankA_DIR, bankA_OUT, bankB_DIR, bankB_OUT;  // status of port expander current configurations to allow bit level changes
 volatile uint8_t Buffer[13];
+//volatile uint8_t seq;
 //volatile uint8_t readTestData[512];
 //uint8_t TestData[8] = {0xAA,0xBB,0xCC,0xDD,0xEE,0x11,0x22,0x44};
 // Sets the external 16MHz crystal on XTAL1 and XTAL2 as the system clock.
@@ -1301,8 +1302,8 @@ uint8_t SPI_write(uint8_t byteToSend){
 	data = SPIC.DATA; //read SPI data register to reset status flag
 	return data;
 }
-//the following command writes a command to the sd card
-void SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read) {
+//the following command writes a command to the sd card and returns a response (if any) or 0xFF if no response
+uint8_t SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read) {
 	
 	SPI_write(SDHC_COMMAND_START | cmd);
 	SPI_write(arg>>24 & LSBYTE_MASK);
@@ -1315,9 +1316,10 @@ void SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read) {
 		Buffer[i%13] = SPI_write(SDHC_DUMMY_BYTE);
 		if (Buffer[i%13] != SDHC_DUMMY_BYTE){
 			 Buffer[1] = Buffer[i%13];
-			 break;
+			 return Buffer[1];
 		}			
-	}	
+	}
+	return SDHC_DUMMY_BYTE;	
 }
 //the following command writes one sector to the sdhc card
 void SD_write_block(uint32_t sector,uint8_t* data, int lengthOfData){
@@ -1325,7 +1327,12 @@ void SD_write_block(uint32_t sector,uint8_t* data, int lengthOfData){
 	SPICS(TRUE);
 	int fillerBytes = SDHC_SECTOR_SIZE - lengthOfData;
 	if (fillerBytes==SDHC_SECTOR_SIZE) fillerBytes = 0;
-	SD_command(24,sector,SDHC_DUMMY_BYTE,8);	//write to specified sector
+	for(int i=0;SD_command(SDHC_CMD_WRITE_SINGLE_BLOCK,sector,SDHC_DUMMY_BYTE,8) != SDHC_CMD_SUCCESS; i++){		//write to specified sector
+		if (i >= 10) {
+			//there was no response to the command
+			while(1);
+		}
+	}
 	Buffer[0] = SPI_write(SDHC_DUMMY_BYTE);	//send 1 dummy byte as spacer
 	SPI_write(SDHC_DATA_TOKEN);	//send data token
 	for (int i=0;i<lengthOfData;i++){	//write the data segment 1 byte at a time
@@ -1335,7 +1342,7 @@ void SD_write_block(uint32_t sector,uint8_t* data, int lengthOfData){
 	Buffer[i%13] = SPI_write(FILLER_BYTE);
 	} 
 	Buffer[0] = SDHC_DUMMY_BYTE;
-	for(int i=0; i<2 | (Buffer[0] == SDHC_DUMMY_BYTE);i++){
+	for(int i=0; (i<2) || (Buffer[0] == SDHC_DUMMY_BYTE);i++){
 		Buffer[0] = SPI_write(SDHC_DUMMY_BYTE);	//send 2 CRC dummy bytes and keep reading bytes until a response is seen 	
 	}
 	if ((Buffer[0] & SDHC_RESPONSE_STATUS_MASK) == 0x02){
@@ -1350,7 +1357,13 @@ void SD_write_block(uint32_t sector,uint8_t* data, int lengthOfData){
 void SD_read_block(uint32_t sector,uint8_t* arrayOf512Bytes){
 	SPIInit(SPI_MODE_0_gc);
 	SPICS(TRUE);
-	SD_command(SDHC_CMD_READ_SINGLE_BLOCK,sector,SDHC_DUMMY_BYTE,8);	//send command to read data
+	
+	for(int i=0;SD_command(SDHC_CMD_READ_SINGLE_BLOCK,sector,SDHC_DUMMY_BYTE,8) != SDHC_CMD_SUCCESS; i++){	//send command to read data
+		if (i >= 10) {
+			//there was no response to the command
+			while(1);
+		}
+	}
 	while(Buffer[0] != SDHC_DATA_TOKEN){
 		Buffer[0] = SPI_write(SDHC_DUMMY_BYTE);
 	}		
@@ -1364,6 +1377,19 @@ void SD_read_block(uint32_t sector,uint8_t* arrayOf512Bytes){
 
 	SPICS(FALSE);
 	SPIDisable();
+}
+
+void checkMote(){
+	ADCPower(TRUE);
+	Ext1Power(TRUE);
+	_delay_ms(100);
+	PortEx_DIRSET(BIT3_bm, PS_BANKB);  //SD card CS	
+	while(1){
+		PortEx_OUTSET(BIT3_bm, PS_BANKB);	//pull SD cs high
+		_delay_ms(5000);
+		PortEx_OUTCLR(BIT3_bm, PS_BANKB);	//pull SD cs low
+		_delay_ms(5000);
+	}
 }
 
 //the following function turns on power to the sd card and port expander and initializes the sdhc card in spi mode
@@ -1393,18 +1419,24 @@ void SD_init(void){
 	
 	SPIInit2(SPI_MODE_0_gc,SPI_LOWEST_CLOCKRATE_PRESCALAR);
 	SPICS(TRUE);
-	for(int i=0; (Buffer[1] != 0x01) & i<10; i++){
-		SD_command(SDHC_CMD_RESET,SDHC_NO_ARGUMENTS,SDHC_CMD_RESET_CRC,8);		//send command 0 to put card in idle state and read 8 next bytes sent back or until response read
-		_delay_ms(100);
-	}	
-	if (Buffer[1] != SDHC_IDLE_STATE) {
-		//there was no response to the first command
+	for(int i=0;SD_command(SDHC_CMD_RESET,SDHC_NO_ARGUMENTS,SDHC_CMD_RESET_CRC,8) != SDHC_IDLE_STATE; i++){		//send command 0 to put card in idle state and read 8 next bytes sent back or until response read
+		if (i >= 10) {												//try command 10 times before timing out
+			//there was no response to the first command
+			while(1);
+		}
 	}
-	SD_command(SDHC_CHECK_VOLTAGE_CMD,SDHC_CHECK_VOLTAGE_ARGUMENT,SDHC_CHECK_VOLTAGE_CRC,8);		//check voltage range (used to indicate to sd card that we know it is an sdhc card)
+	_delay_ms(100);	
+	
+	for(int i=0;SD_command(SDHC_CHECK_VOLTAGE_CMD,SDHC_CHECK_VOLTAGE_ARGUMENT,SDHC_CHECK_VOLTAGE_CRC,8) != SDHC_IDLE_STATE; i++){		//check voltage range (used to indicate to sd card that we know it is an sdhc card)
+		if (i >= 10) {
+			//there was no response to the command
+			while(1);
+		}			
+	}		
 	for(int i=0;i<4;i++){
 		Buffer[i+2] = SPI_write(SDHC_DUMMY_BYTE);
 	}
-	if(Buffer[4] != 0x01 | Buffer[5] != 0xAA){			//check that the response is the same as the argument sent in
+	if((Buffer[4] != 0x01) || (Buffer[5] != 0xAA)){			//check that the response is the same as the argument sent in
 		//broken card or voltage out of operating range bounds
 	}
 	/*
@@ -1429,7 +1461,12 @@ void SD_init(void){
 		SD_command(SDHC_ADV_COMMAND,SDHC_NO_ARGUMENTS,SDHC_DUMMY_BYTE,8);	//next command will be advanced
 		SD_command(SDHC_INITIALIZATION_CMD,SDHC_INITIALIZATION_CMD_ARGUMENT,SDHC_DUMMY_BYTE,8);	//initialize the SDHC card in SPI mode
 	}
-	SD_command(SDHC_CMD_READ_OCR,SDHC_NO_ARGUMENTS,SDHC_DUMMY_BYTE,8);		//check OCR register
+	for(int i=0;SD_command(SDHC_CMD_READ_OCR,SDHC_NO_ARGUMENTS,SDHC_DUMMY_BYTE,8) != SDHC_CMD_SUCCESS; i++){		//check OCR register
+		if (i >= 10) {
+			//there was no response to the command
+			while(1);
+		}
+	}		
 	for (int i=0;i<4;i++){
 		Buffer[i] = SPI_write(SDHC_DUMMY_BYTE);
 	}
@@ -1536,8 +1573,308 @@ void SD_write_and_read_knowns(){
 
 void SD_write_and_read_knowns_FAT(){
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = i;	//write 24 values to the FRAM buffer
-	//error = convertFileName(newFile);
 	error = writeFile(newFile);
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = 0;	//clear the FRAM buffer
 	error = readFile(READ,newFileR);		//read the data into the buffer from file
 }
+/*
+//this function takes a pointer to the data and the length of the data as arguments and sends that data via the radio
+void TransmitData(uint8_t* data,uint8_t dataLength){
+	//write the data that is to be sent to the radio buffer
+	uint16_t headerLength = gen_hdr(header,0xFFFF,dataLength+1);
+	WriteFrameBuffer(data,dataLength,headerLength+1);
+	//initiate transmission by writing to control register
+	WriteRadioRegister(RADIOCTRLRGSTR, STARTTRAN);
+	while (ReadRadioRegister(STATREG) != PLL_ON);	//wait for transmission to finish
+}
+
+//this function takes a pointer to a data array and the length of the array (must be less than 128 bytes)
+//and writes that data to the radio buffer
+void WriteFrameBuffer(uint8_t* data,uint8_t dataLength,uint16_t headerLength){
+	SPIDInit(SPI_MODE_0_gc);	//start the spi bus for the radio
+	RadioCS(TRUE);
+	//PORTD.DIRSET = PIN4_bm;
+	//PORTD.OUTCLR = PIN4_bm;	//select the radio with cs
+	Buffer[1] = SPID_write(WRITE_RADIO_BUFFER_CMD);
+	//Buffer[1] = SPID_write(dataLength);
+	//write the IEEE 802.15.4 header
+	for(int i=0;i<headerLength;i++){
+		Buffer[i%13] = SPID_write(header[i]);
+	}
+	//write the data
+	for(int i=0;i<dataLength;i++){
+		Buffer[i%13] = SPID_write(data[i]);
+	}
+	//write a dummy byte which will be overwritten by radio for auto generated CRC 
+	Buffer[0] = SPID_write(0xFF);
+	//Buffer[0] = SPID_write(0xFF);	
+	RadioCS(FALSE);
+	SPID_disable();
+	//PORTD.OUTCLR = PIN4_bm;	//deselect radio
+	
+}
+//this function takes a pointer to a data address (must have free memory for at least 128 bytes) and writes the data from the 
+//radio buffer to memory starting at that address 
+void ReadFrameBuffer(uint8_t* data){
+	uint8_t dataLength;
+	SPIDInit(SPI_MODE_0_gc);	//start the spi bus for the radio
+	RadioCS(TRUE);
+	//PORTD.DIRSET = PIN4_bm;
+	//PORTD.OUTCLR = PIN4_bm;	//select the radio with cs
+	Buffer[1] = SPID_write(READ_RADIO_BUFFER_CMD);
+	dataLength = SPID_write(DUMMY_BYTE);	//write dummy byte and get data length of packet
+	Buffer[2] = dataLength;
+	for (int i=0;i<(dataLength+3);i++){
+		data[i] = SPID_write(DUMMY_BYTE); //read in the data packet followed by LQI, ED and RX_STATUS
+	} 
+	RadioCS(FALSE);
+	SPID_disable();
+	//PORTD.OUTSET = PIN4_bm;	//deselect radio
+	
+}
+void ReadSRAM(uint8_t* data,uint8_t address,uint8_t dataLength){
+	SPIDInit(SPI_MODE_0_gc);	//start the spi bus for the radio
+	RadioCS(TRUE);
+	//PORTD.DIRSET = PIN4_bm;
+	//PORTD.OUTCLR = PIN4_bm;	//select the radio with cs
+	Buffer[1] = SPID_write(READ_RADIO_SRAM_CMD);
+	Buffer[2] = SPID_write(address);
+	for (int i=0;i<dataLength;i++){
+		data[i] = SPID_write(DUMMY_BYTE); //read in the data packet followed by LQI, ED and RX_STATUS
+	}
+	RadioCS(FALSE);
+	SPID_disable();
+	//PORTD.OUTSET = PIN4_bm;	//deselect radio
+	
+}
+void WriteSRAM(uint8_t* data,uint8_t address,uint8_t dataLength){
+	SPIDInit(SPI_MODE_0_gc);	//start the spi bus for the radio
+	RadioCS(TRUE);
+	//PORTD.DIRSET = PIN4_bm;
+	//PORTD.OUTCLR = PIN4_bm;	//select the radio with cs
+	Buffer[1] = SPID_write(WRITE_RADIO_SRAM_CMD);
+	Buffer[1] = SPID_write(address);
+	for(int i=0;i<dataLength;i++){
+		Buffer[i%13] = SPID_write(data[i]);
+	}
+	RadioCS(FALSE);
+	SPID_disable();
+	//PORTD.OUTCLR = PIN4_bm;	//deselect radio
+	
+}
+//this function takes a byte address of a radio register and a byte of data which it writes to that register
+void WriteRadioRegister(uint8_t registerAddress, uint8_t data){
+	SPIDInit(SPI_MODE_0_gc);	//start the spi bus for the radio
+	RadioCS(TRUE);
+	//PORTD.DIRSET = PIN4_bm;
+	//PORTD.OUTCLR = PIN4_bm;	//select the radio with cs
+	Buffer[1] = SPID_write(registerAddress | RWRITECMD);
+	Buffer[1] = SPID_write(data);
+	RadioCS(FALSE);
+	SPID_disable();
+	//PORTD.OUTSET = PIN4_bm;	//deselect radio
+}
+//this function takes a byte address of a radio register and returns the byte of data in that register
+uint8_t ReadRadioRegister(uint8_t registerAddress){
+	uint8_t data;
+	SPIDInit(SPI_MODE_0_gc);	//start the spi bus for the radio
+	RadioCS(TRUE);
+	//PORTD.DIRSET = PIN4_bm;
+	//PORTD.OUTCLR = PIN4_bm;	//select the radio with cs
+	Buffer[1] = SPID_write((registerAddress | RREADCMD));
+	data = SPID_write(DUMMY_BYTE);	//write dummy byte to radio
+	RadioCS(FALSE);
+	SPID_disable();
+	//PORTD.OUTSET = PIN4_bm;	//deselect radio
+	return data;	//return data in register	
+}	
+//disable SPI on port D
+void SPID_disable(){
+	PORTD.OUTSET = PIN4_bm;
+	SPID.CTRL = 0x00;
+	PORTD.OUTCLR = PIN4_bm;
+	PORTD.DIRCLR = PIN4_bm | PIN5_bm | PIN7_bm;
+}
+*/
+//select radio SPI on port D with cs
+void RadioCS(uint8_t status){
+	if (status) PORTD.OUTCLR = PIN4_bm;
+	else {
+		PORTD.OUTSET = PIN4_bm;
+	}
+}
+/*
+//enable SPI on port D
+void SPIDInit(uint8_t mode){
+	// init SPI SS pin (set it to high)
+	PORTD.DIRSET = PIN4_bm;
+	PORTD.PIN4CTRL = PORT_OPC_WIREDANDPULL_gc;
+	PORTD.OUTSET = PIN4_bm;
+
+	// init SPI
+	SPID.CTRL =	SPI_PRESCALER |  // set clock speed
+	0x00 |  // disable clock double
+	SPI_ENABLE_bm | // Enable SPI module
+	0x00 |  // set data order msb first
+	SPI_MASTER_bm | // set SPI master
+	mode; // set SPI mode
+
+	// disable SPI Interrupts
+	SPID.INTCTRL = SPI_INTLVL_OFF_gc;
+	// set SPI-MOSI and SPI-SCK as output
+	PORTD.DIRSET  = PIN5_bm | PIN7_bm;
+
+	
+}
+*/
+//write a byte of data over SPI port D and read a byte of data simultaneously
+uint8_t SPID_write(uint8_t byteToSend){
+	uint8_t data;
+	SPID.DATA = byteToSend;
+	while(!(SPID.STATUS & SPI_IF_bm)); //wait for byte to be sent
+	data = SPID.DATA; //read SPI data register to reset status flag
+	return data;
+}
+/*
+//the following function takes a pointer to a data array (at least 128 bytes) and stores data received over the radio into that array
+void ReceiveData(uint8_t* data){
+	//read the data from the buffer
+	ReadFrameBuffer(data);
+	//set the radio state to idle
+	//WriteRadioRegister(RADIOCTRLRGSTR, SET_RADIOIDLE);
+	while (ReadRadioRegister(STATREG) != RX_ON);	//wait for state to turn to idle
+}
+
+void RadioListen(){
+	WriteRadioRegister(RADIOCTRLRGSTR, RX_ON);
+	WriteRadioRegister(IRQ_MASK_REGISTER,ENABLE_TRX_INTERRUPTS);	//enable transmission/reception interrupts on radio module
+	//WriteRadioRegister(IRQ_MASK_REGISTER,0x0D);	//enable transmission/reception interrupts on radio module
+	PORTD.PIN2CTRL = RISING_EDGE;	//set interrupt pin 2 on port D
+	sei();
+	PMIC.CTRL = ENABLE_ALL_INTERRUPT_LEVELS;
+	PORTD.INT0MASK = PIN2_bm;
+	PORTD.INTCTRL = PORT_INT0LVL_MED_gc;
+	//WriteRadioRegister(RADIOCTRLRGSTR, RX_ON);
+	//sei();
+}
+*/
+/*
+ISR(PORTD_INT0_vect){
+	//nop();
+	RadioCS(FALSE);
+	Buffer[1] = ReadRadioRegister(IRQ_STATUS);						//combine these two lines after end of testing
+	if((Buffer[1] & TRX_END_FLAG) == TRX_END_FLAG) ReceiveData(FRAMReadBuffer);
+	//nop();
+}
+*/
+/*
+void TestRadio(){
+	
+	
+	//reset radio
+	PORTD.DIRSET = PIN0_bm;
+	PORTD.OUTCLR = PIN0_bm;
+	_delay_ms(100);
+	PORTD.OUTSET = PIN0_bm;
+	_delay_ms(100);
+	//WriteRadioRegister(STATREG,0x06);
+	Buffer[1] = ReadRadioRegister(0x04);
+	//WriteRadioRegister(0x04,0x00);
+	//Buffer[1] = ReadRadioRegister(0x04);
+	Buffer[1] = ReadRadioRegister(0x2C);
+	WriteRadioRegister(RADIOCTRLRGSTR,TRX_OFF);	//set radio to TRX_OFF state
+	Buffer[1] = ReadRadioRegister(STATREG);
+	WriteRadioRegister(RADIOCTRLRGSTR,PLL_ON);	//set radio to PLL_ON state
+	Buffer[1] = ReadRadioRegister(STATREG);
+	for (int i=0;i<10;i++) FRAMReadBuffer[i] = i*5;
+	//WriteFrameBuffer(FRAMReadBuffer,10);
+	//RadioListen(FRAMReadBuffer);
+	//WriteRadioRegister(RADIOCTRLRGSTR,PLL_ON);	//set radio to PLL_ON state
+	//Buffer[1] = ReadRadioRegister(STATREG);
+	Buffer[1] = ReadRadioRegister(TRX_CTRL_2);
+	WriteRadioRegister(TRX_CTRL_2,0x00);	//set radio to PLL_ON state
+	Buffer[1] = ReadRadioRegister(TRX_CTRL_2);
+	//set address of mote
+	WriteRadioRegister(SHRT_ADDR_REG0,0x02);
+	WriteRadioRegister(SHRT_ADDR_REG1,0x00); 
+	/********************************************************************************  Transmit data part of test ************************************************************************/
+	/*
+	while(1){
+		TransmitData(FRAMReadBuffer,10);
+		_delay_ms(10000);
+	}
+	
+	/********************************************************* Receive data part of test ***************************************************************************************/
+	/*
+	for (int i=0;i<10;i++) FRAMReadBuffer[i] = 0;
+	seq = 0;	
+	RadioListen();
+	int i=0;
+	while(1){
+		i++;
+		//nop();
+	}
+		
+	WriteRadioRegister(RADIOCTRLRGSTR, RX_ON);
+	//ReceiveData(FRAMReadBuffer);
+	//WriteSRAM(FRAMReadBuffer,0x00,10);
+	//_delay_ms(10);
+	for (int i=0;i<10;i++) FRAMReadBuffer[i] = 0;
+	//ReadFrameBuffer(FRAMReadBuffer);
+	//ReadSRAM(FRAMReadBuffer,0x00,10);
+	
+	/*
+	chb_init();
+	for (int i=0;i<10;i++) FRAMReadBuffer[i] = i;
+	chb_write(0xFFFF,FRAMReadBuffer,10);
+	for (int i=0;i<10;i++) FRAMReadBuffer[i] = 0;
+	chb_read(FRAMReadBuffer);
+	
+}
+*/
+void chibi_test_radio(){
+		
+	chb_init();
+	chb_set_short_addr(0x0001);
+	//chb_set_pwr(10);
+	while(1) nop();								//comment this like if testing transmission
+	for (int i=0;i<30;i++) FRAMReadBuffer[i] = i;
+	while(1){
+		Buffer[1] = chb_write(0xffff,FRAMReadBuffer,30);
+		_delay_ms(10000);
+	}
+	//while(chb_set_state(CHB_RX_AACK_ON) != RADIO_SUCCESS);	
+	/*
+	for (int i=0;i<10;i++) FRAMReadBuffer[i] = 0;
+	chb_read(FRAMReadBuffer);
+	*/
+}
+
+/*
+uint8_t gen_hdr(uint8_t *hdr, uint16_t addr, uint8_t len)
+{
+	uint8_t *hdr_ptr = hdr;
+
+	// calc frame size and put in 0 position of array
+	// frame size = hdr sz + payload len + fcs len
+	*hdr_ptr++ = CHB_HDR_SZ + len + CHB_FCS_LEN;
+	
+	// use default fcf byte 0 val but test for ack request. we won't request
+	// ack if broadcast. all other cases we will.
+	*hdr_ptr++ = CHB_FCF_BYTE_0 | ((addr != 0xFFFF) << CHB_ACK_REQ_POS);
+	*hdr_ptr++ = CHB_FCF_BYTE_1;
+
+	*hdr_ptr++ = seq++;
+
+	// fill out dest pan ID, dest addr, src addr
+	*(uint16_t *)hdr_ptr = CHB_PAN_ID;
+	hdr_ptr += sizeof(uint16_t);
+	*(uint16_t *)hdr_ptr = addr;
+	hdr_ptr += sizeof(uint16_t);
+	*(uint16_t *)hdr_ptr = ((ReadRadioRegister(SHRT_ADDR_REG1) << 8) | ReadRadioRegister(SHRT_ADDR_REG0));
+	hdr_ptr += sizeof(uint16_t);
+	
+	// return the len of the header
+	return hdr_ptr - hdr;
+}
+*/
