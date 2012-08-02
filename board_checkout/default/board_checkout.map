@@ -1000,44 +1000,44 @@ LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0
  .debug_frame   0x000016b8       0x84 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
  .debug_frame   0x0000173c       0x38 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
 
-.debug_str      0x00000000     0x4839
+.debug_str      0x00000000     0x4835
  *(.debug_str)
- .debug_str     0x00000000      0x4e9 chb.o
-                                0x545 (size before relaxing)
- .debug_str     0x000004e9       0x5d chb_buf.o
-                                0x129 (size before relaxing)
- .debug_str     0x00000546      0x8ff chb_drvr.o
-                                0xd88 (size before relaxing)
- .debug_str     0x00000e45      0x3be chb_eeprom.o
-                                0x49b (size before relaxing)
- .debug_str     0x00001203       0x1c chb_spi.o
-                                 0xd8 (size before relaxing)
- .debug_str     0x0000121f      0x618 board_checkout.o
-                                0x80b (size before relaxing)
- .debug_str     0x00001837      0x398 adc_driver.o
-                                0x7f6 (size before relaxing)
- .debug_str     0x00001bcf      0x5de clksys_driver.o
-                                0x6d7 (size before relaxing)
- .debug_str     0x000021ad     0x1e6d E-000001-000009__firmware_rev_1_0.o
-                               0x27ad (size before relaxing)
- .debug_str     0x0000401a      0x4b7 FAT32.o
-                                0x6c5 (size before relaxing)
- .debug_str     0x000044d1      0x10f c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
+ .debug_str     0x00000000      0x4e5 chb.o
+                                0x541 (size before relaxing)
+ .debug_str     0x000004e5       0x5d chb_buf.o
+                                0x125 (size before relaxing)
+ .debug_str     0x00000542      0x8ff chb_drvr.o
+                                0xd84 (size before relaxing)
+ .debug_str     0x00000e41      0x3be chb_eeprom.o
+                                0x497 (size before relaxing)
+ .debug_str     0x000011ff       0x1c chb_spi.o
+                                 0xd4 (size before relaxing)
+ .debug_str     0x0000121b      0x618 board_checkout.o
+                                0x807 (size before relaxing)
+ .debug_str     0x00001833      0x398 adc_driver.o
+                                0x7f2 (size before relaxing)
+ .debug_str     0x00001bcb      0x5de clksys_driver.o
+                                0x6d3 (size before relaxing)
+ .debug_str     0x000021a9     0x1e6d E-000001-000009__firmware_rev_1_0.o
+                               0x27a9 (size before relaxing)
+ .debug_str     0x00004016      0x4b7 FAT32.o
+                                0x6c1 (size before relaxing)
+ .debug_str     0x000044cd      0x10f c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
                                 0x19b (size before relaxing)
- .debug_str     0x000045e0       0x23 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
+ .debug_str     0x000045dc       0x23 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
                                 0x18d (size before relaxing)
- .debug_str     0x00004603        0xa c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
+ .debug_str     0x000045ff        0xa c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
                                 0x18d (size before relaxing)
- .debug_str     0x0000460d       0x53 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
+ .debug_str     0x00004609       0x53 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
                                 0x1e5 (size before relaxing)
  .debug_str     0x00000000      0x150 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clz.o)
- .debug_str     0x00004660       0x91 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
+ .debug_str     0x0000465c       0x91 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
                                 0x125 (size before relaxing)
- .debug_str     0x000046f1       0xa4 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
+ .debug_str     0x000046ed       0xa4 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
                                 0x16b (size before relaxing)
- .debug_str     0x00004795       0x56 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
+ .debug_str     0x00004791       0x56 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
                                  0xfb (size before relaxing)
- .debug_str     0x000047eb       0x4e c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
+ .debug_str     0x000047e7       0x4e c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
                                  0xf2 (size before relaxing)
 
 .debug_loc      0x00000000     0x708d

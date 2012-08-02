@@ -23,11 +23,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   9 .debug_frame  00001774  00000000  00000000  00015c34  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00004839  00000000  00000000  000173a8  2**0
+ 10 .debug_str    00004835  00000000  00000000  000173a8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    0000708d  00000000  00000000  0001bbe1  2**0
+ 11 .debug_loc    0000708d  00000000  00000000  0001bbdd  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000210  00000000  00000000  00022c6e  2**0
+ 12 .debug_ranges 00000210  00000000  00000000  00022c6a  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -10429,7 +10429,7 @@ void chibi_test_radio(){
     3bbc:	90 e0       	ldi	r25, 0x00	; 0
     3bbe:	0e 94 08 04 	call	0x810	; 0x810 <chb_set_short_addr>
 	//chb_set_pwr(10);
-	while(1) nop();
+	while(1) nop();								//comment this line if testing transmission
     3bc2:	00 00       	nop
     3bc4:	fe cf       	rjmp	.-4      	; 0x3bc2 <chibi_test_radio+0xc>
 
