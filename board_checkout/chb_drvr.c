@@ -770,6 +770,7 @@ static void chb_radio_init()
         strcpy_P(buf, chb_err_init);
         printf(buf);
     }
+	StartOfFreeSpace = 0; //set location in FRAM Buffer at which to start storing radio messages to the start of the buffer
 }
 
 /**************************************************************************/
@@ -823,8 +824,9 @@ ISR(CHB_RADIO_IRQ)
         {
             state = chb_get_state();
 
-            if ((state == CHB_RX_ON) || (state == CHB_RX_AACK_ON) || (state == CHB_BUSY_RX_AACK))
-            {
+            if ((state == CHB_RX_ON) || (state == CHB_RX_AACK_ON) || (state == CHB_BUSY_RX_AACK)){
+				//go to TRX_OFF state to avoid data corruption due to reception of another message
+				chb_set_state(CHB_TRX_OFF);
                 // get the ed measurement
                 pcb->ed = chb_reg_read(PHY_ED_LEVEL);
 
@@ -832,20 +834,20 @@ ISR(CHB_RADIO_IRQ)
                 pcb->crc = (chb_reg_read(PHY_RSSI) & (1<<7)) ? 1 : 0;
 
                 // if the crc is not valid, then do not read the frame and set the rx flag
-                if (pcb->crc)
-                {
+                if (pcb->crc){
                     // get the data
                     chb_frame_read();
                     pcb->rcvd_xfers++;
                     pcb->data_rcv = true;
-					chb_read(FRAMReadBuffer);				//read the data into the FRAM buffer right away --vlad
+					StartOfFreeSpace += chb_read(FRAMReadBuffer+StartOfFreeSpace);	//read the data into the FRAM buffer right away --vlad
+					StartOfFreeSpace %= FR_READ_BUFFER_SIZE;	//wrap around to the start of the buffer (making circular buffer). This should be avoided as data in the buffer will be overwritten (i.e. lost).			
                 }
             }
-            else
-            {
+            else{
                 pcb->tx_end = true;
             }
             intp_src &= ~CHB_IRQ_TRX_END_MASK;
+			//go to receive state
             while (chb_set_state(RX_STATE) != RADIO_SUCCESS);
         }
         else if (intp_src & CHB_IRQ_TRX_UR_MASK)

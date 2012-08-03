@@ -1358,12 +1358,12 @@ void SD_read_block(uint32_t sector,uint8_t* arrayOf512Bytes){
 	SPIInit(SPI_MODE_0_gc);
 	SPICS(TRUE);
 	
-	for(int i=0;SD_command(SDHC_CMD_READ_SINGLE_BLOCK,sector,SDHC_DUMMY_BYTE,8) != SDHC_CMD_SUCCESS; i++){	//send command to read data
+	for(int i=0;SD_command(SDHC_CMD_READ_SINGLE_BLOCK,sector,SDHC_DUMMY_BYTE,8) != SDHC_CMD_SUCCESS; i++) {	//send command to read data
 		if (i >= 10) {
 			//there was no response to the command
 			while(1);
 		}
-	}
+	}		
 	while(Buffer[0] != SDHC_DATA_TOKEN){
 		Buffer[0] = SPI_write(SDHC_DUMMY_BYTE);
 	}		
@@ -1378,7 +1378,7 @@ void SD_read_block(uint32_t sector,uint8_t* arrayOf512Bytes){
 	SPICS(FALSE);
 	SPIDisable();
 }
-
+	
 void checkMote(){
 	ADCPower(TRUE);
 	Ext1Power(TRUE);
@@ -1393,10 +1393,12 @@ void checkMote(){
 }
 
 //the following function turns on power to the sd card and port expander and initializes the sdhc card in spi mode
-void SD_init(void){
+//returns 0 if successful or 1 if not
+uint8_t SD_init(void){
 	ADCPower(TRUE);				//power up portEX
 	Ext1Power(TRUE);			//power up SD card
 	_delay_ms(100);				//wait for bootup
+	uint8_t errorCode = 0;
 
 	
 	PortEx_DIRSET(BIT3_bm, PS_BANKB);  //SD card CS	
@@ -1422,7 +1424,8 @@ void SD_init(void){
 	for(int i=0;SD_command(SDHC_CMD_RESET,SDHC_NO_ARGUMENTS,SDHC_CMD_RESET_CRC,8) != SDHC_IDLE_STATE; i++){		//send command 0 to put card in idle state and read 8 next bytes sent back or until response read
 		if (i >= 10) {												//try command 10 times before timing out
 			//there was no response to the first command
-			while(1);
+			errorCode = 1;
+			break;
 		}
 	}
 	_delay_ms(100);	
@@ -1430,7 +1433,8 @@ void SD_init(void){
 	for(int i=0;SD_command(SDHC_CHECK_VOLTAGE_CMD,SDHC_CHECK_VOLTAGE_ARGUMENT,SDHC_CHECK_VOLTAGE_CRC,8) != SDHC_IDLE_STATE; i++){		//check voltage range (used to indicate to sd card that we know it is an sdhc card)
 		if (i >= 10) {
 			//there was no response to the command
-			while(1);
+			errorCode = 1;
+			break;
 		}			
 	}		
 	for(int i=0;i<4;i++){
@@ -1438,6 +1442,7 @@ void SD_init(void){
 	}
 	if((Buffer[4] != 0x01) || (Buffer[5] != 0xAA)){			//check that the response is the same as the argument sent in
 		//broken card or voltage out of operating range bounds
+		errorCode = 1;
 	}
 	/*
 	used for standard (low capacity) cards
@@ -1457,14 +1462,16 @@ void SD_init(void){
 	}
 	*/
 	//send second initialization command
-	while(Buffer[1]!= 0x00){
+	do{
 		SD_command(SDHC_ADV_COMMAND,SDHC_NO_ARGUMENTS,SDHC_DUMMY_BYTE,8);	//next command will be advanced
 		SD_command(SDHC_INITIALIZATION_CMD,SDHC_INITIALIZATION_CMD_ARGUMENT,SDHC_DUMMY_BYTE,8);	//initialize the SDHC card in SPI mode
-	}
+	} while(Buffer[1]!= 0x00);
+	
 	for(int i=0;SD_command(SDHC_CMD_READ_OCR,SDHC_NO_ARGUMENTS,SDHC_DUMMY_BYTE,8) != SDHC_CMD_SUCCESS; i++){		//check OCR register
 		if (i >= 10) {
 			//there was no response to the command
-			while(1);
+			errorCode = 1;
+			break;
 		}
 	}		
 	for (int i=0;i<4;i++){
@@ -1474,7 +1481,8 @@ void SD_init(void){
 		//the card is addressed in 512 byte sectors
 	}
 	SPICS(FALSE);
-	SPIDisable();	
+	SPIDisable();
+	return errorCode;	
 }	
 //the following command writes multiple blocks/sectors to the sd card starting at a specified sector (in the sd card)
 void SD_write_multiple_blocks(uint32_t sector,uint8_t* data,int lengthOfData){
@@ -1484,7 +1492,7 @@ void SD_write_multiple_blocks(uint32_t sector,uint8_t* data,int lengthOfData){
 	int fillerBytes = SDHC_SECTOR_SIZE - lengthOfData%SDHC_SECTOR_SIZE;
 	if (fillerBytes==SDHC_SECTOR_SIZE) fillerBytes = 0;
 	else numSectors++;
-	SD_command(SDHC_CMD_WRITE_MULTIPLE_BLOCKS,sector,SDHC_DUMMY_BYTE,8);	//write starting at specified sector
+	while(SD_command(SDHC_CMD_WRITE_MULTIPLE_BLOCKS,sector,SDHC_DUMMY_BYTE,8) != SDHC_CMD_SUCCESS);	//write starting at specified sector
 	for (int j=0;j<numSectors;j++){
 		Buffer[1] = SPI_write(SDHC_DUMMY_BYTE);	//send dummy byte
 		Buffer[1] = SPI_write(SDHC_MULT_WRITE_DATA_TOKEN);	//send data token
@@ -1521,10 +1529,7 @@ void SD_write_multiple_blocks(uint32_t sector,uint8_t* data,int lengthOfData){
 void SD_read_multiple_blocks(uint32_t sector,uint8_t* data,int numOfBlocks){
 	SPIInit(SPI_MODE_0_gc);
 	SPICS(TRUE);
-	Buffer[1] = SDHC_DUMMY_BYTE;
-	while(Buffer[1] != FILLER_BYTE){
-		SD_command(SDHC_CMD_READ_MULTIPLE_BLOCKS,sector,SDHC_DUMMY_BYTE,8);	//send command to read data
-	}
+	while(SD_command(SDHC_CMD_READ_MULTIPLE_BLOCKS,sector,SDHC_DUMMY_BYTE,8) != SDHC_CMD_SUCCESS);	//send command to read data
 	//do the following for however many sectors to be read in		
 	for (int j=0;j<numOfBlocks;j++){
 		Buffer[1]=SDHC_DUMMY_BYTE;
@@ -1570,7 +1575,7 @@ void SD_write_and_read_knowns(){
 	for(int i=0;i<1250;i++) FRAMReadBuffer[i] = 0;	//clear FRAM buffer
 	SD_read_multiple_blocks(80,FRAMReadBuffer,3);	//read in 3 blocks of data from the memory card
 }
-
+//check writing and reading to file on sd card
 void SD_write_and_read_knowns_FAT(){
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = i;	//write 24 values to the FRAM buffer
 	error = writeFile(newFile);
@@ -1835,14 +1840,23 @@ void TestRadio(){
 void chibi_test_radio(){
 		
 	chb_init();
-	chb_set_short_addr(0x0001);
+	chb_set_short_addr(0x0002);
 	//chb_set_pwr(10);
 	while(1) nop();								//comment this line if testing transmission
-	for (int i=0;i<30;i++) FRAMReadBuffer[i] = i;
+	for (int i=0;i<333;i++) FRAMReadBuffer[i] = i%200;
+	
+	chb_write(0x0002,FRAMReadBuffer,100);
+	chb_write(0x0002,FRAMReadBuffer+100,100);
+	chb_write(0x0002,FRAMReadBuffer+200,100);
+	chb_write(0x0002,FRAMReadBuffer+300,33);
+	
+	//chb_write(0x0002,FRAMReadBuffer+300,333);
+	/*
 	while(1){
 		Buffer[1] = chb_write(0xffff,FRAMReadBuffer,30);
 		_delay_ms(10000);
 	}
+	*/
 	//while(chb_set_state(CHB_RX_AACK_ON) != RADIO_SUCCESS);	
 	/*
 	for (int i=0;i<10;i++) FRAMReadBuffer[i] = 0;

@@ -48,14 +48,15 @@ int main(void) {
 	// breakpoint 1a - collect room temperature
 	CO_collectTemp(&BP_1a_avg_mV, &BP_1a_min_mV, &BP_1a_max_mV);
 	// avg 830mV +/- 25% with min/max +/- 1% of avg 
-	SD_init();	//initialize SD Card
+	//SD_init();	//initialize SD Card
 	//SD_write_and_read_knowns();
-	error = getBootSectorData();
-	SD_write_and_read_knowns_FAT();
-	SD_disable();
+	//error = getBootSectorData();
+	//SD_write_and_read_knowns_FAT();
+	//SD_disable();
 	
 	//TestRadio();
 	chibi_test_radio();
+	while(1);
 	// breakpoint 1b - collect body temperature
 	CO_collectTemp(&BP_1b_avg_mV, &BP_1b_min_mV, &BP_1b_max_mV);
 	// avg should increase from breakpoint 1a

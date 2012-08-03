@@ -183,6 +183,7 @@
 #define SDHC_CMD_SUCCESS 0x00
 
 volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
+volatile uint32_t StartOfFreeSpace;
 volatile uint8_t error;
 volatile uint8_t SDBuffer[512];
 //volatile uint8_t header[9];
@@ -252,7 +253,7 @@ uint8_t SPI_write(uint8_t byteToSend);
 uint8_t SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read);
 void SD_write_block(uint32_t sector,uint8_t* data, int lengthOfData);
 void SD_read_block(uint32_t sector,uint8_t* arrayOf512Bytes);
-void SD_init(void);
+uint8_t SD_init(void);
 void SD_write_multiple_blocks(uint32_t sector,uint8_t* data,int lengthOfData);
 void SD_read_multiple_blocks(uint32_t sector,uint8_t* data,int numOfBlocks);
 void SD_disable();

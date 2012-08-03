@@ -33,6 +33,7 @@
 *******************************************************************/
 #include <stdio.h>
 #include <string.h>
+#include <util/delay.h>
 
 #include "chb.h"
 #include "chb_drvr.h"
@@ -107,7 +108,8 @@ static U8 chb_gen_hdr(U8 *hdr, U16 addr, U8 len)
 U8 chb_write(U16 addr, U8 *data, U8 len)
 {
     U8 status, frm_len, hdr_len, hdr[CHB_HDR_SZ + 1];
-    
+    int rtry;
+	
     while (len > 0)
     {
         // calculate which frame len to use. if greater than max payload, split
@@ -118,10 +120,9 @@ U8 chb_write(U16 addr, U8 *data, U8 len)
         hdr_len = chb_gen_hdr(hdr, addr, frm_len);
 
         // send data to chip
-        status = chb_tx(hdr, data, frm_len);
-		
-        if (status != CHB_SUCCESS)
-        {
+		rtry = 0;
+		do{
+        status = chb_tx(hdr, data, frm_len);			
             switch (status)
             {
             case RADIO_SUCCESS:
@@ -141,11 +142,13 @@ U8 chb_write(U16 addr, U8 *data, U8 len)
             default:
                 break;
             }
-            return status;
-        }
-
+			if(rtry>=0) _delay_ms(100);		//if not successfully sent the first time, wait some time and try again
+			if(rtry==20) return status;;		//after 20 tries give up on sending the message
+			rtry++;	
+		} while(status != CHB_SUCCESS);			
         // adjust len and restart
         len = len - frm_len;
+		_delay_us(100);				//wait a little before sending next message
     }
     return CHB_SUCCESS;
 }
@@ -223,8 +226,8 @@ U8 chb_read(chb_rx_data_t *rx)
     }
 
     // move the payload down to the beginning of the data buffer
-    memmove(rx->data, data_ptr, len - CHB_HDR_SZ);
-	//memmove(rx->data, data_ptr+((seq%4)*128)+128, len - CHB_HDR_SZ);
+    //memmove(rx->data, data_ptr, len - CHB_HDR_SZ);
+	memmove(rx, data_ptr, len - CHB_HDR_SZ);
     // finally, return the len of the payload
     return len - CHB_HDR_SZ - CHB_FCS_LEN;
 #endif
