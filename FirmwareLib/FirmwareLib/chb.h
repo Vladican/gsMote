@@ -95,10 +95,15 @@ typedef struct
     U16 dest_addr;
     U8 data[CHB_MAX_PAYLOAD];
 } chb_rx_data_t;
-
+//initialize radio and put it into listen mode
 void chb_init();
+//get the radio statistics which are encapsulated in the pcb struct (defined above)
 pcb_t *chb_get_pcb();
-U8 chb_write(U16 addr, U8 *data, U8 len);
+//send a message using the radio. Takes a mote address (0xFFFF to broadcast), a pointer to the data to send and the length of the data to send.
+//the function returns the status of the transmition: 0 if success, 5 if no acknowledgement received (only valid if non broadcast message) and 3 if channel access violation.
+U8 chb_write(U16 addr, U8 *data, U32 len);
+//read the data from the buffer where message is copied to when it is received. Should be done automatically when a message is received and the contents of the buffer are written to the FRAMReadBuffer.
+//the function takes pointer to an array (min length of 128 bytes) and writes the contents of the buffer to it returning the status of the command (0 if successful). 
 U8 chb_read(chb_rx_data_t *rx);
 
 #endif

@@ -840,7 +840,7 @@ ISR(CHB_RADIO_IRQ)
                     pcb->rcvd_xfers++;
                     pcb->data_rcv = true;
 					StartOfFreeSpace += chb_read(FRAMReadBuffer+StartOfFreeSpace);	//read the data into the FRAM buffer right away --vlad
-					StartOfFreeSpace %= FR_READ_BUFFER_SIZE;	//wrap around to the start of the buffer (making circular buffer). This should be avoided as data in the buffer will be overwritten (i.e. lost).			
+					if(StartOfFreeSpace+128 >= FR_READ_BUFFER_SIZE) StartOfFreeSpace = 0;	//wrap around to the start of the buffer (making circular buffer). This should be avoided as data in the buffer will be overwritten (i.e. lost).			
                 }
             }
             else{

@@ -318,23 +318,38 @@ enum
 void chb_drvr_init();
 
 // data access
+//read an 8-bit register
 U8 chb_reg_read(U8 addr);
+//read a 16-bit register
 U16 chb_reg_read16(U8 addr);
+//write an 8-bit register
 void chb_reg_write(U8 addr, U8 val);
+//write a 16-bit register
 void chb_reg_write16(U8 addr, U16 val);
+//write a 64-bit register
 void chb_reg_write64(U8 addr, U8 *val);
+//modify an 8-bit register by turning on/off specific bits in it
 void chb_reg_read_mod_write(U8 addr, U8 val, U8 mask);
+//write data to the radio buffer
 void chb_frame_write(U8 *hdr, U8 hdr_len, U8 *data, U8 data_len);
 
 // general configuration
+//set transceiver mode (possible modes defined above).
 void chb_set_mode(U8 mode);
+//set channel that radio will use (0-10 available for U.S.).
 U8 chb_set_channel(U8 channel);
+//set transmitter power (0 to 10).
 void chb_set_pwr(U8 val);
+//set ieee address of mote
 void chb_set_ieee_addr(U8 *addr);
 void chb_get_ieee_addr(U8 *addr);
+//set the short address of mote (this is the one used by chibi stack)
 void chb_set_short_addr(U16 addr);
+//get the short address of the mote
 U16 chb_get_short_addr();
+//set transceiver state (states defined above)
 U8 chb_set_state(U8 state);
+//put the radio into sleep mode or take it out of sleep
 void chb_sleep(U8 enb);
 
 // data transmit

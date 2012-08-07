@@ -1844,13 +1844,13 @@ void chibi_test_radio(){
 	//chb_set_pwr(10);
 	while(1) nop();								//comment this line if testing transmission
 	for (int i=0;i<333;i++) FRAMReadBuffer[i] = i%200;
-	
+	/*
 	chb_write(0x0002,FRAMReadBuffer,100);
 	chb_write(0x0002,FRAMReadBuffer+100,100);
 	chb_write(0x0002,FRAMReadBuffer+200,100);
 	chb_write(0x0002,FRAMReadBuffer+300,33);
-	
-	//chb_write(0x0002,FRAMReadBuffer+300,333);
+	*/
+	chb_write(0x0002,FRAMReadBuffer,333);
 	/*
 	while(1){
 		Buffer[1] = chb_write(0xffff,FRAMReadBuffer,30);

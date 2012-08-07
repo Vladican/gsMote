@@ -1,6 +1,7 @@
 To use sd card in FAT format, first call the SD_init() function, then the getBootSectorData() function. After that, the writeFile() and readFile() functions can be used
 to access the data on the sd card. Alternatively, the card can be used without a filesystem structure by first initializing it with SD_init() and then writing and reading
-to/from the 512 byte sectors on the card using the SD_read_block, SD_write_block, SD_read_multiple_blocks and SD_write_multiple_blocks functions.
+to/from the 512 byte sectors on the card using the SD_read_block, SD_write_block, SD_read_multiple_blocks and SD_write_multiple_blocks functions. However, if sector 0 is 
+overwritten, the card needs to be reformatted to use it in FAT format.
 
 When reading data from a file, since a single cluster used by files in the FAT32 file system is bigger than the FRAMBuffer, the data needs to be either transmitted or processed
 some other way as it is being read inside the readFile function to avoid data loss.
@@ -9,12 +10,11 @@ Make sure to turn off power to the sd card with SD_disable when the card is not 
 with SD_init() ). 
 
 To use the radio, first initialize the radio stack with chb_init(). Then you can set varius radio parameters like transmit power, radio address, radio channel, etc. with the 
-corresponding configuration methods available in chb_drvr.h . The radio initializes into listen mode so unless a transmition has been send from the radio (using the chb_write 
-command which is defined in chb.h), transition into listen mode is not necessary. When a message is received, it is written to the first part of the FRAMBuffer array so to receive
-consecutive messages without loss of data, that data has to be moved and/or processed as soon as it is received (i.e. somewhere in the interrupt service routine).
+corresponding configuration methods available in chb_drvr.h . The radio initializes into listen mode and transits back into listen mode after sending a transmission. When a message is received, 
+it is written to the FRAMReadBuffer array so to receive consecutive messages without loss of data, that data has to be moved and/or processed before the FRAMReadBuffer fills up and starts  
+overwriting data.
 
-Max payload of data is 100 bytes per radio transmission. If more than that is provided as argument to chb_write then it will get broken up into several transmission. However, 
-this data has to be properly handled on the receiving end as it comes in or else it will be lost (as explained above) because of the consecutive messages.
+Max payload of data is 100 bytes per radio transmission. If more than that is provided as argument to chb_write then it will get broken up into several transmission.
 
 The default transmission power level seems to be pretty low so that it needs to be increased for field testing.
 

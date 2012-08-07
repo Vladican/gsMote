@@ -105,11 +105,12 @@ static U8 chb_gen_hdr(U8 *hdr, U16 addr, U8 len)
 
 */
 /**************************************************************************/
-U8 chb_write(U16 addr, U8 *data, U8 len)
+U8 chb_write(U16 addr, U8 *data, U32 len)
 {
-    U8 status, frm_len, hdr_len, hdr[CHB_HDR_SZ + 1];
+    U8 status, frm_len, frm_offset, hdr_len, hdr[CHB_HDR_SZ + 1];
     int rtry;
 	
+	frm_offset = 0;
     while (len > 0)
     {
         // calculate which frame len to use. if greater than max payload, split
@@ -122,33 +123,35 @@ U8 chb_write(U16 addr, U8 *data, U8 len)
         // send data to chip
 		rtry = 0;
 		do{
-        status = chb_tx(hdr, data, frm_len);			
-            switch (status)
-            {
-            case RADIO_SUCCESS:
-                // fall through
-            case CHB_SUCCESS_DATA_PENDING:
-                pcb.txd_success++;
-                break;
+        status = chb_tx(hdr, data+frm_offset, frm_len);			
 
-            case CHB_NO_ACK:
-                pcb.txd_noack++;
-                break;
-
-            case CHB_CHANNEL_ACCESS_FAILURE:
-                pcb.txd_channel_fail++;
-                break;
-
-            default:
-                break;
-            }
-			if(rtry>=0) _delay_ms(100);		//if not successfully sent the first time, wait some time and try again
+             switch (status)
+             {
+             case RADIO_SUCCESS:
+                  //fall through
+             case CHB_SUCCESS_DATA_PENDING:
+                 pcb.txd_success++;
+                 break;
+ 
+             case CHB_NO_ACK:
+                 pcb.txd_noack++;
+                 break;
+ 
+             case CHB_CHANNEL_ACCESS_FAILURE:
+                 pcb.txd_channel_fail++;
+                 break;
+ 
+             default:
+                 break;
+             }
+			if(rtry>=0) _delay_us(100);		//if not successfully sent the first time, wait some time and try again
 			if(rtry==20) return status;;		//after 20 tries give up on sending the message
 			rtry++;	
 		} while(status != CHB_SUCCESS);			
         // adjust len and restart
+		frm_offset += frm_len;
         len = len - frm_len;
-		_delay_us(100);				//wait a little before sending next message
+		//_delay_ms(1000);				//wait a little before sending next message
     }
     return CHB_SUCCESS;
 }
