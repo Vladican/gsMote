@@ -82,8 +82,7 @@
         <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
         <avrgcc.compiler.directories.IncludePaths>
           <ListValues>
-            <Value>C:\Users\Vlad\Documents\GitHub\gsMote\FirmwareLib\FirmwareLib</Value>
-            <Value>G:\GitHub\gsMote\FirmwareLib\FirmwareLib</Value>
+            <Value>../../../FirmwareLib/FirmwareLib</Value>
           </ListValues>
         </avrgcc.compiler.directories.IncludePaths>
         <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
@@ -96,97 +95,102 @@
             <Value>m</Value>
           </ListValues>
         </avrgcc.linker.libraries.Libraries>
+        <avrgcc.assembler.general.IncludePaths>
+          <ListValues>
+            <Value>../../../FirmwareLib/FirmwareLib</Value>
+          </ListValues>
+        </avrgcc.assembler.general.IncludePaths>
         <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
       </AvrGcc>
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\adc_driver.c">
-      <SubType>compile</SubType>
-      <Link>adc_driver.c</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\adc_driver.h">
-      <SubType>compile</SubType>
-      <Link>adc_driver.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\avr_compiler.h">
-      <SubType>compile</SubType>
-      <Link>avr_compiler.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb.c">
-      <SubType>compile</SubType>
-      <Link>chb.c</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb.h">
-      <SubType>compile</SubType>
-      <Link>chb.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_buf.c">
-      <SubType>compile</SubType>
-      <Link>chb_buf.c</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_buf.h">
-      <SubType>compile</SubType>
-      <Link>chb_buf.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_drvr.c">
-      <SubType>compile</SubType>
-      <Link>chb_drvr.c</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_drvr.h">
-      <SubType>compile</SubType>
-      <Link>chb_drvr.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_eeprom.c">
-      <SubType>compile</SubType>
-      <Link>chb_eeprom.c</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_eeprom.h">
-      <SubType>compile</SubType>
-      <Link>chb_eeprom.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_spi.c">
-      <SubType>compile</SubType>
-      <Link>chb_spi.c</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_spi.h">
-      <SubType>compile</SubType>
-      <Link>chb_spi.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\clksys_driver.c">
-      <SubType>compile</SubType>
-      <Link>clksys_driver.c</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\clksys_driver.h">
-      <SubType>compile</SubType>
-      <Link>clksys_driver.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\E-000001-000009_firmware_rev_1_0.h">
-      <SubType>compile</SubType>
-      <Link>E-000001-000009_firmware_rev_1_0.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\E-000001-000009__firmware_rev_1_0.c">
-      <SubType>compile</SubType>
-      <Link>E-000001-000009__firmware_rev_1_0.c</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\FAT32.c">
-      <SubType>compile</SubType>
-      <Link>FAT32.c</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\FAT32.h">
-      <SubType>compile</SubType>
-      <Link>FAT32.h</Link>
-    </Compile>
-    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\types.h">
-      <SubType>compile</SubType>
-      <Link>types.h</Link>
-    </Compile>
     <None Include="AccelSampler2.c">
       <SubType>compile</SubType>
     </None>
     <None Include="board_checkout.c">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\adc_driver.c">
+      <SubType>compile</SubType>
+      <Link>adc_driver.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\adc_driver.h">
+      <SubType>compile</SubType>
+      <Link>adc_driver.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\avr_compiler.h">
+      <SubType>compile</SubType>
+      <Link>avr_compiler.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb.c">
+      <SubType>compile</SubType>
+      <Link>chb.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb.h">
+      <SubType>compile</SubType>
+      <Link>chb.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_buf.c">
+      <SubType>compile</SubType>
+      <Link>chb_buf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_buf.h">
+      <SubType>compile</SubType>
+      <Link>chb_buf.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_drvr.c">
+      <SubType>compile</SubType>
+      <Link>chb_drvr.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_drvr.h">
+      <SubType>compile</SubType>
+      <Link>chb_drvr.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_eeprom.c">
+      <SubType>compile</SubType>
+      <Link>chb_eeprom.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_eeprom.h">
+      <SubType>compile</SubType>
+      <Link>chb_eeprom.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_spi.c">
+      <SubType>compile</SubType>
+      <Link>chb_spi.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_spi.h">
+      <SubType>compile</SubType>
+      <Link>chb_spi.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\clksys_driver.c">
+      <SubType>compile</SubType>
+      <Link>clksys_driver.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\clksys_driver.h">
+      <SubType>compile</SubType>
+      <Link>clksys_driver.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\E-000001-000009_firmware_rev_1_0.h">
+      <SubType>compile</SubType>
+      <Link>E-000001-000009_firmware_rev_1_0.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\E-000001-000009__firmware_rev_1_0.c">
+      <SubType>compile</SubType>
+      <Link>E-000001-000009__firmware_rev_1_0.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\FAT32.c">
+      <SubType>compile</SubType>
+      <Link>FAT32.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\FAT32.h">
+      <SubType>compile</SubType>
+      <Link>FAT32.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\types.h">
+      <SubType>compile</SubType>
+      <Link>types.h</Link>
+    </Compile>
     <Compile Include="AccelSampler.c">
       <SubType>compile</SubType>
     </Compile>

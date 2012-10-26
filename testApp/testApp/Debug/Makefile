@@ -35,15 +35,15 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/adc_driver.c \
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/chb.c \
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/chb_buf.c \
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/chb_drvr.c \
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/chb_eeprom.c \
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/chb_spi.c \
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/clksys_driver.c \
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/E-000001-000009__firmware_rev_1_0.c \
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/FAT32.c \
+../../../FirmwareLib/FirmwareLib/adc_driver.c \
+../../../FirmwareLib/FirmwareLib/chb.c \
+../../../FirmwareLib/FirmwareLib/chb_buf.c \
+../../../FirmwareLib/FirmwareLib/chb_drvr.c \
+../../../FirmwareLib/FirmwareLib/chb_eeprom.c \
+../../../FirmwareLib/FirmwareLib/chb_spi.c \
+../../../FirmwareLib/FirmwareLib/clksys_driver.c \
+../../../FirmwareLib/FirmwareLib/E-000001-000009__firmware_rev_1_0.c \
+../../../FirmwareLib/FirmwareLib/FAT32.c \
 ../AccelSampler.c
 
 
@@ -135,16 +135,16 @@ OUTPUT_FILE_DEP:= ./makedep.mk
 
 
 
-./%.o: ../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/%.c
+./%.o: ../../../FirmwareLib/FirmwareLib/%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : (AVR_8_bit_GNU_Toolchain_3.4.0_663) 4.6.2
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Studio 6.0\extensions\Atmel\AVRGCC\3.4.0.65\AVRToolchain\bin\avr-gcc.exe$(QUOTE) -funsigned-char -funsigned-bitfields -I"C:\Users\Vlad\Documents\GitHub\gsMote\FirmwareLib\FirmwareLib" -I"G:\GitHub\gsMote\FirmwareLib\FirmwareLib"  -O1 -fpack-struct -fshort-enums -g2 -Wall -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"  -mmcu=atxmega256a3   -o"$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Studio 6.0\extensions\Atmel\AVRGCC\3.4.0.65\AVRToolchain\bin\avr-gcc.exe$(QUOTE) -funsigned-char -funsigned-bitfields -I"../../../FirmwareLib/FirmwareLib"  -O1 -fpack-struct -fshort-enums -g2 -Wall -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"  -mmcu=atxmega256a3   -o"$@" "$<" 
 	@echo Finished building: $<
 
 ./%.o: .././%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : (AVR_8_bit_GNU_Toolchain_3.4.0_663) 4.6.2
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Studio 6.0\extensions\Atmel\AVRGCC\3.4.0.65\AVRToolchain\bin\avr-gcc.exe$(QUOTE) -funsigned-char -funsigned-bitfields -I"C:\Users\Vlad\Documents\GitHub\gsMote\FirmwareLib\FirmwareLib" -I"G:\GitHub\gsMote\FirmwareLib\FirmwareLib"  -O1 -fpack-struct -fshort-enums -g2 -Wall -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"  -mmcu=atxmega256a3   -o"$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Studio 6.0\extensions\Atmel\AVRGCC\3.4.0.65\AVRToolchain\bin\avr-gcc.exe$(QUOTE) -funsigned-char -funsigned-bitfields -I"../../../FirmwareLib/FirmwareLib"  -O1 -fpack-struct -fshort-enums -g2 -Wall -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"  -mmcu=atxmega256a3   -o"$@" "$<" 
 	@echo Finished building: $<
 
 

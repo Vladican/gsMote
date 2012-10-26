@@ -1,7 +1,6 @@
-chb_spi.d chb_spi.o: \
- ../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/chb_spi.c \
- ../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/chb_spi.h \
- ../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/types.h \
+chb_spi.d chb_spi.o: ../../../FirmwareLib/FirmwareLib/chb_spi.c \
+ ../../../FirmwareLib/FirmwareLib/chb_spi.h \
+ ../../../FirmwareLib/FirmwareLib/types.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/include/stdbool.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/include/stdint.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/stdint.h \
@@ -15,9 +14,9 @@ chb_spi.d chb_spi.o: \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/avr/fuse.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/avr/lock.h
 
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/chb_spi.h:
+../../../FirmwareLib/FirmwareLib/chb_spi.h:
 
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/types.h:
+../../../FirmwareLib/FirmwareLib/types.h:
 
 c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/include/stdbool.h:
 

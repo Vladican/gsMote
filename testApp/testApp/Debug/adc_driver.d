@@ -1,7 +1,6 @@
-adc_driver.d adc_driver.o: \
- ../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/adc_driver.c \
- ../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/adc_driver.h \
- ../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/avr_compiler.h \
+adc_driver.d adc_driver.o: ../../../FirmwareLib/FirmwareLib/adc_driver.c \
+ ../../../FirmwareLib/FirmwareLib/adc_driver.h \
+ ../../../FirmwareLib/FirmwareLib/avr_compiler.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/include/stdint.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/stdint.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/include/stdbool.h \
@@ -22,9 +21,9 @@ adc_driver.d adc_driver.o: \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/util/delay_basic.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/math.h
 
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/adc_driver.h:
+../../../FirmwareLib/FirmwareLib/adc_driver.h:
 
-../../../../GitHub/gsMote/FirmwareLib/FirmwareLib/avr_compiler.h:
+../../../FirmwareLib/FirmwareLib/avr_compiler.h:
 
 c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/include/stdint.h:
 
