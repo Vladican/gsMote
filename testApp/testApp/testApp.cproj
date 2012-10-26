@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>6.0</ProjectVersion>
+    <ToolchainName>com.Atmel.AVRGCC8</ToolchainName>
+    <ProjectGuid>{025ba559-4281-439e-b121-155ad9fcab39}</ProjectGuid>
+    <avrdevice>ATxmega256A3</avrdevice>
+    <avrdeviceseries>none</avrdeviceseries>
+    <OutputType>Executable</OutputType>
+    <Language>C</Language>
+    <OutputFileName>$(MSBuildProjectName)</OutputFileName>
+    <OutputFileExtension>.elf</OutputFileExtension>
+    <OutputDirectory>$(MSBuildProjectDirectory)\$(Configuration)</OutputDirectory>
+    <AssemblyName>testApp</AssemblyName>
+    <Name>testApp</Name>
+    <RootNamespace>testApp</RootNamespace>
+    <ToolchainFlavour>Native</ToolchainFlavour>
+    <KeepTimersRunning>true</KeepTimersRunning>
+    <OverrideVtor>false</OverrideVtor>
+    <OverrideVtorValue />
+    <eraseonlaunchrule>0</eraseonlaunchrule>
+    <AsfVersion>3.1.3</AsfVersion>
+    <avrtoolinterface>JTAG</avrtoolinterface>
+    <avrtool>com.atmel.avrdbg.tool.jtagicemkii</avrtool>
+    <com_atmel_avrdbg_tool_jtagicemkii>
+      <ToolType>com.atmel.avrdbg.tool.jtagicemkii</ToolType>
+      <ToolName>JTAGICE mkII</ToolName>
+      <ToolNumber>070000005249</ToolNumber>
+      <KeepTimersRunning>true</KeepTimersRunning>
+      <OverrideVtor>false</OverrideVtor>
+      <OverrideVtorValue>
+      </OverrideVtorValue>
+      <Channel>
+        <host>127.0.0.1</host>
+        <port>50531</port>
+        <ssl>False</ssl>
+      </Channel>
+      <ToolOptions>
+        <InterfaceName>JTAG</InterfaceName>
+        <InterfaceProperties>
+          <JtagDbgClock>0</JtagDbgClock>
+          <JtagProgClock>1000000</JtagProgClock>
+          <IspClock>150000</IspClock>
+          <JtagInChain>false</JtagInChain>
+          <JtagEnableExtResetOnStartSession>false</JtagEnableExtResetOnStartSession>
+          <JtagDevicesBefore>0</JtagDevicesBefore>
+          <JtagDevicesAfter>0</JtagDevicesAfter>
+          <JtagInstrBitsBefore>0</JtagInstrBitsBefore>
+          <JtagInstrBitsAfter>0</JtagInstrBitsAfter>
+        </InterfaceProperties>
+      </ToolOptions>
+    </com_atmel_avrdbg_tool_jtagicemkii>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <ToolchainSettings>
+      <AvrGcc>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.optimization.level>Optimize for size (-Os)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>m</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+      </AvrGcc>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <ToolchainSettings>
+      <AvrGcc>
+        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+        <avrgcc.compiler.directories.IncludePaths>
+          <ListValues>
+            <Value>C:\Users\Vlad\Documents\GitHub\gsMote\FirmwareLib\FirmwareLib</Value>
+            <Value>G:\GitHub\gsMote\FirmwareLib\FirmwareLib</Value>
+          </ListValues>
+        </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
+        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+        <avrgcc.compiler.optimization.DebugLevel>Default (-g2)</avrgcc.compiler.optimization.DebugLevel>
+        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+        <avrgcc.linker.libraries.Libraries>
+          <ListValues>
+            <Value>m</Value>
+          </ListValues>
+        </avrgcc.linker.libraries.Libraries>
+        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+      </AvrGcc>
+    </ToolchainSettings>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\adc_driver.c">
+      <SubType>compile</SubType>
+      <Link>adc_driver.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\adc_driver.h">
+      <SubType>compile</SubType>
+      <Link>adc_driver.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\avr_compiler.h">
+      <SubType>compile</SubType>
+      <Link>avr_compiler.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb.c">
+      <SubType>compile</SubType>
+      <Link>chb.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb.h">
+      <SubType>compile</SubType>
+      <Link>chb.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_buf.c">
+      <SubType>compile</SubType>
+      <Link>chb_buf.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_buf.h">
+      <SubType>compile</SubType>
+      <Link>chb_buf.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_drvr.c">
+      <SubType>compile</SubType>
+      <Link>chb_drvr.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_drvr.h">
+      <SubType>compile</SubType>
+      <Link>chb_drvr.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_eeprom.c">
+      <SubType>compile</SubType>
+      <Link>chb_eeprom.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_eeprom.h">
+      <SubType>compile</SubType>
+      <Link>chb_eeprom.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_spi.c">
+      <SubType>compile</SubType>
+      <Link>chb_spi.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\chb_spi.h">
+      <SubType>compile</SubType>
+      <Link>chb_spi.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\clksys_driver.c">
+      <SubType>compile</SubType>
+      <Link>clksys_driver.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\clksys_driver.h">
+      <SubType>compile</SubType>
+      <Link>clksys_driver.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\E-000001-000009_firmware_rev_1_0.h">
+      <SubType>compile</SubType>
+      <Link>E-000001-000009_firmware_rev_1_0.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\E-000001-000009__firmware_rev_1_0.c">
+      <SubType>compile</SubType>
+      <Link>E-000001-000009__firmware_rev_1_0.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\FAT32.c">
+      <SubType>compile</SubType>
+      <Link>FAT32.c</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\FAT32.h">
+      <SubType>compile</SubType>
+      <Link>FAT32.h</Link>
+    </Compile>
+    <Compile Include="..\..\..\GitHub\gsMote\FirmwareLib\FirmwareLib\types.h">
+      <SubType>compile</SubType>
+      <Link>types.h</Link>
+    </Compile>
+    <None Include="AccelSampler2.c">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="board_checkout.c">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="AccelSampler.c">
+      <SubType>compile</SubType>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
+</Project>

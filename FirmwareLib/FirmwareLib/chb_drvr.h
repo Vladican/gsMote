@@ -338,7 +338,7 @@ void chb_frame_write(U8 *hdr, U8 hdr_len, U8 *data, U8 data_len);
 void chb_set_mode(U8 mode);
 //set channel that radio will use (0-10 available for U.S.).
 U8 chb_set_channel(U8 channel);
-//set transmitter power (0 to 10).
+//set transmitter power (0 to 13).
 void chb_set_pwr(U8 val);
 //set ieee address of mote
 void chb_set_ieee_addr(U8 *addr);

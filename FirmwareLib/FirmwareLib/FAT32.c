@@ -342,14 +342,16 @@ return 0;
 //***************************************************************************
 unsigned char convertFileName (unsigned char *fileName)
 {
+bool NoExtension = FALSE;
 unsigned char fileNameFAT[11];
 unsigned char j, k;
 
 for(j=0; j<12; j++)
 if(fileName[j] == '.') break;
 
-if(j>8) {//transmitString_F(PSTR("Invalid fileName..")); 
+if(j>8 && j<12) {//transmitString_F(PSTR("Invalid fileName..")); 
 	return 1;}
+else if (j==12) NoExtension=TRUE;	
 
 for(k=0; k<j; k++) //setting file name
   fileNameFAT[k] = fileName[k];
@@ -357,8 +359,8 @@ for(k=0; k<j; k++) //setting file name
 for(k=j; k<=7; k++) //filling file name trail with blanks
   fileNameFAT[k] = ' ';
 
-j++;
-for(k=8; k<11; k++) //setting file extention
+if(!NoExtension) j++;
+for(k=8; k<11; k++) //setting file extension
 {
   if(fileName[j] != 0)
     fileNameFAT[k] = fileName[j++];
@@ -437,7 +439,7 @@ else
   fileSize = 0;
 }
 
-k=0;
+k=0;    //remove
 
 while(1)
 {
@@ -446,7 +448,7 @@ while(1)
       start = 0;
 	  startBlock = getFirstSector (cluster) + sector;
 	  SD_read_block (startBlock,SDBuffer);
-	  i = fileSize % bytesPerSector;
+	  i = fileSize % bytesPerSector;     //remove
 	  j = sector;
    }
    else
@@ -456,24 +458,12 @@ while(1)
 	  j=0;
    }
    
-  /* 
-   do
-   {
 
-	 data = dataString[k++];
-	 //transmitByte(data);
-     FRAMReadBuffer[i++] = data;
-	 fileSize++;
-     
-     if(i >= 512)   //though 'i' will never become greater than 512, it's kept here to avoid
-	 */ 
-	// {				//infinite loop in case it happens to be greater than 512 due to some data corruption
-	  // i=0;
 	  fileSize += 512;
 	   SD_write_block (startBlock,FRAMReadBuffer,512);
        j++;
-	   if(j == sectorPerCluster) {j = 0; break;}
-	   startBlock++; 
+	   if(j == sectorPerCluster) {j = 0;}
+	   else {startBlock++; break;} 
    //  }
  //  } while((data != '\n') && (k < MAX_STRING_SIZE)); //stop when newline character is found
    													 //or when string size limit reached
@@ -484,7 +474,7 @@ while(1)
         FRAMReadBuffer[i]= 0x00;
    	  SD_write_block (startBlock,FRAMReadBuffer,512);
 */
-      break;
+     // break;
   // } 
  
    prevCluster = cluster;
@@ -500,6 +490,7 @@ while(1)
 
    getSetNextCluster(prevCluster, SET, cluster);
    getSetNextCluster(cluster, SET, EOF);   //last cluster of the file, marked EOF
+   break;				//added to remove writing last sector of previous cluster to first sector of next cluster error  --- needs testing
 }        
 
 getSetFreeCluster (NEXT_FREE, SET, cluster); //update FSinfo next free cluster entry
@@ -507,7 +498,7 @@ getSetFreeCluster (NEXT_FREE, SET, cluster); //update FSinfo next free cluster e
 //error = getDateTime_FAT();    //get current date & time from the RTC
 //if(error) { dateFAT = 0; timeFAT = 0;}
 
-if(appendFile)  //executes this loop if file is to be appended
+if(appendFile)  //executes this loop if file is to be appended (updates file information and reduce count of free memory)
 {
   SD_read_block (appendFileSector,SDBuffer);    
   dir = (struct dir_Structure *) &SDBuffer[appendFileLocation]; 

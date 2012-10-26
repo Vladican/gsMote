@@ -2,10 +2,10 @@
 
 // Global Variables
 volatile uint8_t channelStatus;  // copy of channel filter configuration to allow bit level changes
-volatile uint16_t sampleCount;  // sample and discard counter for array offset
+//volatile uint16_t sampleCount;  // sample and discard counter for array offset
 volatile int32_t data24Bit[NUM_SAMPLES];  // storage for ADC samples
 volatile uint8_t SPIBuffer[13];  // space for 24-bit ADC conversion plus dummy byte
-volatile uint16_t FRAMAddress;  // address counters for FRAM write/read
+//volatile uint16_t FRAMAddress;  // address counters for FRAM write/read
 //volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
 volatile uint8_t newFile[15] = {'n','e','w','F','I','L','E','.',' ',' ',' ',' ',' ',' ',' '}; //must be no more than 8 letters before the extension "." 
 volatile uint8_t newFileR[15] = {'n','e','w','F','I','L','E','.',' ',' ',' ',' ',' ',' ',' '};
@@ -26,6 +26,12 @@ volatile uint8_t Buffer[13];
 //  - LS900-SI-02 does not contain the crystal
 //  - SFLX02-A03 does contain the crystal
 // The high frequency crystal is required to clock the ADC without jitter
+void TestCard(){
+		SD_init();
+		getBootSectorData();
+		for (int i=0;i<512;i++) FRAMReadBuffer[i] = i%121;
+		for (int i=0;i<55;i++) {FRAMReadBuffer[0] = i; writeFile(newFile);}
+}
 void setXOSC_32MHz() {
 	// configure the crystal to match the chip 
 	CLKSYS_XOSC_Config( OSC_FRQRANGE_12TO16_gc,
@@ -750,7 +756,7 @@ void CO_collectADC(uint8_t channel, uint8_t filterConfig, int32_t *avgV,
 	PORTF.DIRCLR = PIN0_bm;
 	PORTF.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_TOTEM_gc;
 	PORTF.INT0MASK = PIN0_bm;
-	PORTF.INTCTRL = PORT_INT0LVL_LO_gc;
+	PORTF.INTCTRL = PORT_INT0LVL_LO_gc;				
 
 	// Configure clock for AD7767 MCLK for desired sample frequency
 	// f_samples = f_MCLK / 16
@@ -798,6 +804,148 @@ void CO_collectADC(uint8_t channel, uint8_t filterConfig, int32_t *avgV,
 	*maxV = (int32_t) -(max * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
 	*minV = (int32_t) -(min * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
 
+}
+
+void CO_collectADC_cont(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t spsExponent) {
+
+int64_t sum = 0;
+int64_t average;
+int64_t min = ADC_MAX;
+int64_t max = -ADC_MAX;
+uint16_t period;
+
+// Turn on power to ADC and PortEx
+ADCPower(TRUE);
+
+// set gain, filters, and ADC input for appropriate VIN
+set_ampGain(channel, gainExponent);
+set_filter(filterConfig);
+
+// if acc channel then enable DC Pass
+// it is assumed that if not using high frequency acc specific function then
+// DC Pass is wanted.
+if ((channel == ADC_CH_6_gc) ||	(channel == ADC_CH_7_gc) ||
+(channel == ADC_CH_8_gc)) ACC_DCPassEnable(TRUE);
+
+enableADCMUX(TRUE);
+setADCInput(channel);
+SPIInit(SPI_MODE_1_gc);
+SPIC.CTRL = ADC_SPI_CONFIG_gc;
+
+// Configure IO13 (PF0) to capture ADC DRDY signal
+PORTF.DIRCLR = PIN0_bm;
+//PORTF.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_TOTEM_gc;
+PORTF.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_PULLUP_gc;
+PORTF.INT1MASK = PIN0_bm;
+PORTF.INTCTRL = PORT_INT1LVL_LO_gc;
+
+// Configure clock for AD7767 MCLK for desired sample frequency
+//f_samples = f_MCLK / 16
+//f_MCLK = f_peripheral(2^25Hz) / (f_period + 1Hz)
+// Set IO14 (PE5) to output
+PORTE.DIRSET = PIN5_bm;
+// Set Waveform generator mode and enable the CCx output to IO14 (PE5)
+TCE1.CTRLB = TC_WGMODE_SS_gc | TC1_CCBEN_bm;
+// set period
+period = (1 << (21 - spsExponent)) - 1;
+TCE1.PER = period;
+TCE1.CCBBUF = period / 2;
+// Set oscillator source and frequency and start
+TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
+
+// Enable interrupts.
+PMIC.CTRL |= PMIC_LOLVLEN_bm;
+sei();
+
+sampleCount = 0;
+TotalSampleCount = 0;
+discardCount = 0;
+
+// wait for ADC to collect samples
+//while(sampleCount < NUM_SAMPLES);
+
+// turn off timer and interupts
+/*
+TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+PMIC.CTRL &= ~PMIC_LOLVLEN_bm;
+cli();
+
+SPIDisable();
+enableADCMUX(FALSE);
+ADCPower(FALSE);
+
+// collect average, max and min of SP samples
+for (sampleCount = 0; sampleCount < NUM_SAMPLES; sampleCount++) {
+	sum += data24Bit[sampleCount];
+if (max < data24Bit[sampleCount]) { max = data24Bit[sampleCount];}
+		if (min > data24Bit[sampleCount]) { min = data24Bit[sampleCount];}
+	}
+	average = sum / NUM_SAMPLES;
+
+	//convert to uV
+	*avgV = (int32_t) -(average * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+	*maxV = (int32_t) -(max * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+	*minV = (int32_t) -(min * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+*/
+}
+
+void ADC_Stop_Sampling(){
+		PortEx_DIRCLR(BIT3_bm, PS_BANKB);  //pull SD card CS high
+		PortEx_OUTCLR(BIT3_bm, PS_BANKB);
+	
+}
+ISR(PORTF_INT1_vect) {
+	// skip first samples because cannot perform recommended reset
+	if(TotalSampleCount>=10){
+		SD_disable();
+		while(1){
+			nop();
+		}		
+	}		
+	if (discardCount < ADC_DISCARD) {
+		discardCount++;
+	} else {
+		// collect data from offchip ADC
+		SPIInit(SPI_MODE_1_gc);
+		SPIC.CTRL = ADC_SPI_CONFIG_gc;
+		SPICS(TRUE); // CS SPI-SS
+		PORTF.OUTCLR = PIN1_bm; // pull ADC_CS down to enable data read
+		for(uint8_t bufIndex = 0; bufIndex < 3; bufIndex++) {
+			SPIC.DATA = 0xAA; // dummy data to start SPI clock
+			while(!(SPIC.STATUS & SPI_IF_bm));
+			SPIBuffer[bufIndex] = SPIC.DATA;
+		}
+		PORTF.OUTSET = PIN1_bm; // pull ADC_CS up to end data read
+		SPICS(FALSE);
+
+		// create 32 bits from SPIBuffer[0:2] with sign extension of SPIBuffer[0][7]
+		if(SPIBuffer[0] & BIT7_bm) FRAMReadBuffer[(sampleCount*4)+3] = 0xFF; // sign extension if negative
+		else FRAMReadBuffer[(sampleCount*4)+3] = 0x00;
+		
+		FRAMReadBuffer[(sampleCount*4)+2]  = SPIBuffer[0];
+		FRAMReadBuffer[(sampleCount*4)+1]  = SPIBuffer[1];
+		FRAMReadBuffer[(sampleCount*4)+0]  = SPIBuffer[2];
+
+		sampleCount++;
+	}
+	//after 3 samples, send the data via radio and reset the sample buffer
+	if (sampleCount >= 128) { //maybe make it 220, check the writeFile function to see if it writes full buffer 
+		//PORTF.OUTCLR = PIN1_bm;	//set ADC cs to high
+		//SPIInit(SPI_MODE_0_gc);
+		//SPICS(TRUE);
+		//PortEx_DIRCLR(BIT3_bm, PS_BANKB);  //pull SD card CS low
+		//PortEx_OUTCLR(BIT3_bm, PS_BANKB);
+		getBootSectorData();
+		writeFile(newFile);
+		/*
+		SD_write_block(10,FRAMReadBuffer,512);
+		for (int i=0;i<512;i++) FRAMReadBuffer[i] = 0;
+		SD_read_block(10,FRAMReadBuffer);
+		*/
+		sampleCount=0;
+		TotalSampleCount++;
+		//PORTF.OUTSET = PIN1_bm; //re-enable ADC for further sampling
+	}
 }
 
 ISR(PORTF_INT0_vect) {
@@ -915,6 +1063,72 @@ void CO_collectSeismic3Channel(uint8_t filterConfig, uint8_t gain[], uint8_t sub
 	ADCPower(FALSE);
 	
 }
+
+void CO_collectSeismic3Channel_continuous(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
+uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
+uint16_t averagingPtC, uint16_t averagingPtD) {
+	
+	// Turn on power to ADC and PortEx
+	ADCPower(TRUE);
+	
+	// Set gains, filters, and input channel
+	set_ampGain(ADC_CH_6_gc, gain[0]);
+	set_ampGain(ADC_CH_7_gc, gain[1]);
+	set_ampGain(ADC_CH_8_gc, gain[2]);
+	set_filter(filterConfig);
+	ACC_DCPassEnable(DCPassEnable);
+	SPIInit(SPI_MODE_1_gc);
+	SPIC.CTRL = ADC_SPI_CONFIG_gc;
+
+	enableADCMUX(TRUE);
+	setADCInput(ADC_CH_6_gc);
+	
+
+	// Configure IO13 (PF0) to capture ADC DRDY signal
+	PORTF.PIN0CTRL = PORT_ISC_FALLING_gc;
+	PORTF.DIRCLR = PIN0_bm;
+	
+	// Configure IO13(PF0) to drive event channel
+	EVSYS.CH0MUX = EVSYS_CHMUX_PORTF_PIN0_gc;
+
+	// Configure counter for IO13(PF0) events
+	TCC0.CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm | TC0_CCCEN_bm | TC0_CCDEN_bm;
+	TCC0.CCA = averagingPtA;
+	TCC0.CCB = averagingPtB;
+	TCC0.CCC = averagingPtC;
+	TCC0.CCD = averagingPtD;
+	TCC0.PER = subsamplesPerChannel - 1;
+	TCC0.INTCTRLA =  TC_OVFINTLVL_MED_gc;
+	TCC0.INTCTRLB = TC_CCAINTLVL_HI_gc | TC_CCBINTLVL_HI_gc | TC_CCCINTLVL_HI_gc | TC_CCDINTLVL_HI_gc;
+	TCC0.CTRLA = ( TCC0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_EVCH0_gc;
+
+	FRAMAddress = FR_BASEADD;
+	sampleCount = 0;
+	SPICount = 0;
+	checksumADC[0] = checksumADC[1] = checksumADC[2] = 0;
+
+	// Enable interrupts.
+	PMIC.CTRL |= (PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm);
+	sei();
+
+	SPICS(TRUE);
+
+	// Configure clock signal for AD7767 MCLK
+	PORTE.DIRSET = PIN5_bm;
+	// Set Waveform generator mode and enable the CCx output to IO14 (PE5)
+	TCE1.CTRLB = TC_WGMODE_SS_gc | TC1_CCBEN_bm;
+	// set period
+	TCE1.PER = (0x20 << subsamplesPerSecond);
+	TCE1.CCBBUF = (0x10 << subsamplesPerSecond);
+	// Set oscillator source and frequency and start
+	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
+	
+	// collect samples from ADC continuously 
+	while(1){
+	nop();
+	}	
+}
+
 
 ISR(TCC0_CCA_vect) {
 	sampleCurrentChannel();
@@ -1277,7 +1491,7 @@ void FRAMWriteKnowns() {
 	SPIDisable();
 	ADCPower(FALSE);
 }
-
+/*
 void SDHC_init(void);
 void SDHC_send_command(uint8_t command, uint32_t arg);
 void SDHC_read_sector(void);
@@ -1287,7 +1501,7 @@ uint16_t SDHC_CRC16(uint8_t *data, uint16_t bytes);
 void SDHC_read_block(uint8_t *buffer, uint16_t address, uint16_t numBlocks);
 void SDHC_write_block(uint8_t *buffer, uint16_t address, uint16_t numBlocks);
 void SDHC_read_register(uint8_t *buffer, uint8_t cmd);
-
+*/
 void SDHC_CS(uint8_t enable) {
 		
 }
@@ -1323,6 +1537,7 @@ uint8_t SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read) {
 }
 //the following command writes one sector to the sdhc card
 void SD_write_block(uint32_t sector,uint8_t* data, int lengthOfData){
+	PortEx_OUTCLR(BIT3_bm, PS_BANKB);	//pull SD cs low
 	SPIInit(SPI_MODE_0_gc);
 	SPICS(TRUE);
 	int fillerBytes = SDHC_SECTOR_SIZE - lengthOfData;
@@ -1350,11 +1565,13 @@ void SD_write_block(uint32_t sector,uint8_t* data, int lengthOfData){
 	}
 	while(Buffer[0] != SDHC_DUMMY_BYTE) Buffer[0] = SPI_write(SDHC_DUMMY_BYTE);	//wait for card to finish internal processes
 	SPICS(FALSE);
-	SPIDisable();	
+	SPIDisable();
+	PortEx_OUTSET(BIT3_bm, PS_BANKB);	//pull SD cs high	
 }
 
 //the following command reads one sector from the sdhc card
 void SD_read_block(uint32_t sector,uint8_t* arrayOf512Bytes){
+	PortEx_OUTCLR(BIT3_bm, PS_BANKB);	//pull SD cs low
 	SPIInit(SPI_MODE_0_gc);
 	SPICS(TRUE);
 	
@@ -1377,6 +1594,7 @@ void SD_read_block(uint32_t sector,uint8_t* arrayOf512Bytes){
 
 	SPICS(FALSE);
 	SPIDisable();
+	PortEx_OUTSET(BIT3_bm, PS_BANKB);	//pull SD cs high
 }
 	
 void checkMote(){
@@ -1482,10 +1700,12 @@ uint8_t SD_init(void){
 	}
 	SPICS(FALSE);
 	SPIDisable();
+	PortEx_OUTSET(BIT3_bm, PS_BANKB);	//pull SD cs high
 	return errorCode;	
 }	
 //the following command writes multiple blocks/sectors to the sd card starting at a specified sector (in the sd card)
 void SD_write_multiple_blocks(uint32_t sector,uint8_t* data,int lengthOfData){
+	PortEx_OUTCLR(BIT3_bm, PS_BANKB);	//pull SD cs low
 	SPIInit(SPI_MODE_0_gc);
 	SPICS(TRUE);
 	int numSectors = lengthOfData/SDHC_SECTOR_SIZE;
@@ -1523,10 +1743,12 @@ void SD_write_multiple_blocks(uint32_t sector,uint8_t* data,int lengthOfData){
 	Buffer[1] = FILLER_BYTE;
 	while (Buffer[1] != SDHC_DUMMY_BYTE) Buffer[1] = SPI_write(SDHC_DUMMY_BYTE); //wait for card to finish internal processes
 	SPICS(FALSE);
-	SPIDisable();		
+	SPIDisable();
+	PortEx_OUTSET(BIT3_bm, PS_BANKB);	//pull SD cs high		
 }
 //the following command reads multiple blocks from the sd card starting at the specified block/sector
 void SD_read_multiple_blocks(uint32_t sector,uint8_t* data,int numOfBlocks){
+	PortEx_OUTCLR(BIT3_bm, PS_BANKB);	//pull SD cs low
 	SPIInit(SPI_MODE_0_gc);
 	SPICS(TRUE);
 	while(SD_command(SDHC_CMD_READ_MULTIPLE_BLOCKS,sector,SDHC_DUMMY_BYTE,8) != SDHC_CMD_SUCCESS);	//send command to read data
@@ -1550,11 +1772,12 @@ void SD_read_multiple_blocks(uint32_t sector,uint8_t* data,int numOfBlocks){
 	while (Buffer[1] != SDHC_DUMMY_BYTE) Buffer[1] = SPI_write(SDHC_DUMMY_BYTE); //wait for card to finish internal processes
 	SPICS(FALSE);
 	SPIDisable();
+	PortEx_OUTSET(BIT3_bm, PS_BANKB);	//pull SD cs high
 }
 //this function deselects the sd card and turns off power to the port expander and the sd card
 void SD_disable(){
-	PortEx_DIRCLR(BIT3_bm, PS_BANKB);  //pull SD card CS high
-	PortEx_OUTCLR(BIT3_bm, PS_BANKB);
+	PortEx_DIRSET(BIT3_bm, PS_BANKB);  //pull SD card CS high
+	PortEx_OUTSET(BIT3_bm, PS_BANKB);
 	SPIInit(SPI_MODE_0_gc);
 	SPICS(TRUE);
 	SPI_write(SDHC_DUMMY_BYTE);	//must write a byte to spi when cd card cs is high to have sd card release MISO line

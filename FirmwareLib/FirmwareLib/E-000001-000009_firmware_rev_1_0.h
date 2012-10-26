@@ -186,6 +186,9 @@ volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRA
 volatile uint32_t StartOfFreeSpace;
 volatile uint8_t error;
 volatile uint8_t SDBuffer[512];
+volatile uint16_t sampleCount;  // sample and discard counter for array offset
+volatile uint16_t TotalSampleCount; 
+volatile uint16_t FRAMAddress;  // address counters for FRAM write/read
 //volatile uint8_t header[9];
 // Function Prototypes
 // breakpoint check functions
@@ -195,6 +198,8 @@ void CO_collectSP(uint8_t channel, int32_t *averageV, int32_t *minV,
 			int32_t *maxV, uint8_t gainExponent);
 void CO_collectADC(uint8_t channel, uint8_t filterConfig, int32_t *avgV, int32_t *minV,
 			int32_t *maxV, uint8_t gainExponent, uint8_t spsExponent);
+//collect ADC data and send it over the radio every 3 samples
+void CO_collectADC_cont(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t spsExponent);
 void CO_collectSeismic3Channel(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
 	uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
 	uint16_t averagingPtC, uint16_t averagingPtD);
@@ -202,6 +207,9 @@ void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t ga
 	uint8_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable,
 	uint16_t averagingPtA, uint16_t averagingPtB, uint16_t averagingPtC,
 	uint16_t averagingPtD);
+void CO_collectSeismic3Channel_continuous(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
+	uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
+	uint16_t averagingPtC, uint16_t averagingPtD);
 void FRAMTest3Channel();
 void FRAMTest1Channel();
 void FRAMWriteKnownsCheck();
@@ -298,7 +306,6 @@ void RadioListen();
 #define RX_START 0x02
 #define TRX_END_FLAG 0x08
 #define RISING_EDGE 0x01
-#define ENABLE_ALL_INTERRUPT_LEVELS 0x07
 #define IRQ_STATUS 0x0F
 #define IRQ_MASK_REGISTER 0x0E
 #define ENABLE_TRX_INTERRUPTS 0x0C
@@ -308,6 +315,9 @@ void RadioListen();
 void ReadSRAM(uint8_t* data,uint8_t address,uint8_t dataLength);
 void WriteSRAM(uint8_t* data,uint8_t address,uint8_t dataLength);
 */
+
+#define ENABLE_ALL_INTERRUPT_LEVELS 0x07
+
 void checkMote();
 void chibi_test_radio();
 /*
@@ -316,3 +326,5 @@ uint8_t gen_hdr(uint8_t *hdr, uint16_t addr, uint8_t len);
 #define SHRT_ADDR_REG0 0x20
 #define SHRT_ADDR_REG1 0x21
 */
+
+void TestCard();
