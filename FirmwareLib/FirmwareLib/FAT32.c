@@ -48,18 +48,16 @@ if(bpb->jumpBoot[0]!=0xE9 && bpb->jumpBoot[0]!=0xEB)   //check if it is boot sec
 }
 
 bytesPerSector = bpb->bytesPerSector;
-//transmitHex(INT, bytesPerSector); transmitByte(' ');
 sectorPerCluster = bpb->sectorPerCluster;
-//transmitHex(INT, sectorPerCluster); transmitByte(' ');
 reservedSectorCount = bpb->reservedSectorCount;
-rootCluster = bpb->rootCluster;// + (sector / sectorPerCluster) +1;
+rootCluster = bpb->rootCluster;
 firstDataSector = bpb->hiddenSectors + reservedSectorCount + (bpb->numberofFATs * bpb->FATsize_F32);
 
 dataSectors = bpb->totalSectors_F32
               - bpb->reservedSectorCount
               - ( bpb->numberofFATs * bpb->FATsize_F32);
 totalClusters = dataSectors / sectorPerCluster;
-//transmitHex(LONG, totalClusters); transmitByte(' ');
+
 
 if((getSetFreeCluster (TOTAL_FREE, GET, 0)) > totalClusters)  //check if FSinfo free clusters count is valid
      freeClusterCountUpdated = 0;
@@ -129,7 +127,6 @@ return (0);
 unsigned long getSetFreeCluster(unsigned char totOrNext, unsigned char get_set, unsigned long FSEntry)
 {
 struct FSInfo_Structure *FS = (struct FSInfo_Structure *) &SDBuffer;
-//unsigned char error;
 
 SD_read_block(unusedSectors + 1,SDBuffer);
 
@@ -186,8 +183,6 @@ while(1)
 
         if(dir->name[0] == EMPTY) //indicates end of the file list of the directory
 		{
-		  //if(flag == DELETE)
-		      //transmitString_F(PSTR("File does not exist!"));
 		  return 0;   
 		}
 		if((dir->name[0] != DELETED) && (dir->attrib != ATTR_LONG_NAME))
@@ -208,12 +203,6 @@ while(1)
 			  }	
 			  else    //when flag = DELETE
 			  {
-				  /*
-			     TX_NEWLINE;
-				 transmitString_F(PSTR("Deleting.."));
-				 TX_NEWLINE;
-				 TX_NEWLINE;
-				 */
 				 firstCluster = (((unsigned long) dir->firstClusterHI) << 16) | dir->firstClusterLO;
                 
 				 //mark file as 'deleted' in FAT table
@@ -233,32 +222,16 @@ while(1)
 			        nextCluster = getSetNextCluster (firstCluster, GET, 0);
 					getSetNextCluster (firstCluster, SET, 0);
 					if(nextCluster > 0x0ffffff6) 
-					   {//transmitString_F(PSTR("File deleted!"));
+					   {//file deleted
 						   return 0;}
 					firstCluster = nextCluster;
 			  	 } 
 			  }
             }
           }
-          else  //when flag = GET_LIST
+          else  //invalid flag
 		  {
-			  /*
-		     TX_NEWLINE;
-			 for(j=0; j<11; j++)
-		     {
-			   if(j == 8) transmitByte(' ');
-			   transmitByte (dir->name[j]);
-			 }
-		     transmitString_F (PSTR("   "));
-		     if((dir->attrib != 0x10) && (dir->attrib != 0x08))
-			 {
-			     transmitString_F (PSTR("FILE" ));
-		         transmitString_F (PSTR("   "));
-			     displayMemory (LOW, dir->fileSize);
-			 }
-			 else
-			   transmitString_F ((dir->attrib == 0x10)? PSTR("DIR") : PSTR("ROOT"));
-			   */
+			  return 0;
 		  }
        }
      }
@@ -269,7 +242,7 @@ while(1)
    if(cluster > 0x0ffffff6)
    	 return 0;
    if(cluster == 0) 
-   {//transmitString_F(PSTR("Error in getting cluster"));  
+   {//error in getting cluster
 	   return 0;}
  }
 return 0;
@@ -287,7 +260,6 @@ unsigned char readFile (unsigned char flag, unsigned char *fileName)
 {
 struct dir_Structure *dir;
 unsigned long cluster, byteCounter = 0, fileSize, firstSector;
-//unsigned int k;
 unsigned char j, error;
 
 error = convertFileName (fileName); //convert fileName into FAT format
@@ -306,10 +278,7 @@ cluster = (((unsigned long) dir->firstClusterHI) << 16) | dir->firstClusterLO;
 
 fileSize = dir->fileSize;
 
-/*
-TX_NEWLINE;
-TX_NEWLINE;
-*/
+
 while(1)
 {
   firstSector = getFirstSector (cluster);
@@ -329,7 +298,7 @@ while(1)
 	*/
   }
   cluster = getSetNextCluster (cluster, GET, 0);
-  if(cluster == 0) {//transmitString_F(PSTR("Error in getting cluster")); 
+  if(cluster == 0) {//Error in getting cluster
 	  return 0;}
 }
 return 0;
@@ -349,7 +318,7 @@ unsigned char j, k;
 for(j=0; j<12; j++)
 if(fileName[j] == '.') break;
 
-if(j>8 && j<12) {//transmitString_F(PSTR("Invalid fileName..")); 
+if(j>8 && j<12) {//Invalid fileName
 	return 1;}
 else if (j==12) NoExtension=TRUE;	
 
@@ -385,10 +354,9 @@ return 0;
 //Arguments: pointer to the file name
 //return: 1 - invalid filename, 2 - no free cluster, 3 - end of cluster chain, 4 - error in getting cluster
 //************************************************************************************
-unsigned char writeFile (unsigned char *fileName)
-{
-unsigned char j,k, data, error, fileCreatedFlag = 0, start = 0, appendFile = 0, sector=0;
-unsigned int i, firstClusterHigh=0, firstClusterLow=0, startBlock=0;  //value 0 is assigned just to avoid warning in compilation
+unsigned char writeFile (unsigned char *fileName){
+unsigned char j, data, error, fileCreatedFlag = 0, start = 0, appendFile = 0, sector=0;
+unsigned int firstClusterHigh=0, firstClusterLow=0, startBlock=0;  //value 0 is assigned just to avoid warning in compilation
 struct dir_Structure *dir;
 unsigned long cluster, nextCluster, prevCluster, firstSector, clusterCount, extraMemory;
 
@@ -396,10 +364,12 @@ j = readFile (VERIFY, fileName);
 
 if(j == 1) 
 {
-  //transmitString_F(PSTR(" File already exists, appending data..")); 
+  //File already exists, appending data
   appendFile = 1;
+  //set cluster to write to as the first cluster of the file
   cluster = appendStartCluster;
   clusterCount=0;
+  //iterate through the clusters in the file until the last incomplete cluster is found and set that to cluster
   while(1)
   {
     nextCluster = getSetNextCluster (cluster, GET, 0);
@@ -407,7 +377,7 @@ if(j == 1)
 	cluster = nextCluster;
 	clusterCount++;
   }
-
+  //using the size of the file and how many clusters it occupies, deduce the sector offset within the last incomplete cluster
   sector = (fileSize - (clusterCount * sectorPerCluster * bytesPerSector)) / bytesPerSector; //last sector number of the last cluster of the file
   start = 1;
 }
@@ -416,8 +386,7 @@ else if(j == 2)
 
 else
 {
- // TX_NEWLINE;
- // transmitString_F(PSTR(" Creating File.."));
+ //Creating File
 
   cluster = getSetFreeCluster (NEXT_FREE, GET, 0);
   if(cluster > totalClusters)
@@ -426,77 +395,48 @@ else
   cluster = searchNextFreeCluster(cluster);
    if(cluster == 0)
    {
-	   /*
-      TX_NEWLINE;
-      transmitString_F(PSTR(" No free cluster!"));
-	  */
+	   // No free cluster!
 	  return 2;
    }
-  getSetNextCluster(cluster, SET, EOF);   //last cluster of the file, marked EOF
+  getSetNextCluster(cluster, SET, EOF);   //set last cluster of the file, marked EOF
    
   firstClusterHigh = (unsigned int) ((cluster & 0xffff0000) >> 16 );
   firstClusterLow = (unsigned int) ( cluster & 0x0000ffff);
   fileSize = 0;
 }
 
-k=0;    //remove
-
-while(1)
-{
-   if(start)
-   {
+//start writing data here
+if(start){
       start = 0;
 	  startBlock = getFirstSector (cluster) + sector;
 	  SD_read_block (startBlock,SDBuffer);
-	  i = fileSize % bytesPerSector;     //remove
 	  j = sector;
    }
-   else
-   {
+   else{
       startBlock = getFirstSector (cluster);
-	  i=0;
 	  j=0;
    }
-   
-
-	  fileSize += 512;
-	   SD_write_block (startBlock,FRAMReadBuffer,512);
-       j++;
-	   if(j == sectorPerCluster) {j = 0;}
-	   else {startBlock++; break;} 
-   //  }
- //  } while((data != '\n') && (k < MAX_STRING_SIZE)); //stop when newline character is found
-   													 //or when string size limit reached
-/*
-   if((data == '\n') || (k >= MAX_STRING_SIZE))
-   {
-      for(;i<512;i++)  //fill the rest of the buffer with 0x00
-        FRAMReadBuffer[i]= 0x00;
-   	  SD_write_block (startBlock,FRAMReadBuffer,512);
-*/
-     // break;
-  // } 
+//write 1 sector (512 bytes) to the cluster and increase file size by 512 bytes   
+fileSize += 512;
+SD_write_block (startBlock,FRAMReadBuffer,512);
+j++;
+//if the cluster is filled up, find the next free cluster and set it as the current cluster of the file, also link another free cluster to the file and mark it as the end of file cluster
+if(j == sectorPerCluster) {
+	j = 0; 
  
-   prevCluster = cluster;
-
-   cluster = searchNextFreeCluster(prevCluster); //look for a free cluster starting from the current cluster
-
-   if(cluster == 0)
-   {
-      //TX_NEWLINE;
-      //transmitString_F(PSTR(" No free cluster!"));
+	prevCluster = cluster;
+	cluster = searchNextFreeCluster(prevCluster); //look for a free cluster starting from the current cluster
+	if(cluster == 0){
+      //No free cluster!
 	  return 2;
    }
-
-   getSetNextCluster(prevCluster, SET, cluster);
-   getSetNextCluster(cluster, SET, EOF);   //last cluster of the file, marked EOF
-   break;				//added to remove writing last sector of previous cluster to first sector of next cluster error  --- needs testing
-}        
+	getSetNextCluster(prevCluster, SET, cluster);
+	getSetNextCluster(cluster, SET, EOF);   //last cluster of the file, marked EOF
+}
+//otherwise increment the sector offset 
+else startBlock++;       
 
 getSetFreeCluster (NEXT_FREE, SET, cluster); //update FSinfo next free cluster entry
-
-//error = getDateTime_FAT();    //get current date & time from the RTC
-//if(error) { dateFAT = 0; timeFAT = 0;}
 
 if(appendFile)  //executes this loop if file is to be appended (updates file information and reduce count of free memory)
 {
@@ -511,10 +451,7 @@ if(appendFile)  //executes this loop if file is to be appended (updates file inf
   SD_write_block (appendFileSector,SDBuffer,512);
   freeMemoryUpdate (REMOVE, extraMemory); //updating free memory count in FSinfo sector;
 
-  
- // TX_NEWLINE;
- // transmitString_F(PSTR(" File appended!"));
-
+ //File appended!
   return 0;
 }
 
@@ -531,10 +468,10 @@ while(1)
      SD_read_block (firstSector + sector,SDBuffer);
 	
 
-     for(i=0; i<bytesPerSector; i+=32)
+     for(int i=0; i<bytesPerSector; i+=32)
      {
 	    dir = (struct dir_Structure *) &SDBuffer[i];
-
+		//if file info successfully updated, return from function
 		if(fileCreatedFlag)   //to mark last directory entry with 0x00 (empty) mark
 		 { 					  //indicating end of the directory file list
 		   //dir->name[0] = EMPTY;
@@ -561,9 +498,7 @@ while(1)
 		  SD_write_block (firstSector + sector,SDBuffer,512);
 		  fileCreatedFlag = 1;
 
-		  //TX_NEWLINE;
-		  //TX_NEWLINE;
-		  //transmitString_F(PSTR(" File Created! "));
+		  //File Created!
 
 		  freeMemoryUpdate (REMOVE, fileSize); //updating free memory count in FSinfo sector
 	     
@@ -584,12 +519,13 @@ while(1)
 
       else
       {	
-	    //transmitString_F(PSTR("End of Cluster Chain")); 
+	    //End of Cluster Chain 
 	    return 3;
       }
    }
-   if(cluster == 0) {//transmitString_F(PSTR("Error in getting cluster")); 
-	   return 4;}
+   if(cluster == 0) {//Error in getting cluster 
+	   return 4;
+	}
    
    prevCluster = cluster;
  }
@@ -625,33 +561,7 @@ unsigned long searchNextFreeCluster (unsigned long startCluster)
  return 0;
 }
 
-//************************************************************
-//Function: To convert the unsigned long value of memory into 
-//          text string and send to UART
-//Arguments: 1. unsigned char flag. If flag is HIGH, memory will be displayed in KBytes, else in Bytes. 
-//			 2. unsigned long memory value
-//return: none
-//************************************************************
-/*
-void displayMemory (unsigned char flag, unsigned long memory)
-{
-  unsigned char memoryString[] = "              Bytes"; //19 character long string for memory display
-  unsigned char i;
-  for(i=12; i>0; i--) //converting freeMemory into ASCII string
-  {
-    if(i==5 || i==9) 
-	{
-	   memoryString[i-1] = ',';  
-	   i--;
-	}
-    memoryString[i-1] = (memory % 10) | 0x30;
-    memory /= 10;
-	if(memory == 0) break;
-  }
-  if(flag == HIGH)  memoryString[13] = 'K';
-  //transmitString(memoryString);
-}
-*/
+
 //********************************************************************
 //Function: to delete a specified file from the root directory
 //Arguments: pointer to the file name

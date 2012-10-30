@@ -181,6 +181,7 @@
 #define SDHC_MULT_WRITE_DATA_TOKEN 0xFC
 #define SDHC_MULT_WRITE_STOP_TOKEN 0xFD
 #define SDHC_CMD_SUCCESS 0x00
+#define ENABLE_ALL_INTERRUPT_LEVELS 0x07
 
 volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
 volatile uint32_t StartOfFreeSpace;
@@ -189,7 +190,7 @@ volatile uint8_t SDBuffer[512];
 volatile uint16_t sampleCount;  // sample and discard counter for array offset
 volatile uint16_t TotalSampleCount; 
 volatile uint16_t FRAMAddress;  // address counters for FRAM write/read
-//volatile uint8_t header[9];
+
 // Function Prototypes
 // breakpoint check functions
 void CO_collectTemp(uint16_t *avgV, uint16_t *minV, uint16_t *maxV);
@@ -198,7 +199,7 @@ void CO_collectSP(uint8_t channel, int32_t *averageV, int32_t *minV,
 			int32_t *maxV, uint8_t gainExponent);
 void CO_collectADC(uint8_t channel, uint8_t filterConfig, int32_t *avgV, int32_t *minV,
 			int32_t *maxV, uint8_t gainExponent, uint8_t spsExponent);
-//collect ADC data and send it over the radio every 3 samples
+//collect ADC data and send it over the radio every 128 samples
 void CO_collectADC_cont(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t spsExponent);
 void CO_collectSeismic3Channel(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
 	uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
@@ -244,16 +245,6 @@ void writeSE2FRAM();
 void readFRAM (uint16_t numBytes);
 void calcChecksumFRAM(void);
 void sampleCurrentChannel();
-void SDHC_init(void);
-void SDHC_send_command(uint8_t command, uint32_t arg);
-void SDHC_read_sector(void);
-void SDHC_write_sector(void);
-uint8_t SDHC_get_response(void);
-uint16_t SDHC_CRC16(uint8_t *data, uint16_t bytes);
-void SDHC_read_block(uint8_t *buffer, uint16_t address, uint16_t numBlocks);
-void SDHC_write_block(uint8_t *buffer, uint16_t address, uint16_t numBlocks);
-void SDHC_read_register(uint8_t *buffer, uint8_t cmd);
-void SDHC_CS(uint8_t enable);
 void FRAMWriteKnowns();
 
 //function prototypes for SD card
@@ -271,60 +262,13 @@ void SD_write_and_read_knowns_FAT();
 //functions for radio
 void RadioCS(uint8_t state);
 uint8_t SPID_write(uint8_t data);
-/*
-void WriteRadioRegister(uint8_t registerAddress, uint8_t data);
-uint8_t ReadRadioRegister(uint8_t registerAddress);
-void WriteFrameBuffer(uint8_t* data,uint8_t dataLength,uint16_t headerLength);
-void ReadFrameBuffer(uint8_t* data);
-void TransmitData(uint8_t* data,uint8_t dataLength);
-void ReceiveData(uint8_t* data);
-void SPIDInit(uint8_t mode);
-void RadioCS(uint8_t state);
-uint8_t SPID_write(uint8_t data);
-void SPID_disable();
-void TestRadio();
-void RadioListen();
 
 
-#define RADIOCTRLRGSTR 0x02
-#define STARTTRAN 0x02
-#define STATREG 0x01
-#define RADIOIDLE 0x00
-#define SET_RADIOIDLE 0x09
-#define RWRITECMD 0xC0
-#define RREADCMD 0x80
-#define WRITE_RADIO_BUFFER_CMD 0x60
-#define READ_RADIO_BUFFER_CMD 0x20
-#define DUMMY_BYTE 0xFF
-#define READ_RADIO_SRAM_CMD 0x00
-#define WRITE_RADIO_SRAM_CMD 0x40
-#define TRX_OFF 0x08
-#define PLL_ON 0x09
-#define RX_ON 0x06
-#define FORCE_TRX_OFF 0x03
-#define FORCE_PLL_ON 0x04
-#define RX_START 0x02
-#define TRX_END_FLAG 0x08
-#define RISING_EDGE 0x01
-#define IRQ_STATUS 0x0F
-#define IRQ_MASK_REGISTER 0x0E
-#define ENABLE_TRX_INTERRUPTS 0x0C
-#define TRX_CTRL_2 0x0C
-#define PHY_TX_PWR 0x05
 
-void ReadSRAM(uint8_t* data,uint8_t address,uint8_t dataLength);
-void WriteSRAM(uint8_t* data,uint8_t address,uint8_t dataLength);
-*/
 
-#define ENABLE_ALL_INTERRUPT_LEVELS 0x07
-
+//miscellaneous testing functions
 void checkMote();
 void chibi_test_radio();
-/*
-uint8_t gen_hdr(uint8_t *hdr, uint16_t addr, uint8_t len);
 
-#define SHRT_ADDR_REG0 0x20
-#define SHRT_ADDR_REG1 0x21
-*/
 
 void TestCard();
