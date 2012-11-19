@@ -1,3 +1,7 @@
+
+#ifndef FIRMWARE_HEADER
+#define FIRMWARE_HEADER
+
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #define F_CPU 32000000UL
@@ -49,30 +53,11 @@
 #define PS_LOW 0x00
 
 
-// AD7767 
+// AD7767
 #define ADC_VREF 2500000  // 2.5volts in microvolts
 #define ADC_MAX 0x7FFFFF  // 24-bit ADC.  2^23 because signed
 #define ADC_DRIVER_GAIN_NUMERATOR 3  // gain of ADC stage
 #define ADC_DRIVER_GAIN_DENOMINATOR 2
-
-
-// Hardware filter config
-#define FILTER_CH_1AND5_bm 0x01
-#define FILTER_CH_2AND6_bm 0x02
-#define FILTER_CH_3AND7_bm 0x04
-#define FILTER_CH_4AND8_bm 0x08
-#define FILTER_HP_0_bm 0x80
-#define FILTER_HP_2_bm 0x00
-#define FILTER_LP_INF_gc 0x00
-#define FILTER_LP_32K_gc 0x10
-#define FILTER_LP_6K_gc 0x20
-#define FILTER_LP_600_gc 0x40
-
-// Software Defines
-#define NUM_SAMPLES 1024
-#define TRUE 1
-#define FALSE 0
-#define ADC_DISCARD 128
 
 // Sample frequency (samples per second)
 #define SPS_32_gc 0x05
@@ -121,6 +106,26 @@
 #define GAIN_64_gc 0x06
 #define GAIN_128_gc 0x07
 
+
+// Hardware filter config
+#define FILTER_CH_1AND5_bm 0x01
+#define FILTER_CH_2AND6_bm 0x02
+#define FILTER_CH_3AND7_bm 0x04
+#define FILTER_CH_4AND8_bm 0x08
+#define FILTER_HP_0_bm 0x80
+#define FILTER_HP_2_bm 0x00
+#define FILTER_LP_INF_gc 0x00
+#define FILTER_LP_32K_gc 0x10
+#define FILTER_LP_6K_gc 0x20
+#define FILTER_LP_600_gc 0x40
+
+// Software Defines
+#define NUM_SAMPLES 1024
+#define TRUE 1
+#define FALSE 0
+#define ADC_DISCARD 128
+
+
 // Bit masks
 #define BIT0_bm 0x01
 #define BIT1_bm 0x02
@@ -130,6 +135,7 @@
 #define BIT5_bm 0x20
 #define BIT6_bm 0x40
 #define BIT7_bm 0x80
+
 
 #define SDHC_SECTOR_SIZE 512 
 #define SDHC_CMD_RESET 0x00
@@ -183,6 +189,18 @@
 #define SDHC_CMD_SUCCESS 0x00
 #define ENABLE_ALL_INTERRUPT_LEVELS 0x07
 
+// Global Variables
+volatile uint8_t channelStatus;  // copy of channel filter configuration to allow bit level changes
+volatile int32_t data24Bit[NUM_SAMPLES];  // storage for ADC samples
+volatile uint8_t SPIBuffer[13];  // space for 24-bit ADC conversion plus dummy byte
+volatile uint8_t FileName[15]; //= {'n','e','w','F','I','L','E','.',' ',' ',' ',' ',' ',' ',' '}; //must be no more than 8 letters before the extension "." 
+volatile uint8_t SPICount, discardCount;
+volatile int32_t *temp32;  // for parsing SPI transactions
+volatile int64_t *temp64; // for parsing SPI transactions from 8bit pieces to 64bit whole
+volatile int64_t sumFRAM[3];  // sum of all FRAM samples for averaging
+volatile uint8_t bankA_DIR, bankA_OUT, bankB_DIR, bankB_OUT;  // status of port expander current configurations to allow bit level changes
+volatile uint8_t Buffer[13];
+volatile int64_t var;
 volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
 volatile uint32_t StartOfFreeSpace;
 volatile uint8_t error;
@@ -190,6 +208,7 @@ volatile uint8_t SDBuffer[512];
 volatile uint16_t sampleCount;  // sample and discard counter for array offset
 volatile uint16_t TotalSampleCount; 
 volatile uint16_t FRAMAddress;  // address counters for FRAM write/read
+//volatile uint8_t Filename[15];
 
 // Function Prototypes
 // breakpoint check functions
@@ -258,10 +277,7 @@ void SD_read_multiple_blocks(uint32_t sector,uint8_t* data,int numOfBlocks);
 void SD_disable();
 void SD_write_and_read_knowns();
 void SD_write_and_read_knowns_FAT();
-
-//functions for radio
-void RadioCS(uint8_t state);
-uint8_t SPID_write(uint8_t data);
+void storeFilename(char* str);
 
 
 
@@ -272,3 +288,5 @@ void chibi_test_radio();
 
 
 void TestCard();
+
+#endif

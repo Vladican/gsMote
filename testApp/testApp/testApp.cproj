@@ -111,6 +111,10 @@
     <None Include="board_checkout.c">
       <SubType>compile</SubType>
     </None>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\ADC.c">
+      <SubType>compile</SubType>
+      <Link>ADC.c</Link>
+    </Compile>
     <Compile Include="..\..\FirmwareLib\FirmwareLib\adc_driver.c">
       <SubType>compile</SubType>
       <Link>adc_driver.c</Link>
@@ -186,6 +190,10 @@
     <Compile Include="..\..\FirmwareLib\FirmwareLib\FAT32.h">
       <SubType>compile</SubType>
       <Link>FAT32.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\SD_Card.c">
+      <SubType>compile</SubType>
+      <Link>SD_Card.c</Link>
     </Compile>
     <Compile Include="..\..\FirmwareLib\FirmwareLib\types.h">
       <SubType>compile</SubType>

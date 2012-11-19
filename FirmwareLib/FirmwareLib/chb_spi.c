@@ -69,11 +69,10 @@ void chb_spi_init()
     data is read byte val.
 */
 /**************************************************************************/
-/*
-U8 chb_xfer_byte(U8 data)
-{
-    CHB_DATA = data;
-    while (!(CHB_STATUS & (1<<CHB_SPIF)));
-    return CHB_DATA;
+uint8_t SPID_write(uint8_t byteToSend){
+	uint8_t data;
+	SPID.DATA = byteToSend;
+	while(!(SPID.STATUS & SPI_IF_bm)); //wait for byte to be sent
+	data = SPID.DATA; //read SPI data register to reset status flag
+	return data;
 }
-*/

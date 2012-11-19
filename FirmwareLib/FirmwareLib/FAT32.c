@@ -354,12 +354,19 @@ return 0;
 //Arguments: pointer to the file name
 //return: 1 - invalid filename, 2 - no free cluster, 3 - end of cluster chain, 4 - error in getting cluster
 //************************************************************************************
-unsigned char writeFile (unsigned char *fileName){
+unsigned char writeFile (unsigned char* fileName){
 unsigned char j, data, error, fileCreatedFlag = 0, start = 0, appendFile = 0, sector=0;
 unsigned int firstClusterHigh=0, firstClusterLow=0, startBlock=0;  //value 0 is assigned just to avoid warning in compilation
 struct dir_Structure *dir;
 unsigned long cluster, nextCluster, prevCluster, firstSector, clusterCount, extraMemory;
 
+//store the string variable into the file name array if it is of a proper length
+/*
+if(strlen(fileName) > 15) return 1;
+for(int i=0; i < strlen(fileName); i++){
+	Filename[i] = fileName[i];
+}
+*/
 j = readFile (VERIFY, fileName);
 
 if(j == 1) 

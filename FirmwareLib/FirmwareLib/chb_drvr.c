@@ -875,3 +875,11 @@ ISR(CHB_RADIO_IRQ)
     CHB_LEAVE_CRIT();
 	chb_reg_read(IRQ_STATUS);		//clear any interrupts that might have been seen when handling this interrupt
 }
+
+//select radio SPI on port D with cs
+void RadioCS(uint8_t status){
+	if (status) PORTD.OUTCLR = PIN4_bm;
+	else {
+		PORTD.OUTSET = PIN4_bm;
+	}
+}

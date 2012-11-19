@@ -314,6 +314,8 @@ enum
     #define RX_STATE CHB_RX_AACK_ON
 #endif
 
+//select radio
+void RadioCS(uint8_t state);
 // init 
 void chb_drvr_init();
 

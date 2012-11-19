@@ -63,6 +63,6 @@
 #define CHB_SPI_DISABLE()   do {CHB_SPI_PORT |= (1<<CHB_SSPIN);} while (0)
 
 void chb_spi_init();
-//U8 chb_xfer_byte(U8 data);
+uint8_t SPID_write(uint8_t data);
 
 #endif

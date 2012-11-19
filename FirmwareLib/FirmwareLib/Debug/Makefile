@@ -35,6 +35,7 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../ADC.c \
 ../adc_driver.c \
 ../chb.c \
 ../chb_buf.c \
@@ -43,7 +44,8 @@ C_SRCS +=  \
 ../chb_spi.c \
 ../clksys_driver.c \
 ../E-000001-000009__firmware_rev_1_0.c \
-../FAT32.c
+../FAT32.c \
+../SD_Card.c
 
 
 PREPROCESSING_SRCS += 
@@ -53,6 +55,7 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+ADC.o \
 adc_driver.o \
 chb.o \
 chb_buf.o \
@@ -61,10 +64,12 @@ chb_eeprom.o \
 chb_spi.o \
 clksys_driver.o \
 E-000001-000009__firmware_rev_1_0.o \
-FAT32.o
+FAT32.o \
+SD_Card.o
 
 
 OBJS_AS_ARGS +=  \
+ADC.o \
 adc_driver.o \
 chb.o \
 chb_buf.o \
@@ -73,10 +78,12 @@ chb_eeprom.o \
 chb_spi.o \
 clksys_driver.o \
 E-000001-000009__firmware_rev_1_0.o \
-FAT32.o
+FAT32.o \
+SD_Card.o
 
 
 C_DEPS +=  \
+ADC.d \
 adc_driver.d \
 chb.d \
 chb_buf.d \
@@ -85,10 +92,12 @@ chb_eeprom.d \
 chb_spi.d \
 clksys_driver.d \
 E-000001-000009__firmware_rev_1_0.d \
-FAT32.d
+FAT32.d \
+SD_Card.d
 
 
 C_DEPS_AS_ARGS +=  \
+ADC.d \
 adc_driver.d \
 chb.d \
 chb_buf.d \
@@ -97,7 +106,8 @@ chb_eeprom.d \
 chb_spi.d \
 clksys_driver.d \
 E-000001-000009__firmware_rev_1_0.d \
-FAT32.d
+FAT32.d \
+SD_Card.d
 
 
 OUTPUT_FILE_PATH +=libFirmwareLib.a
@@ -109,6 +119,10 @@ ADDITIONAL_DEPENDENCIES:=
 OUTPUT_FILE_DEP:= ./makedep.mk
 
 # AVR32/GNU C Compiler
+
+
+
+
 
 
 
