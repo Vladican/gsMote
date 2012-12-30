@@ -208,7 +208,7 @@ volatile uint8_t SDBuffer[512];
 volatile uint16_t sampleCount;  // sample and discard counter for array offset
 volatile uint16_t TotalSampleCount; 
 volatile uint16_t FRAMAddress;  // address counters for FRAM write/read
-//volatile uint8_t Filename[15];
+uint8_t Filename[15];
 
 // Function Prototypes
 // breakpoint check functions

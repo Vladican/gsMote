@@ -8,10 +8,17 @@
 #include "E-000001-000009_firmware_rev_1_0.h"
 
 volatile int numOfSamples;
+//uint8_t Filename[15];
 
 int main(void) {
 	
-	TestCard();
+	//TestCard();
+	//TestCard();
+	for (int i=0;i<512;i++) FRAMReadBuffer[i] = i%121;
+	SD_init();
+	getBootSectorData();
+	writeFile("testing");
+	nop();
 	/*
 	numOfSamples = 0;
 	chb_init();

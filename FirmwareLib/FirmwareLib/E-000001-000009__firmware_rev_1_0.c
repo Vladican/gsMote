@@ -493,5 +493,8 @@ void TestCard(){
 	SD_init();
 	getBootSectorData();
 	for (int i=0;i<512;i++) FRAMReadBuffer[i] = i%121;
-for (int i=0;i<55;i++) {FRAMReadBuffer[0] = i; writeFile("testing");}
+//for (int i=0;i<1;i++) {
+	//FRAMReadBuffer[0] = i; 
+	writeFile("testing");//}
+	nop();
 }

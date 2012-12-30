@@ -2,7 +2,7 @@
 
 volatile uint8_t checksumADC[3] = {0};  // checksum for FRAM test
 volatile uint8_t checksumFRAM[3] = {0};  // checksum for FRAM test
-volatile uint8_t newFile[15] = {'n','e','w','F','I','L','E','.',' ',' ',' ',' ',' ',' ',' '}; //must be no more than 8 letters before the extension "." 
+
 
 void CO_collectTemp(uint16_t *avgV, uint16_t *minV, uint16_t *maxV) {
 	uint32_t sum = 0;
@@ -189,7 +189,7 @@ void ADCPower(uint8_t on) {
 		PORTE.OUTSET = PIN4_bm; // MUX-SYNC2
 		PORTF.OUTSET = PIN1_bm | PIN2_bm | PIN3_bm;  // ADC-CS and DAC write/latch
 		channelStatus = 0x00; // POR to zeros
-		_delay_ms(200);
+		_delay_ms(100);
 
 		// set SPI-MISO as input
 		PORTC.DIRCLR = PIN6_bm;
@@ -534,7 +534,7 @@ ISR(PORTF_INT1_vect) {
 		//PortEx_DIRCLR(BIT3_bm, PS_BANKB);  //pull SD card CS low
 		//PortEx_OUTCLR(BIT3_bm, PS_BANKB);
 		//writeFile("samples");
-		writeFile(newFile); 
+		writeFile("data"); 
 		/*
 		SD_write_block(10,FRAMReadBuffer,512);
 		for (int i=0;i<512;i++) FRAMReadBuffer[i] = 0;

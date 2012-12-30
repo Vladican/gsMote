@@ -13,7 +13,7 @@
 #include <avr/pgmspace.h>
 #include "FAT32.h"
 #include "E-000001-000009_firmware_rev_1_0.h"
-
+//uint8_t Filename[15];
 
 //***************************************************************************
 //Function: to read data from boot sector of SD card, to determine important
@@ -265,7 +265,7 @@ unsigned char j, error;
 error = convertFileName (fileName); //convert fileName into FAT format
 if(error) return 2;
 
-dir = findFiles (GET_FILE, fileName); //get the file location
+dir = findFiles (GET_FILE, Filename); //get the file location
 if(dir == 0) 
 {
   if(flag == READ) return (1);
@@ -315,15 +315,25 @@ bool NoExtension = FALSE;
 unsigned char fileNameFAT[11];
 unsigned char j, k;
 
+//store the string variable into the file name array if it is of a proper length
+
+if(strlen(fileName) > 15) return 1;
+int i=0;
+for(; i < strlen(fileName); i++){
+	Filename[i] = fileName[i];
+}
+for(; i < 15; i++) Filename[i] = ' ';
+
+
 for(j=0; j<12; j++)
-if(fileName[j] == '.') break;
+if(Filename[j] == '.') break;
 
 if(j>8 && j<12) {//Invalid fileName
 	return 1;}
 else if (j==12) NoExtension=TRUE;	
 
 for(k=0; k<j; k++) //setting file name
-  fileNameFAT[k] = fileName[k];
+  fileNameFAT[k] = Filename[k];
 
 for(k=j; k<=7; k++) //filling file name trail with blanks
   fileNameFAT[k] = ' ';
@@ -331,8 +341,8 @@ for(k=j; k<=7; k++) //filling file name trail with blanks
 if(!NoExtension) j++;
 for(k=8; k<11; k++) //setting file extension
 {
-  if(fileName[j] != 0)
-    fileNameFAT[k] = fileName[j++];
+  if(Filename[j] != 0)
+    fileNameFAT[k] = Filename[j++];
   else //filling extension trail with blanks
     while(k<11)
       fileNameFAT[k++] = ' ';
@@ -343,7 +353,7 @@ for(j=0; j<11; j++) //converting small letters to caps
     fileNameFAT[j] -= 0x20;
 
 for(j=0; j<11; j++)
-  fileName[j] = fileNameFAT[j];
+  Filename[j] = fileNameFAT[j];
 
 return 0;
 }
@@ -489,7 +499,7 @@ while(1)
         if((dir->name[0] == EMPTY) || (dir->name[0] == DELETED))  //looking for an empty slot to enter file info
 		{
 		  for(j=0; j<11; j++)
-  			dir->name[j] = fileName[j];
+  			dir->name[j] = Filename[j];
 		  dir->attrib = ATTR_ARCHIVE;	//settting file attribute as 'archive'
 		  dir->NTreserved = 0;			//always set to 0
 		  dir->timeTenth = 0;			//always set to 0
@@ -581,7 +591,7 @@ void deleteFile (unsigned char *fileName)
   error = convertFileName (fileName);
   if(error) return;
 
-  findFiles (DELETE, fileName);
+  findFiles (DELETE, Filename);
 }
 
 //********************************************************************
