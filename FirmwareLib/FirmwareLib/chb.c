@@ -55,6 +55,19 @@ void chb_init()
     memset(&pcb, 0, sizeof(pcb_t));
     pcb.src_addr = chb_get_short_addr();
     chb_drvr_init();
+	radio_msg_received_int_enable();
+}
+
+// Configure PE2 to use as proxy interrupt for data being stored in radio buffer
+void radio_msg_received_int_enable(){
+	PORTE.DIRSET = PIN2_bm;
+	PORTE.OUTCLR = PIN2_bm;
+	PORTE.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_TOTEM_gc;
+	PORTE.INT0MASK = PIN2_bm;
+	PORTE.INTCTRL = PORT_INT0LVL_LO_gc;
+	// Enable low level interrupts.
+	PMIC.CTRL |= PMIC_LOLVLEN_bm;
+	sei();
 }
 
 /**************************************************************************/

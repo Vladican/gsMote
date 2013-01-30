@@ -364,7 +364,7 @@ return 0;
 //Arguments: pointer to the file name
 //return: 1 - invalid filename, 2 - no free cluster, 3 - end of cluster chain, 4 - error in getting cluster
 //************************************************************************************
-unsigned char writeFile (unsigned char* fileName){
+unsigned char writeFile (unsigned char* fileName,uint32_t index_offset){
 unsigned char j, data, error, fileCreatedFlag = 0, start = 0, appendFile = 0, sector=0;
 unsigned int firstClusterHigh=0, firstClusterLow=0, startBlock=0;  //value 0 is assigned just to avoid warning in compilation
 struct dir_Structure *dir;
@@ -435,7 +435,7 @@ if(start){
    }
 //write 1 sector (512 bytes) to the cluster and increase file size by 512 bytes   
 fileSize += 512;
-SD_write_block (startBlock,FRAMReadBuffer,512);
+SD_write_block (startBlock,FRAMReadBuffer+index_offset,512);
 j++;
 //if the cluster is filled up, find the next free cluster and set it as the current cluster of the file, also link another free cluster to the file and mark it as the end of file cluster
 if(j == sectorPerCluster) {

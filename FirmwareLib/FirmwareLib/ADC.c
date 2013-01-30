@@ -485,11 +485,15 @@ discardCount = 0;
 }
 
 
-void ADC_Stop_Sampling(){
-		PortEx_DIRCLR(BIT3_bm, PS_BANKB);  //pull SD card CS high
-		PortEx_OUTCLR(BIT3_bm, PS_BANKB);
-	
+void ADC_Pause_Sampling(){
+		//ignore interrupts from the ADC...don't turn it off to avoid the boot up time
+	PORTF.INT1MASK = 0x00;
 }
+
+void ADC_Resume_Sampling(){
+	//re-enable interrupt on port F which the ADC uses
+	PORTF.INT1MASK = PIN0_bm;
+}	
 ISR(PORTF_INT1_vect) {
 	// skip first samples because cannot perform recommended reset
 	if(TotalSampleCount>=10){
@@ -534,7 +538,7 @@ ISR(PORTF_INT1_vect) {
 		//PortEx_DIRCLR(BIT3_bm, PS_BANKB);  //pull SD card CS low
 		//PortEx_OUTCLR(BIT3_bm, PS_BANKB);
 		//writeFile("samples");
-		writeFile("data"); 
+		writeFile("data",0); 
 		/*
 		SD_write_block(10,FRAMReadBuffer,512);
 		for (int i=0;i<512;i++) FRAMReadBuffer[i] = 0;

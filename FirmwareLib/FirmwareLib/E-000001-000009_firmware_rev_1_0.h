@@ -124,7 +124,9 @@
 #define TRUE 1
 #define FALSE 0
 #define ADC_DISCARD 128
-
+#define DATA_GATHERING 0x01
+#define TIME_SYNCH 0x02
+#define SYNCHED 0x03
 
 // Bit masks
 #define BIT0_bm 0x01
@@ -209,6 +211,9 @@ volatile uint16_t sampleCount;  // sample and discard counter for array offset
 volatile uint16_t TotalSampleCount; 
 volatile uint16_t FRAMAddress;  // address counters for FRAM write/read
 uint8_t Filename[15];
+volatile uint8_t RadioMonitorMode;
+volatile uint16_t MotesReadyToSynch;
+char ResetCommand[6];
 
 // Function Prototypes
 // breakpoint check functions
@@ -265,6 +270,8 @@ void readFRAM (uint16_t numBytes);
 void calcChecksumFRAM(void);
 void sampleCurrentChannel();
 void FRAMWriteKnowns();
+void ADC_Pause_Sampling();
+void ADC_Resume_Sampling();
 
 //function prototypes for SD card
 uint8_t SPI_write(uint8_t byteToSend);

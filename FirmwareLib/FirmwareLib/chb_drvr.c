@@ -290,6 +290,11 @@ static void chb_frame_read()
                 data = SPID_write(0);
                 chb_buf_write(data);
             }
+			//generate message received event here
+			//EVSYS.STROBE = 0x04;  //generate event on channel 3
+			//generate interrupt on port E by toggling pin 2
+			PORTE.OUTSET = PIN2_bm;
+			PORTE.OUTCLR = PIN2_bm;
         }
         else
         {
@@ -839,8 +844,10 @@ ISR(CHB_RADIO_IRQ)
                     chb_frame_read();
                     pcb->rcvd_xfers++;
                     pcb->data_rcv = true;
+					/*
 					StartOfFreeSpace += chb_read(FRAMReadBuffer+StartOfFreeSpace);	//read the data into the FRAM buffer right away --vlad
-					if(StartOfFreeSpace+128 >= FR_READ_BUFFER_SIZE) StartOfFreeSpace = 0;	//wrap around to the start of the buffer (making circular buffer). This should be avoided as data in the buffer will be overwritten (i.e. lost).			
+					if(StartOfFreeSpace+128 >= FR_READ_BUFFER_SIZE) StartOfFreeSpace = 0;	//wrap around to the start of the buffer (making circular buffer). This should be avoided as data in the buffer will be overwritten (i.e. lost).
+					*/			
                 }
             }
             else{

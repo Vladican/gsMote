@@ -105,5 +105,7 @@ U8 chb_write(U16 addr, U8 *data, U32 len);
 //read the data from the buffer where message is copied to when it is received. Should be done automatically when a message is received and the contents of the buffer are written to the FRAMReadBuffer.
 //the function takes pointer to an array (min length of 128 bytes) and writes the contents of the buffer to it returning the status of the command (0 if successful). 
 U8 chb_read(chb_rx_data_t *rx);
+//enable pseudo interrupt on portE which triggers every time incoming radio message is stored in the message buffer
+void radio_msg_received_int_enable();
 
 #endif
