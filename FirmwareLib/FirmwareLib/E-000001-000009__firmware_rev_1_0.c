@@ -439,7 +439,7 @@ void SD_write_and_read_knowns(){
 //check writing and reading to file on sd card
 void SD_write_and_read_knowns_FAT(){
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = i;	//write 24 values to the FRAM buffer
-	error = writeFile("testing",0);
+	error = writeFile("testing",FRAMReadBuffer,512);
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = 0;	//clear the FRAM buffer
 	error = readFile(READ,"testing");		//read the data into the buffer from file
 }
@@ -496,7 +496,7 @@ void TestCard(){
 	for (int i=0;i<512;i++) FRAMReadBuffer[i] = i%121;
 //for (int i=0;i<1;i++) {
 	//FRAMReadBuffer[0] = i; 
-	writeFile("testing",0);//}
+	writeFile("testing",FRAMReadBuffer,512);//}
 	nop();
 }
 

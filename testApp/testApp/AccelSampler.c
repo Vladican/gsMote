@@ -12,10 +12,10 @@ volatile int numOfSamples;
 
 int main(void) {
 	
-	for (int i=0;i<512;i++) FRAMReadBuffer[i] = i%121;
+	for (int i=0;i<1556;i++) FRAMReadBuffer[i] = i%121;
 	SD_init();
 	getBootSectorData();
-	writeFile("testing");
+	writeFile("testing2",FRAMReadBuffer,1556);
 	nop();
 	while(1){
 		nop();

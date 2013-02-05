@@ -477,6 +477,8 @@ TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
 
 // Enable interrupts.
 PMIC.CTRL |= PMIC_LOLVLEN_bm;
+chb_init();
+chb_set_short_addr(moteID);
 sei();
 
 sampleCount = 0;
@@ -495,13 +497,16 @@ void ADC_Resume_Sampling(){
 	PORTF.INT1MASK = PIN0_bm;
 }	
 ISR(PORTF_INT1_vect) {
-	// skip first samples because cannot perform recommended reset
+	//freeze mote after x number of samples
+	/*
 	if(TotalSampleCount>=10){
 		SD_disable();
 		while(1){
 			nop();
 		}		
-	}		
+	}
+	*/		
+	// skip first samples because cannot perform recommended reset
 	if (discardCount < ADC_DISCARD) {
 		discardCount++;
 	}		
@@ -531,14 +536,15 @@ ISR(PORTF_INT1_vect) {
 		
 		sampleCount++;
 	//after 128 samples, store the data into sd card and reset sample buffer
-	if (sampleCount >= 128) { 
+	//after 30 samples, send the data over the radio
+	if (sampleCount >= 30) { 
 		//PORTF.OUTCLR = PIN1_bm;	//set ADC cs to high
 		//SPIInit(SPI_MODE_0_gc);
 		//SPICS(TRUE);
 		//PortEx_DIRCLR(BIT3_bm, PS_BANKB);  //pull SD card CS low
 		//PortEx_OUTCLR(BIT3_bm, PS_BANKB);
 		//writeFile("samples");
-		writeFile("data",0); 
+		//writeFile("data",FRAMReadBuffer,512); 
 		/*
 		SD_write_block(10,FRAMReadBuffer,512);
 		for (int i=0;i<512;i++) FRAMReadBuffer[i] = 0;
@@ -547,6 +553,11 @@ ISR(PORTF_INT1_vect) {
 		sampleCount=0;
 		TotalSampleCount++;
 		//PORTF.OUTSET = PIN1_bm; //re-enable ADC for further sampling
+		
+		//write code to send the data over radio instead. Include some identifying info (like mote number) with the data.
+		memmove(FRAMReadBuffer+1,FRAMReadBuffer,sampleCount*4); //move the data in the FRAM buffer up by 1 byte to make room for metadata
+		FRAMReadBuffer[0] = moteID;
+		chb_write(0x0000,FRAMReadBuffer,sampleCount*4+1);	//send the samples and the metadata (for now just 1 byte containing moteID) to the base station
 	}	
 	}	
 }

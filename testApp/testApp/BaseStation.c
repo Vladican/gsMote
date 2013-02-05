@@ -16,9 +16,8 @@ int main(){
 			//store samples in SD card as they come in
 			if(StartOfFreeSpace >= 512){
 				cli();
-				for(uint32_t i=0;i<StartOfFreeSpace;i+=512){	//atomically write the data that accumulated in the FRAM buffer to the SD card
-					writeFile("DATA",i);						
-				}
+				//atomically write the data that accumulated in the FRAM buffer to the SD card
+				writeFile("DATA",FRAMReadBuffer,StartOfFreeSpace);						
 				StartOfFreeSpace = 0;					
 				sei();
 			}				

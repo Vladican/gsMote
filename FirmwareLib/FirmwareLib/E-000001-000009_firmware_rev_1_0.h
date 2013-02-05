@@ -214,6 +214,7 @@ uint8_t Filename[15];
 volatile uint8_t RadioMonitorMode;
 volatile uint16_t MotesReadyToSynch;
 char ResetCommand[6];
+uint8_t moteID;
 
 // Function Prototypes
 // breakpoint check functions

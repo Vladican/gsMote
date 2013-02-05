@@ -364,7 +364,7 @@ return 0;
 //Arguments: pointer to the file name
 //return: 1 - invalid filename, 2 - no free cluster, 3 - end of cluster chain, 4 - error in getting cluster
 //************************************************************************************
-unsigned char writeFile (unsigned char* fileName,uint32_t index_offset){
+unsigned char writeFile (unsigned char* fileName,uint8_t* dataArray,uint32_t lengthOfData){
 unsigned char j, data, error, fileCreatedFlag = 0, start = 0, appendFile = 0, sector=0;
 unsigned int firstClusterHigh=0, firstClusterLow=0, startBlock=0;  //value 0 is assigned just to avoid warning in compilation
 struct dir_Structure *dir;
@@ -423,37 +423,51 @@ else
 }
 
 //start writing data here
-if(start){
-      start = 0;
-	  startBlock = getFirstSector (cluster) + sector;
-	  SD_read_block (startBlock,SDBuffer);
-	  j = sector;
-   }
-   else{
-      startBlock = getFirstSector (cluster);
-	  j=0;
-   }
-//write 1 sector (512 bytes) to the cluster and increase file size by 512 bytes   
-fileSize += 512;
-SD_write_block (startBlock,FRAMReadBuffer+index_offset,512);
-j++;
-//if the cluster is filled up, find the next free cluster and set it as the current cluster of the file, also link another free cluster to the file and mark it as the end of file cluster
-if(j == sectorPerCluster) {
-	j = 0; 
- 
-	prevCluster = cluster;
-	cluster = searchNextFreeCluster(prevCluster); //look for a free cluster starting from the current cluster
-	if(cluster == 0){
-      //No free cluster!
-	  return 2;
-   }
-	getSetNextCluster(prevCluster, SET, cluster);
-	getSetNextCluster(cluster, SET, EOF);   //last cluster of the file, marked EOF
-}
-//otherwise increment the sector offset 
-else startBlock++;       
 
-getSetFreeCluster (NEXT_FREE, SET, cluster); //update FSinfo next free cluster entry
+if(start){
+  start = 0;
+  startBlock = getFirstSector (cluster) + sector;
+  SD_read_block (startBlock,SDBuffer);
+  j = sector;
+}
+else{
+  startBlock = getFirstSector (cluster);
+  j=0;
+}
+uint32_t writtenData = 0;
+uint32_t dataToWrite = 0;
+while(lengthOfData!=0){
+	//write 1 sector (512 bytes) to the cluster and increase file size by 512 bytes
+	if(lengthOfData >= 512 ){
+		 writtenData += 512;
+		 dataToWrite = 512;
+		 lengthOfData -= 512;
+	}
+	else{
+		writtenData += lengthOfData;
+		dataToWrite = lengthOfData%512;
+		lengthOfData = 0;
+	}		   
+	fileSize += 512;	//always increment size of file by 512 to avoid losing data when appending to the file. Otherwise if there is data in an unfilled sector it will be overwritten.
+	SD_write_block (startBlock,dataArray+writtenData-dataToWrite,dataToWrite);
+	j++;
+	//if the cluster is filled up, find the next free cluster and set it as the current cluster of the file, also link another free cluster to the file and mark it as the end of file cluster
+	if(j == sectorPerCluster) {
+		j = 0; 
+ 
+		prevCluster = cluster;
+		cluster = searchNextFreeCluster(prevCluster); //look for a free cluster starting from the current cluster
+		if(cluster == 0){
+		  //No free cluster!
+		  return 2;
+	   }
+		getSetNextCluster(prevCluster, SET, cluster);
+		getSetNextCluster(cluster, SET, EOF);   //last cluster of the file, marked EOF
+	}
+	//otherwise increment the sector offset 
+	else startBlock++;       
+	getSetFreeCluster (NEXT_FREE, SET, cluster); //update FSinfo next free cluster entry
+}
 
 if(appendFile)  //executes this loop if file is to be appended (updates file information and reduce count of free memory)
 {
