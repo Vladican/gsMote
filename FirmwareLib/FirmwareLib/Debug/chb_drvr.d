@@ -25,7 +25,7 @@ chb_drvr.d chb_drvr.o: .././chb_drvr.c \
  .././E-000001-000009_firmware_rev_1_0.h .././adc_driver.h \
  .././avr_compiler.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/stdlib.h \
- .././clksys_driver.h .././FAT32.h
+ .././clksys_driver.h .././FAT32.h .././ADC.h .././SD_Card.h
 
 c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/stdio.h:
 
@@ -90,3 +90,7 @@ c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.
 .././clksys_driver.h:
 
 .././FAT32.h:
+
+.././ADC.h:
+
+.././SD_Card.h:

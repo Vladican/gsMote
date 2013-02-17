@@ -70,6 +70,9 @@
     <Compile Include="ADC.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="ADC.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="adc_driver.c">
       <SubType>compile</SubType>
     </Compile>
@@ -128,6 +131,9 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="SD_Card.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SD_Card.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="types.h">

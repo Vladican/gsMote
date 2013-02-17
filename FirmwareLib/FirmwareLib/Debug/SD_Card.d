@@ -21,7 +21,7 @@ SD_Card.d SD_Card.o: .././SD_Card.c \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/stdlib.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/avr/interrupt.h \
  .././clksys_driver.h .././FAT32.h .././chb.h .././types.h \
- .././chb_drvr.h
+ .././chb_drvr.h .././ADC.h .././SD_Card.h
 
 .././E-000001-000009_firmware_rev_1_0.h:
 
@@ -76,3 +76,7 @@ c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.
 .././types.h:
 
 .././chb_drvr.h:
+
+.././ADC.h:
+
+.././SD_Card.h:

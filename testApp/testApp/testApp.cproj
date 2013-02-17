@@ -104,6 +104,14 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\ADC.h">
+      <SubType>compile</SubType>
+      <Link>ADC.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\SD_Card.h">
+      <SubType>compile</SubType>
+      <Link>SD_Card.h</Link>
+    </Compile>
     <Compile Include="BaseStation.c">
       <SubType>compile</SubType>
     </Compile>

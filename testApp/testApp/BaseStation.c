@@ -7,10 +7,13 @@
 # include "E-000001-000009_firmware_rev_1_0.h"
 
 int main(){
+	moteID = 0;
 	chb_init();
+	chb_set_short_addr(moteID);
 	SD_init();
 	getBootSectorData();
-	uint16_t MotesInSystem = 2;
+	RadioMonitorMode = DATA_GATHERING;
+	uint16_t MotesInSystem = 1;
 	while(1){
 		while(MotesReadyToSynch < MotesInSystem){
 			//store samples in SD card as they come in
@@ -24,5 +27,6 @@ int main(){
 		}
 		//send synch message
 		MotesReadyToSynch = 0;	//reset unsynched motes number
+		chb_write(0xFFFF,"start sampling",strlen("start sampling"));
 	}	
 }

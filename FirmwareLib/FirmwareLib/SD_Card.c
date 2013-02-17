@@ -252,8 +252,3 @@ void SD_disable(){
 	Ext1Power(FALSE);			//power down SD card
 }
 
-void storeFilename(char* str){
-	int i=0;
-	for (;i<strlen(str) && i<15 ;i++) FileName[i] = str[i];
-	for (;i<15;i++)	FileName[i] = " ";
-}

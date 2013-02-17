@@ -1,6 +1,6 @@
 #include "E-000001-000009_firmware_rev_1_0.h"
 
-const char BasestationSynchResponse[15] = {'S','t','a','r','t',' ','s','a','m','p','l','i','n','g','\n'};
+//const char BasestationSynchResponse[15] = {'S','t','a','r','t',' ','s','a','m','p','l','i','n','g','\n'};
 
 // Sets the external 16MHz crystal on XTAL1 and XTAL2 as the system clock.
 // There was a problem with some of the hardware modules not having the crystal
@@ -508,7 +508,7 @@ ISR(PORTE_INT0_vect){
 		case DATA_GATHERING:
 			//check contents of the message first and if it is a synch message, increment MotesReadyToSynch variable
 			chb_read(msg);
-			if(!strncmp(msg,ResetCommand,5)){
+			if(!strncmp(msg,"reset",5)){
 				MotesReadyToSynch++;
 			}
 			//otherwise, store the message contents in the FRAM buffer
@@ -522,7 +522,7 @@ ISR(PORTE_INT0_vect){
 		//case for synching sampling with basestation
 		case TIME_SYNCH:
 			chb_read(msg);
-			if(!strncmp(msg,BasestationSynchResponse,15)){	//if basestation synch response message received, do the following
+			if(!strncmp(msg,"start sampling",15)){	//if basestation synch response message received, do the following
 				RadioMonitorMode = SYNCHED;
 				TCD1.CTRLA = TC_CLKSEL_EVCH1_gc;	//restart the synch timers
 				TCC1.CTRLA = 0x01;  

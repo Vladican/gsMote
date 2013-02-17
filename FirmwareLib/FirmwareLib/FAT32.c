@@ -13,7 +13,6 @@
 #include <avr/pgmspace.h>
 #include "FAT32.h"
 #include "E-000001-000009_firmware_rev_1_0.h"
-//uint8_t Filename[15];
 
 //***************************************************************************
 //Function: to read data from boot sector of SD card, to determine important
@@ -370,13 +369,7 @@ unsigned int firstClusterHigh=0, firstClusterLow=0, startBlock=0;  //value 0 is 
 struct dir_Structure *dir;
 unsigned long cluster, nextCluster, prevCluster, firstSector, clusterCount, extraMemory;
 
-//store the string variable into the file name array if it is of a proper length
-/*
-if(strlen(fileName) > 15) return 1;
-for(int i=0; i < strlen(fileName); i++){
-	Filename[i] = fileName[i];
-}
-*/
+
 j = readFile (VERIFY, fileName);
 
 if(j == 1) 

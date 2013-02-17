@@ -8,7 +8,7 @@
 #include "E-000001-000009_firmware_rev_1_0.h"
 
 volatile int numOfSamples;
-//uint8_t Filename[15];
+
 
 int main(void) {
 	

@@ -477,6 +477,7 @@ TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
 
 // Enable interrupts.
 PMIC.CTRL |= PMIC_LOLVLEN_bm;
+//perhaps next two lines are redundant...
 chb_init();
 chb_set_short_addr(moteID);
 sei();

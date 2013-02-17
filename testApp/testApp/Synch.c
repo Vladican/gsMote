@@ -2,13 +2,10 @@
 #include "E-000001-000009_firmware_rev_1_0.h"
 
 
-//const char ResetCommand[6] = {'r','e','s','e','t','\n'};
-uint8_t messageSize = 8;
 char buff[8];
 //creates a system for syncing ADC sampling with other motes through the base station every SynchPer seconds
 void synch(int SynchPer){
 	moteID = 1;
-	*ResetCommand = "reset";
 	RadioMonitorMode = SYNCHED;		//initialize the RadioMonitorMode to synched 
 	EVSYS.CH1MUX = EVSYS_CHMUX_TCC1_OVF_gc;	//set overflow of lower 16 bits of the counter as event on channel 1
 	TCD1.CTRLA = TC_CLKSEL_EVCH1_gc; //select event channel 1 as input clock to the upper 16 bits of the counter
@@ -29,8 +26,8 @@ ISR(TCD1_OVF_vect) {
 	TCD1.CTRLFSET = 0x0C;
 	chb_init();
 	chb_set_short_addr(moteID);
-	char message[messageSize];
-	strcpy(message,ResetCommand);
+	unsigned char message[8];
+	strcpy(message,"reset");
 	itoa((int)(moteID),buff,10);
 	strcat(message,buff);
 	//insert code here to send and wait for synch message
