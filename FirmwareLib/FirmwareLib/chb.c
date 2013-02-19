@@ -64,9 +64,9 @@ void radio_msg_received_int_enable(){
 	PORTE.OUTCLR = PIN2_bm;
 	PORTE.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_TOTEM_gc;
 	PORTE.INT0MASK = PIN2_bm;
-	PORTE.INTCTRL = PORT_INT0LVL_LO_gc;
+	PORTE.INTCTRL = PORT_INT0LVL_HI_gc;
 	// Enable low level interrupts.
-	PMIC.CTRL |= PMIC_LOLVLEN_bm;
+	PMIC.CTRL |= PMIC_HILVLEN_bm;
 	sei();
 }
 
@@ -148,18 +148,19 @@ U8 chb_write(U16 addr, U8 *data, U32 len)
  
              case CHB_NO_ACK:
                  pcb.txd_noack++;
+				 rtry++;
                  break;
  
              case CHB_CHANNEL_ACCESS_FAILURE:
                  pcb.txd_channel_fail++;
+				 rtry++;
                  break;
  
              default:
                  break;
              }
-			if(rtry>=0) _delay_us(100);		//if not successfully sent the first time, wait some time and try again
-			if(rtry==20) return status;;		//after 20 tries give up on sending the message
-			rtry++;	
+			if(rtry>0) _delay_us(10);		//if not successfully sent the first time, wait some time and try again
+			if(rtry==20) return status;;		//after 20 tries give up on sending the message	
 		} while(status != CHB_SUCCESS);			
         // adjust len and restart
 		frm_offset += frm_len;

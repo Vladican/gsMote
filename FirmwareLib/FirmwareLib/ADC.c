@@ -435,7 +435,7 @@ uint16_t period;
 // Turn on power to ADC and PortEx
 ADCPower(TRUE);
 //get data to write files to SD card
-getBootSectorData();
+//getBootSectorData();
 // set gain, filters, and ADC input for appropriate VIN
 set_ampGain(channel, gainExponent);
 set_filter(filterConfig);
@@ -456,7 +456,7 @@ PORTF.DIRCLR = PIN0_bm;
 PORTF.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_TOTEM_gc;
 //PORTF.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_PULLUP_gc;
 PORTF.INT1MASK = PIN0_bm;
-PORTF.INTCTRL = PORT_INT1LVL_LO_gc;
+PORTF.INTCTRL = PORT_INT1LVL_MED_gc;
 
 // Configure clock for AD7767 MCLK for desired sample frequency
 //f_samples = f_MCLK / 16
@@ -476,15 +476,17 @@ TCE1.CCBBUF = period / 2;
 TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
 
 // Enable interrupts.
-PMIC.CTRL |= PMIC_LOLVLEN_bm;
+PMIC.CTRL |= PMIC_MEDLVLEN_bm;
+//enable RR of lowlvl interrupts
+PMIC.CTRL |= PMIC_RREN_bm; 
 //perhaps next two lines are redundant...
-chb_init();
-chb_set_short_addr(moteID);
-sei();
+// chb_init();
+// chb_set_short_addr(moteID);
 
 sampleCount = 0;
 TotalSampleCount = 0;
 discardCount = 0;
+sei();
 }
 
 
@@ -556,9 +558,10 @@ ISR(PORTF_INT1_vect) {
 		//PORTF.OUTSET = PIN1_bm; //re-enable ADC for further sampling
 		
 		//write code to send the data over radio instead. Include some identifying info (like mote number) with the data.
-		memmove(FRAMReadBuffer+1,FRAMReadBuffer,sampleCount*4); //move the data in the FRAM buffer up by 1 byte to make room for metadata
-		FRAMReadBuffer[0] = moteID;
-		chb_write(0x0000,FRAMReadBuffer,sampleCount*4+1);	//send the samples and the metadata (for now just 1 byte containing moteID) to the base station
+		memmove(FRAMReadBuffer+2,FRAMReadBuffer,sampleCount*4); //move the data in the FRAM buffer up by 1 byte to make room for metadata
+		FRAMReadBuffer[0] = moteID;		//send moteID of the mote that gathered the data
+		FRAMReadBuffer[1] = (uint8_t)sampleCount;	//send the number of data samples gathered cast as a byte since no more than 30/31 samples should be send at a time
+		chb_write(0x0000,FRAMReadBuffer,sampleCount*4+2);	//send the samples and the metadata (for now just 1 byte containing moteID) to the base station
 	}	
 	}	
 }

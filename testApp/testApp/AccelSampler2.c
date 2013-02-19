@@ -9,8 +9,19 @@
 
 
 int main(){
-	set_32MHz();
-	synch(1);
-	CO_collectADC_cont(ADC_CH_1_gc, (uint8_t) (FILTER_CH_1AND5_bm | FILTER_HP_0_bm | FILTER_LP_600_gc),	GAIN_1_gc, SPS_1K_gc);
-	while(1);
+	char buff[8];
+	moteID = 1;
+	RadioMonitorMode = SYNCHED;		//initialize the RadioMonitorMode to synched
+// 	unsigned char message[8];
+// 	strcpy(message,"reset");
+// 	itoa((int)(moteID),buff,10);
+// 	strcat(message,buff);
+		
+	set_32MHz();	//set the clock frequency
+	synch(1);		//synch sampling at 1 sec periods
+	CO_collectADC_cont(ADC_CH_1_gc, (uint8_t) (FILTER_CH_1AND5_bm | FILTER_HP_0_bm | FILTER_LP_600_gc),	GAIN_1_gc, SPS_1K_gc);	//collect and send samples from ADC at 1kHz
+	while(1){
+		//if(RadioMonitorMode == TIME_SYNCH) chb_write(0x0000,message,strlen(message));
+		nop();
+	}
 }

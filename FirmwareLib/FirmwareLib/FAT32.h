@@ -129,6 +129,7 @@ unsigned long fileSize; //size of file in bytes
 volatile unsigned long firstDataSector, rootCluster, totalClusters;
 volatile unsigned int  bytesPerSector, sectorPerCluster, reservedSectorCount;
 unsigned long unusedSectors, appendFileSector, appendFileLocation, fileSize, appendStartCluster;
+uint8_t Filename[15];	//array to store file name to be used
 
 //global flag to keep track of free cluster count updating in FSinfo sector
 unsigned char freeClusterCountUpdated;

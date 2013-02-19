@@ -87,7 +87,7 @@
 // enable rising edge interrupt on IRQ PIN
 #define CFG_CHB_INTP_RISE_EDGE() do {       \
     CHB_PINCTRL |= PORT_ISC_RISING_gc;      \
-    CHB_INTCTRL |=  PORT_INT0LVL_MED_gc;    \
+    CHB_INTCTRL |=  PORT_INT0LVL_HI_gc;    \
     CHB_INTMASK |= (1<<CHB_IRQ_PIN);}       \
     while(0)
 

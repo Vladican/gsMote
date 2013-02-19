@@ -8,11 +8,13 @@
 
 int main(){
 	moteID = 0;
+	RadioMonitorMode = DATA_GATHERING;
+	char message[15];
+	strcpy(message,"start sampling");
 	chb_init();
 	chb_set_short_addr(moteID);
-	SD_init();
-	getBootSectorData();
-	RadioMonitorMode = DATA_GATHERING;
+ 	SD_init();
+ 	getBootSectorData();
 	uint16_t MotesInSystem = 1;
 	while(1){
 		while(MotesReadyToSynch < MotesInSystem){
@@ -27,6 +29,7 @@ int main(){
 		}
 		//send synch message
 		MotesReadyToSynch = 0;	//reset unsynched motes number
-		chb_write(0xFFFF,"start sampling",strlen("start sampling"));
+		//if following does not work use copy string workaround
+		chb_write(0xFFFF,message,strlen(message));
 	}	
 }

@@ -651,7 +651,7 @@ U8 chb_tx(U8 *hdr, U8 *data, U8 len)
     //Do frame transmission. 
     chb_reg_read_mod_write(TRX_STATE, CMD_TX_START, 0x1F);
 
-    // wait for the transmission to end, signalled by the TRX END flag
+    // wait for the transmission to end, signaled by the TRX END flag
     while (!pcb->tx_end);
     pcb->tx_end = false;
 
@@ -764,7 +764,7 @@ static void chb_radio_init()
 
     // enable mcu intp pin
     CFG_CHB_INTP_RISE_EDGE();
-	PMIC.CTRL = 0x07;	//enable interrupts on MCU
+	PMIC.CTRL |= 0x07;	//enable interrupts on MCU
 
     if (chb_get_state() != RX_STATE)
     {

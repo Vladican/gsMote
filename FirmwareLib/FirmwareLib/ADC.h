@@ -79,6 +79,18 @@
 #define FILTER_LP_6K_gc 0x20
 #define FILTER_LP_600_gc 0x40
 
+//ADC related global vars
+volatile uint8_t channelStatus;  // copy of channel filter configuration to allow bit level changes
+volatile int32_t data24Bit[NUM_SAMPLES];  // storage for ADC samples
+volatile uint8_t SPIBuffer[13];  // space for 24-bit ADC conversion plus dummy byte
+volatile uint8_t SPICount, discardCount;
+volatile int32_t *temp32;  // for parsing SPI transactions
+volatile int64_t *temp64; // for parsing SPI transactions from 8bit pieces to 64bit whole
+volatile int64_t sumFRAM[3];  // sum of all FRAM samples for averaging
+volatile int64_t var;
+volatile uint16_t sampleCount;  // sample and discard counter for array offset
+volatile uint16_t TotalSampleCount;
+
 //ADC sampling functions
 void CO_collectTemp(uint16_t *avgV, uint16_t *minV, uint16_t *maxV);
 void CO_collectBatt(uint16_t *avgV, uint16_t *minV, uint16_t *maxV);
@@ -98,11 +110,15 @@ uint16_t averagingPtD);
 void CO_collectSeismic3Channel_continuous(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
 uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
 uint16_t averagingPtC, uint16_t averagingPtD);
+void sampleCurrentChannel();
+void writeSE2FRAM();
 
 //ADC config functions
 void ADCPower(uint8_t on);
+void set_filter(uint8_t filterConfig);
 void setADCInput(uint8_t channel);
 void enableADCMUX(uint8_t on);
+void set_ampGain(uint8_t channel, uint8_t gainExponent);
 void ACC_DCPassEnable(uint8_t enable);
 void ADC_Pause_Sampling();
 void ADC_Resume_Sampling();

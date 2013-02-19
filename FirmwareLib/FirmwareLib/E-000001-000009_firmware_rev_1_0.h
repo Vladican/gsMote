@@ -80,23 +80,12 @@
 #define ENABLE_ALL_INTERRUPT_LEVELS 0x07
 
 // Global Variables
-volatile uint8_t channelStatus;  // copy of channel filter configuration to allow bit level changes
-volatile int32_t data24Bit[NUM_SAMPLES];  // storage for ADC samples
-volatile uint8_t SPIBuffer[13];  // space for 24-bit ADC conversion plus dummy byte
-volatile uint8_t SPICount, discardCount;
-volatile int32_t *temp32;  // for parsing SPI transactions
-volatile int64_t *temp64; // for parsing SPI transactions from 8bit pieces to 64bit whole
-volatile int64_t sumFRAM[3];  // sum of all FRAM samples for averaging
 volatile uint8_t bankA_DIR, bankA_OUT, bankB_DIR, bankB_OUT;  // status of port expander current configurations to allow bit level changes
 volatile uint8_t Buffer[13];
-volatile int64_t var;
 volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
 volatile uint32_t StartOfFreeSpace;
 volatile uint8_t error;
-volatile uint16_t sampleCount;  // sample and discard counter for array offset
-volatile uint16_t TotalSampleCount; 
 volatile uint16_t FRAMAddress;  // address counters for FRAM write/read
-uint8_t Filename[15];	//array to store file name to be used
 volatile uint8_t RadioMonitorMode;
 volatile uint16_t MotesReadyToSynch;
 uint8_t moteID;
@@ -121,7 +110,6 @@ void portExCS(uint8_t write);
 void Ext1Power(uint8_t on);
 void Ext2Power(uint8_t on);
 void HVPower(uint8_t on);
-void set_ampGain(uint8_t channel, uint8_t gainExponent);
 void lowerMuxCS(uint8_t write);
 void upperMuxCS(uint8_t write);
 
@@ -130,12 +118,8 @@ void SPIInit(uint8_t mode);
 void SPICS(uint8_t enable);
 void SPIDisable();
 
-void set_filter(uint8_t filterConfig);
-
-void writeSE2FRAM();
 void readFRAM (uint16_t numBytes);
 void calcChecksumFRAM(void);
-void sampleCurrentChannel();
 void FRAMWriteKnowns();
 
 

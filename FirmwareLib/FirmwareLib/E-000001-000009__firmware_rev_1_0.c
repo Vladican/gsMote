@@ -1,7 +1,5 @@
 #include "E-000001-000009_firmware_rev_1_0.h"
 
-//const char BasestationSynchResponse[15] = {'S','t','a','r','t',' ','s','a','m','p','l','i','n','g','\n'};
-
 // Sets the external 16MHz crystal on XTAL1 and XTAL2 as the system clock.
 // There was a problem with some of the hardware modules not having the crystal
 // so this function will fail until the oscillator is installed.
@@ -446,29 +444,7 @@ void SD_write_and_read_knowns_FAT(){
 
 
 
-/*
-//the following function takes a pointer to a data array (at least 128 bytes) and stores data received over the radio into that array
-void ReceiveData(uint8_t* data){
-	//read the data from the buffer
-	ReadFrameBuffer(data);
-	//set the radio state to idle
-	//WriteRadioRegister(RADIOCTRLRGSTR, SET_RADIOIDLE);
-	while (ReadRadioRegister(STATREG) != RX_ON);	//wait for state to turn to idle
-}
 
-void RadioListen(){
-	WriteRadioRegister(RADIOCTRLRGSTR, RX_ON);
-	WriteRadioRegister(IRQ_MASK_REGISTER,ENABLE_TRX_INTERRUPTS);	//enable transmission/reception interrupts on radio module
-	//WriteRadioRegister(IRQ_MASK_REGISTER,0x0D);	//enable transmission/reception interrupts on radio module
-	PORTD.PIN2CTRL = RISING_EDGE;	//set interrupt pin 2 on port D
-	sei();
-	PMIC.CTRL = ENABLE_ALL_INTERRUPT_LEVELS;
-	PORTD.INT0MASK = PIN2_bm;
-	PORTD.INTCTRL = PORT_INT0LVL_MED_gc;
-	//WriteRadioRegister(RADIOCTRLRGSTR, RX_ON);
-	//sei();
-}
-*/
 //function for testing radio transmission
 void chibi_test_radio(){
 		
@@ -522,7 +498,7 @@ ISR(PORTE_INT0_vect){
 		//case for synching sampling with basestation
 		case TIME_SYNCH:
 			chb_read(msg);
-			if(!strncmp(msg,"start sampling",15)){	//if basestation synch response message received, do the following
+			if(!strncmp(msg,"start sampling",14)){	//if basestation synch response message received, do the following
 				RadioMonitorMode = SYNCHED;
 				TCD1.CTRLA = TC_CLKSEL_EVCH1_gc;	//restart the synch timers
 				TCC1.CTRLA = 0x01;  
