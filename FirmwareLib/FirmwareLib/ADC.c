@@ -555,6 +555,7 @@ ISR(PORTF_INT1_vect) {
 		*/
 		sampleCount=0;
 		TotalSampleCount++;
+		discardCount = ADC_DISCARD -1; //discard the next sample after pausing the sampling to send/store data since the sample ready flag will be outdated and the value might be bad
 		//PORTF.OUTSET = PIN1_bm; //re-enable ADC for further sampling
 		
 		//write code to send the data over radio instead. Include some identifying info (like mote number) with the data.
