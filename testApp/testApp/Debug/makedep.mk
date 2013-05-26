@@ -2,8 +2,6 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
-BaseStation.c
-
 Synch.c
 
 ..\..\FirmwareLib\FirmwareLib\ADC.c
@@ -27,4 +25,6 @@ Synch.c
 ..\..\FirmwareLib\FirmwareLib\FAT32.c
 
 ..\..\FirmwareLib\FirmwareLib\SD_Card.c
+
+AccelSampler.c
 

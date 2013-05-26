@@ -383,11 +383,10 @@ void FRAMTest3Channel(void) {
 	ADCPower(FALSE);
 	
 }
-
+//need to fix
 void FRAMTest1Channel(void) {
 
-	CO_collectSeismic1Channel(ADC_CH_8_gc, FILTER_CH_4AND8_bm | FILTER_HP_0_bm | FILTER_LP_600_gc,
-	GAIN_1_gc, SSPS_SE_64K_gc, 21, TRUE, 13, 14, 15, 16);
+	//CO_collectSeismic1Channel(ADC_CH_8_gc, FILTER_CH_4AND8_bm | FILTER_HP_0_bm | FILTER_LP_600_gc, GAIN_1_gc, SSPS_SE_64K_gc, 21, TRUE, 13, 14, 15, 16);
 	ADCPower(TRUE);
 	_delay_us(250);
 	

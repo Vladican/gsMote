@@ -35,7 +35,6 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
-../BaseStation.c \
 ../Synch.c \
 ../../../FirmwareLib/FirmwareLib/ADC.c \
 ../../../FirmwareLib/FirmwareLib/adc_driver.c \
@@ -47,7 +46,8 @@ C_SRCS +=  \
 ../../../FirmwareLib/FirmwareLib/clksys_driver.c \
 ../../../FirmwareLib/FirmwareLib/E-000001-000009__firmware_rev_1_0.c \
 ../../../FirmwareLib/FirmwareLib/FAT32.c \
-../../../FirmwareLib/FirmwareLib/SD_Card.c
+../../../FirmwareLib/FirmwareLib/SD_Card.c \
+../AccelSampler.c
 
 
 PREPROCESSING_SRCS += 
@@ -57,7 +57,6 @@ ASM_SRCS +=
 
 
 OBJS +=  \
-BaseStation.o \
 Synch.o \
 ADC.o \
 adc_driver.o \
@@ -69,11 +68,11 @@ chb_spi.o \
 clksys_driver.o \
 E-000001-000009__firmware_rev_1_0.o \
 FAT32.o \
-SD_Card.o
+SD_Card.o \
+AccelSampler.o
 
 
 OBJS_AS_ARGS +=  \
-BaseStation.o \
 Synch.o \
 ADC.o \
 adc_driver.o \
@@ -85,11 +84,11 @@ chb_spi.o \
 clksys_driver.o \
 E-000001-000009__firmware_rev_1_0.o \
 FAT32.o \
-SD_Card.o
+SD_Card.o \
+AccelSampler.o
 
 
 C_DEPS +=  \
-BaseStation.d \
 Synch.d \
 ADC.d \
 adc_driver.d \
@@ -101,11 +100,11 @@ chb_spi.d \
 clksys_driver.d \
 E-000001-000009__firmware_rev_1_0.d \
 FAT32.d \
-SD_Card.d
+SD_Card.d \
+AccelSampler.d
 
 
 C_DEPS_AS_ARGS +=  \
-BaseStation.d \
 Synch.d \
 ADC.d \
 adc_driver.d \
@@ -117,7 +116,8 @@ chb_spi.d \
 clksys_driver.d \
 E-000001-000009__firmware_rev_1_0.d \
 FAT32.d \
-SD_Card.d
+SD_Card.d \
+AccelSampler.d
 
 
 OUTPUT_FILE_PATH +=testApp.elf

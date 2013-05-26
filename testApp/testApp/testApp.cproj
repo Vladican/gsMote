@@ -112,9 +112,9 @@
       <SubType>compile</SubType>
       <Link>SD_Card.h</Link>
     </Compile>
-    <Compile Include="BaseStation.c">
+    <None Include="BaseStation.c">
       <SubType>compile</SubType>
-    </Compile>
+    </None>
     <Compile Include="Synch.c">
       <SubType>compile</SubType>
     </Compile>
@@ -215,9 +215,9 @@
       <SubType>compile</SubType>
       <Link>types.h</Link>
     </Compile>
-    <None Include="AccelSampler.c">
+    <Compile Include="AccelSampler.c">
       <SubType>compile</SubType>
-    </None>
+    </Compile>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

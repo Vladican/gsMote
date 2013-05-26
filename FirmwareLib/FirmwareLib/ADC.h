@@ -88,16 +88,16 @@ volatile int32_t *temp32;  // for parsing SPI transactions
 volatile int64_t *temp64; // for parsing SPI transactions from 8bit pieces to 64bit whole
 volatile int64_t sumFRAM[3];  // sum of all FRAM samples for averaging
 volatile int64_t var;
-volatile uint16_t sampleCount;  // sample and discard counter for array offset
+volatile uint32_t sampleCount;  // sample and discard counter for array offset
 volatile uint16_t TotalSampleCount;
+volatile int32_t* ADC_BUFFER;
 
 //ADC sampling functions
 void CO_collectTemp(uint16_t *avgV, uint16_t *minV, uint16_t *maxV);
 void CO_collectBatt(uint16_t *avgV, uint16_t *minV, uint16_t *maxV);
 void CO_collectSP(uint8_t channel, int32_t *averageV, int32_t *minV,
 int32_t *maxV, uint8_t gainExponent);
-void CO_collectADC(uint8_t channel, uint8_t filterConfig, int32_t *avgV, int32_t *minV,
-int32_t *maxV, uint8_t gainExponent, uint8_t spsExponent);
+void CO_collectADC(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t spsExponent, uint32_t numOfSamples, int32_t* DataArray);
 //collect ADC data and send it over the radio every 128 samples
 void CO_collectADC_cont(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t spsExponent);
 void CO_collectSeismic3Channel(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
@@ -106,10 +106,10 @@ uint16_t averagingPtC, uint16_t averagingPtD);
 void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t gain,
 uint8_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable,
 uint16_t averagingPtA, uint16_t averagingPtB, uint16_t averagingPtC,
-uint16_t averagingPtD);
-void CO_collectSeismic3Channel_continuous(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
+uint16_t averagingPtD, uint32_t numOfSamples, int32_t* DataArray);
+void CO_collectSeismic3Channel_2(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
 uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
-uint16_t averagingPtC, uint16_t averagingPtD);
+uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, uint32_t* DataArray);
 void sampleCurrentChannel();
 void writeSE2FRAM();
 

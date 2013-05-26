@@ -348,14 +348,11 @@ void enableADCMUX(uint8_t on) {
  *  \param gainExponent		Sets gain to 2^gainExponent[0:2].
  *  \param spsExponent Sets samples per second = 2^spsExponent
 */
-void CO_collectADC(uint8_t channel, uint8_t filterConfig, int32_t *avgV, int32_t *minV, int32_t *maxV, uint8_t gainExponent, uint8_t spsExponent) {
+void CO_collectADC(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t spsExponent, uint32_t numOfSamples, int32_t* DataArray) {
 
-	int64_t sum = 0;
-	int64_t average;
-	int64_t min = ADC_MAX;
-	int64_t max = -ADC_MAX;
+
 	uint16_t period;
-	
+	ADC_BUFFER = DataArray;
 	// Turn on power to ADC and PortEx
 	ADCPower(TRUE);
 	
@@ -402,7 +399,7 @@ void CO_collectADC(uint8_t channel, uint8_t filterConfig, int32_t *avgV, int32_t
 	discardCount = 0;
 	
 	// wait for ADC to collect samples
-	while(sampleCount < NUM_SAMPLES);
+	while(sampleCount < numOfSamples);
 
 	// turn off timer and interupts
 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
@@ -412,20 +409,6 @@ void CO_collectADC(uint8_t channel, uint8_t filterConfig, int32_t *avgV, int32_t
 	SPIDisable();	
 	enableADCMUX(FALSE);
 	ADCPower(FALSE);
-
-	// collect average, max and min of SP samples
-	for (sampleCount = 0; sampleCount < NUM_SAMPLES; sampleCount++) {
-		sum += data24Bit[sampleCount];
-		if (max < data24Bit[sampleCount]) { max = data24Bit[sampleCount];}
-		if (min > data24Bit[sampleCount]) { min = data24Bit[sampleCount];}
-	}
-	average = sum / NUM_SAMPLES;
-
-	//convert to uV
-	*avgV = (int32_t) -(average * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
-	*maxV = (int32_t) -(max * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
-	*minV = (int32_t) -(min * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
-
 }
 
 void CO_collectADC_cont(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t spsExponent) {
@@ -590,6 +573,8 @@ ISR(PORTF_INT0_vect) {
 		*(((uint8_t*)&data24Bit[sampleCount]) + 2) = SPIBuffer[0];
 		*(((uint8_t*)&data24Bit[sampleCount]) + 1) = SPIBuffer[1];
 		*(((uint8_t*)&data24Bit[sampleCount]) + 0) = SPIBuffer[2];
+		
+		ADC_BUFFER[sampleCount] = (int32_t) -((uint64_t)data24Bit[sampleCount] * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
 
 		sampleCount++;
 	}
@@ -683,10 +668,11 @@ uint16_t averagingPtC, uint16_t averagingPtD) {
 	
 }
 
-void CO_collectSeismic3Channel_continuous(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
+void CO_collectSeismic3Channel_2(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
 uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
-uint16_t averagingPtC, uint16_t averagingPtD) {
+uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, uint32_t* DataArray) {
 	
+	ADC_BUFFER = DataArray;
 	// Turn on power to ADC and PortEx
 	ADCPower(TRUE);
 	
@@ -742,10 +728,19 @@ uint16_t averagingPtC, uint16_t averagingPtD) {
 	// Set oscillator source and frequency and start
 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
 	
-	// collect samples from ADC continuously
-	while(1){
-		nop();
-	}
+	// wait for ADC to collect samples
+	while(sampleCount < numOfSamples);
+
+	// turn off timer and interrupts
+	TCC0.CTRLA = ( TCC0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+	PMIC.CTRL &= ~(PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm);
+	cli();
+
+	SPICS(FALSE);
+	SPIDisable();
+	enableADCMUX(FALSE);
+	ADCPower(FALSE);
 }
 
 
@@ -775,11 +770,32 @@ ISR(TCC0_CCD_vect) {
 }
 
 ISR(TCC0_OVF_vect) {
-	writeSE2FRAM();
+	volatile int32_t sum = 0;
+	volatile int32_t currentSample;
+	//sampleCount++;
+		
+	//SPIC.CTRL = FR_SPI_CONFIG_gc;
+		
+	for(uint8_t i = 0; i < 12; i+=3) {
+		if(SPIBuffer[i] & BIT7_bm) *(((uint8_t*)&currentSample) + 3) = 0xFF; // sign extension if negative
+		else *(((uint8_t*)&currentSample) + 3) = 0x00;
+		*(((uint8_t*)&currentSample) + 2) = SPIBuffer[i];
+		*(((uint8_t*)&currentSample) + 1) = SPIBuffer[i+1];
+		*(((uint8_t*)&currentSample) + 0) = SPIBuffer[i+2];
+		sum += currentSample;
+	}
+		
+	sum = sum / 4;
+	ADC_BUFFER[sampleCount] = currentSample;
+	sampleCount++;
+
 }
 
-void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t gain, uint8_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD) {
+void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t gain, uint8_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA, 
+								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, int32_t* DataArray) {
 	
+	uint16_t period;
+	ADC_BUFFER=DataArray;
 	// Turn on power to ADC and PortEx
 	ADCPower(TRUE);
 	
@@ -812,10 +828,10 @@ void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t ga
 	TCD0.INTCTRLB = TC_CCAINTLVL_HI_gc | TC_CCBINTLVL_HI_gc | TC_CCCINTLVL_HI_gc | TC_CCDINTLVL_HI_gc;
 	TCD0.CTRLA = ( TCD0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_EVCH0_gc;
 
-	FRAMAddress = FR_BASEADD;
+	//FRAMAddress = FR_BASEADD;
 	sampleCount = 0;
 	SPICount = 0;
-	checksumADC[0] = checksumADC[1] = checksumADC[2] = 0;
+	//checksumADC[0] = checksumADC[1] = checksumADC[2] = 0;
 	
 	// Enable interrupts.
 	PMIC.CTRL |= PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm;
@@ -834,7 +850,7 @@ void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t ga
 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
 	
 	// wait for ADC to collect samples
-	while(sampleCount < FR_TOTAL_NUM_SE_SAMPLES);
+	while(sampleCount < numOfSamples);
 
 	// turn off timer and interrupts
 	TCD0.CTRLA = ( TCD0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
@@ -867,7 +883,25 @@ ISR(TCD0_CCD_vect) {
 }
 
 ISR(TCD0_OVF_vect) {
-	writeSE2FRAM();
+	//writeSE2FRAM();
+	volatile int32_t sum = 0;
+	volatile int32_t currentSample;
+		
+	//SPIC.CTRL = FR_SPI_CONFIG_gc;
+		
+	for(uint8_t i = 0; i < 12; i+=3) {
+		if(SPIBuffer[i] & BIT7_bm) *(((uint8_t*)&currentSample) + 3) = 0xFF; // sign extension if negative
+		else *(((uint8_t*)&currentSample) + 3) = 0x00;
+		*(((uint8_t*)&currentSample) + 2) = SPIBuffer[i];
+		*(((uint8_t*)&currentSample) + 1) = SPIBuffer[i+1];
+		*(((uint8_t*)&currentSample) + 0) = SPIBuffer[i+2];
+		sum += currentSample;
+	}
+		
+	sum = sum / 4;
+	//get average of the 4 subsamples
+	ADC_BUFFER[sampleCount] = sum;
+	sampleCount++;
 }
 
 void sampleCurrentChannel() {
