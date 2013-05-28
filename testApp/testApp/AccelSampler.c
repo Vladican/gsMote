@@ -23,6 +23,6 @@ int main(void) {
 // 		nop();
 // 	}
 	//CO_collectADC(ADC_CH_8_gc, (uint8_t) (FILTER_CH_3AND7_bm | FILTER_HP_0_bm | FILTER_LP_600_gc), GAIN_16_gc, SPS_4K_gc, 100, testArray);
-	//CO_collectSeismic1Channel(ADC_CH_8_gc,(uint8_t) (FILTER_CH_3AND7_bm | FILTER_HP_0_bm | FILTER_LP_600_gc),GAIN_1_gc, SSPS_SE_4K_gc, 5, TRUE, 1, 2, 3, 4,100,testArray);
-	CO_collectSeismic3Channel_2((uint8_t) (FILTER_CH_3AND7_bm | FILTER_CH_2AND6_bm | FILTER_HP_0_bm | FILTER_LP_600_gc),UnityGain, SSPS_SE_4K_gc, 5, TRUE, 1, 2, 3, 4,100,testArray);
+	CO_collectSeismic1Channel(ADC_CH_8_gc,(uint8_t) (FILTER_CH_3AND7_bm | FILTER_HP_0_bm | FILTER_LP_600_gc),GAIN_1_gc, SSPS_SE_4K_gc, 5, TRUE, 1, 2, 3, 4,100,testArray);
+	//CO_collectSeismic3Axises((uint8_t) (FILTER_CH_3AND7_bm | FILTER_CH_2AND6_bm | FILTER_HP_0_bm | FILTER_LP_600_gc),UnityGain, SSPS_SE_4K_gc, 5, TRUE, 1, 2, 3, 4,100,testArray);
 }

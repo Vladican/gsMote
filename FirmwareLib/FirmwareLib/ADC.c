@@ -411,6 +411,7 @@ void CO_collectADC(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, 
 	ADCPower(FALSE);
 }
 
+//continuously take samples and send them via radio. NOT RECOMMENDET
 void CO_collectADC_cont(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t spsExponent) {
 
 uint16_t period;
@@ -472,7 +473,6 @@ discardCount = 0;
 sei();
 }
 
-
 void ADC_Pause_Sampling(){
 		//ignore interrupts from the ADC...don't turn it off to avoid the boot up time
 	PORTF.INT1MASK = 0x00;
@@ -482,6 +482,8 @@ void ADC_Resume_Sampling(){
 	//re-enable interrupt on port F which the ADC uses
 	PORTF.INT1MASK = PIN0_bm;
 }	
+
+//ISR used by CO_collectADC_cont function
 ISR(PORTF_INT1_vect) {
 	//freeze mote after x number of samples
 	/*
@@ -550,6 +552,7 @@ ISR(PORTF_INT1_vect) {
 	}	
 }
 
+//ISR used by CO_collectADC function
 ISR(PORTF_INT0_vect) {
 	// skip first samples because cannot perform recommended reset
 	if (discardCount < ADC_DISCARD) {
@@ -593,6 +596,7 @@ void ACC_DCPassEnable(uint8_t enable) {
 	}
 }
 
+/*
 void CO_collectSeismic3Channel(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
 uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
 uint16_t averagingPtC, uint16_t averagingPtD) {
@@ -666,9 +670,9 @@ uint16_t averagingPtC, uint16_t averagingPtD) {
 	enableADCMUX(FALSE);
 	ADCPower(FALSE);
 	
-}
+}*/
 
-void CO_collectSeismic3Channel_2(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
+void CO_collectSeismic3Axises(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
 uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
 uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, uint32_t* DataArray) {
 	
@@ -743,19 +747,22 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, uint32_t* D
 	ADCPower(FALSE);
 }
 
-
+//first averaging point
 ISR(TCC0_CCA_vect) {
 	sampleCurrentChannel();
 }
 
+//second averaging point
 ISR(TCC0_CCB_vect) {
 	sampleCurrentChannel();
 }
 
+//third averaging point
 ISR(TCC0_CCC_vect) {
 	sampleCurrentChannel();
 }
 
+//final averaging point. Also change ADC channel to sample the next accelerometer axis
 ISR(TCC0_CCD_vect) {
 	sampleCurrentChannel();
 	SPICount = 0;
@@ -769,6 +776,7 @@ ISR(TCC0_CCD_vect) {
 	
 }
 
+//consolidate the 4 averaging points
 ISR(TCC0_OVF_vect) {
 	volatile int32_t sum = 0;
 	volatile int32_t currentSample;
@@ -791,6 +799,7 @@ ISR(TCC0_OVF_vect) {
 
 }
 
+//collect data from 1 axis of accelerometer
 void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t gain, uint8_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA, 
 								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, int32_t* DataArray) {
 	
@@ -865,23 +874,27 @@ void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t ga
 	
 }
 
+//first averaging point
 ISR(TCD0_CCA_vect) {
 	sampleCurrentChannel();
 }
-
+//second averaging point
 ISR(TCD0_CCB_vect) {
 	sampleCurrentChannel();
 }
 
+//third averaging point
 ISR(TCD0_CCC_vect) {
 	sampleCurrentChannel();
 }
 
+//final averaging point
 ISR(TCD0_CCD_vect) {
 	sampleCurrentChannel();
 	SPICount = 0;
 }
 
+//consolidate the 4 averaging points
 ISR(TCD0_OVF_vect) {
 	//writeSE2FRAM();
 	volatile int32_t sum = 0;
@@ -904,6 +917,7 @@ ISR(TCD0_OVF_vect) {
 	sampleCount++;
 }
 
+//sample an axis of accelerometer with ADC
 void sampleCurrentChannel() {
 	PORTF.OUTCLR = PIN1_bm; // pull ADC_CS down to enable data read
 	SPIC.DATA = 0xAA; // dummy data to start SPI clock
@@ -919,6 +933,7 @@ void sampleCurrentChannel() {
 	SPICount +=3;
 }
 
+//write collected accelerometer samples to FRAM. OBSOLETE
 void writeSE2FRAM() {
 	volatile int32_t sum = 0;
 	volatile int32_t currentSample;
@@ -982,7 +997,7 @@ void writeSE2FRAM() {
 	checksumADC[2] += SPIBuffer[2];
 }
 
-
+//calcuate checksum for FRAM. Not used
 void calcChecksumFRAM() {
 	sumFRAM[0] = sumFRAM[1] = sumFRAM[2] = 0;
 	checksumFRAM[0] = checksumFRAM[1] = checksumFRAM[2] = 0;
@@ -1015,7 +1030,7 @@ void calcChecksumFRAM() {
 	
 }
 
-
+//test function for FRAM
 void FRAMWriteKnowns() {
 	FRAMAddress = FR_BASEADD;
 	sampleCount = 0;

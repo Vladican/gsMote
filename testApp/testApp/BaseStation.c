@@ -29,7 +29,6 @@ int main(){
 		}
 		//send synch message
 		MotesReadyToSynch = 0;	//reset unsynched motes number
-		//if following does not work use copy string workaround
 		chb_write(0xFFFF,message,strlen(message));
 	}	
 }

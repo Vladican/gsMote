@@ -369,12 +369,11 @@ void readFRAM (uint16_t numBytes) {
 
 }
 
+//test 3 channel sampling of accelerometer. OBSOLETE
 void FRAMTest3Channel(void) {
 	uint8_t gains[3] = { GAIN_1_gc, GAIN_1_gc, GAIN_1_gc };
 			
-	CO_collectSeismic3Channel(FILTER_CH_2AND6_bm | FILTER_CH_3AND7_bm |
-		FILTER_CH_4AND8_bm | FILTER_HP_0_bm | FILTER_LP_600_gc,
-		gains, SSPS_SE_64K_gc, 21, TRUE, 13, 14, 15, 16);
+	//CO_collectSeismic3Channel(FILTER_CH_2AND6_bm | FILTER_CH_3AND7_bm |	FILTER_CH_4AND8_bm | FILTER_HP_0_bm | FILTER_LP_600_gc,	gains, SSPS_SE_64K_gc, 21, TRUE, 13, 14, 15, 16);
 	ADCPower(TRUE);
 	_delay_us(250);
 	
@@ -383,7 +382,7 @@ void FRAMTest3Channel(void) {
 	ADCPower(FALSE);
 	
 }
-//need to fix
+//test 1 channel sampling of accelerometer. OBSOLETE
 void FRAMTest1Channel(void) {
 
 	//CO_collectSeismic1Channel(ADC_CH_8_gc, FILTER_CH_4AND8_bm | FILTER_HP_0_bm | FILTER_LP_600_gc, GAIN_1_gc, SSPS_SE_64K_gc, 21, TRUE, 13, 14, 15, 16);
@@ -475,7 +474,7 @@ void TestCard(){
 	nop();
 }
 
-//interrupt service routine for handling received data over radio
+//interrupt service routine for handling received data over radio. Gets called when data received by the mote. Has cases for synching right now.
 ISR(PORTE_INT0_vect){
 	char msg[128];
 	switch (RadioMonitorMode) {

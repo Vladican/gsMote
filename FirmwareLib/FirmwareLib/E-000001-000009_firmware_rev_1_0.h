@@ -86,9 +86,9 @@ volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRA
 volatile uint32_t StartOfFreeSpace;
 volatile uint8_t error;
 volatile uint16_t FRAMAddress;  // address counters for FRAM write/read
-volatile uint8_t RadioMonitorMode;
-volatile uint16_t MotesReadyToSynch;
-uint8_t moteID;
+volatile uint8_t RadioMonitorMode;	//used by synch module
+volatile uint16_t MotesReadyToSynch;	//used by synch module
+uint8_t moteID;	//used by synch module
 
 
 void FRAMTest3Channel();
