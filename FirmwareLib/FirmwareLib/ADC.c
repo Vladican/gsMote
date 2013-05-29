@@ -408,7 +408,7 @@ void CO_collectADC(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, 
 
 	SPIDisable();	
 	enableADCMUX(FALSE);
-	ADCPower(FALSE);
+	//ADCPower(FALSE);
 }
 
 //continuously take samples and send them via radio. NOT RECOMMENDET

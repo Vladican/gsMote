@@ -9,6 +9,9 @@
 
 
 int main(){
+	int32_t SampledData[130];
+	char SampledDataInChars[1700];
+	/*
 	char buff[8];
 	moteID = 1;
 	RadioMonitorMode = SYNCHED;		//initialize the RadioMonitorMode to synched
@@ -24,4 +27,13 @@ int main(){
 		//if(RadioMonitorMode == TIME_SYNCH) chb_write(0x0000,message,strlen(message));
 		nop();
 	}
+	*/
+	SD_init();
+	getBootSectorData();
+	set_32MHz();
+	while(1){
+		CO_collectADC(ADC_CH_1_gc,(uint8_t) (FILTER_CH_1AND5_bm | FILTER_HP_0_bm | FILTER_LP_600_gc),GAIN_1_gc,SPS_1K_gc,128,SampledData);
+		DeciToString(SampledData,128,SampledDataInChars);
+		writeFile("samples",SampledDataInChars,1700);	
+	}		
 }

@@ -507,3 +507,15 @@ ISR(PORTE_INT0_vect){
 			break;
 	}
 }
+
+void DeciToString(int32_t* DecimalArray, uint32_t length, char* ReturnString){
+	char b[20];
+	uint32_t i;
+	ReturnString[0] = 0;
+	for(i=0;i<length;i++){
+		sprintf(b,"%d",DecimalArray[i]);
+		strcat(ReturnString,b);
+		//add a space between each value
+		strcat(ReturnString," ");
+	}		
+}

@@ -4,6 +4,8 @@
 
 Synch.c
 
+AccelSampler2.c
+
 ..\..\FirmwareLib\FirmwareLib\ADC.c
 
 ..\..\FirmwareLib\FirmwareLib\adc_driver.c
@@ -25,6 +27,4 @@ Synch.c
 ..\..\FirmwareLib\FirmwareLib\FAT32.c
 
 ..\..\FirmwareLib\FirmwareLib\SD_Card.c
-
-AccelSampler.c
 

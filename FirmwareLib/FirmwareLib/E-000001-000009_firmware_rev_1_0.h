@@ -133,4 +133,6 @@ void chibi_test_radio();
 
 void TestCard();
 
+void DeciToString(int32_t* DecimalArray, uint32_t length, char* ReturnString);
+
 #endif

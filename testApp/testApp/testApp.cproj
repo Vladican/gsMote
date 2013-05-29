@@ -121,9 +121,9 @@
     <Compile Include="Synch.h">
       <SubType>compile</SubType>
     </Compile>
-    <None Include="AccelSampler2.c">
+    <Compile Include="AccelSampler2.c">
       <SubType>compile</SubType>
-    </None>
+    </Compile>
     <None Include="board_checkout.c">
       <SubType>compile</SubType>
     </None>
@@ -215,9 +215,9 @@
       <SubType>compile</SubType>
       <Link>types.h</Link>
     </Compile>
-    <Compile Include="AccelSampler.c">
+    <None Include="AccelSampler.c">
       <SubType>compile</SubType>
-    </Compile>
+    </None>
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>
