@@ -8,8 +8,9 @@
 #include "E-000001-000009_firmware_rev_1_0.h"
 
 
+
 int main(){
-	int32_t SampledData[130];
+	volatile int32_t SampledData[130];
 	char SampledDataInChars[1700];
 	/*
 	char buff[8];

@@ -555,6 +555,7 @@ ISR(PORTF_INT1_vect) {
 //ISR used by CO_collectADC function
 ISR(PORTF_INT0_vect) {
 	// skip first samples because cannot perform recommended reset
+	volatile int32_t currentSample;
 	if (discardCount < ADC_DISCARD) {
 		discardCount++;
 	} else { 
@@ -570,15 +571,15 @@ ISR(PORTF_INT0_vect) {
 		SPICS(FALSE);
 
 		// create 32 bits from SPIBuffer[0:2] with sign extension of SPIBuffer[0][7]
-		if(SPIBuffer[0] & BIT7_bm) *(((uint8_t*)&data24Bit[sampleCount]) + 3) = 0xFF; // sign extension if negative
-		else *(((uint8_t*)&data24Bit[sampleCount]) + 3) = 0x00;
-	
-		*(((uint8_t*)&data24Bit[sampleCount]) + 2) = SPIBuffer[0];
-		*(((uint8_t*)&data24Bit[sampleCount]) + 1) = SPIBuffer[1];
-		*(((uint8_t*)&data24Bit[sampleCount]) + 0) = SPIBuffer[2];
+		if(SPIBuffer[0] & BIT7_bm) *(((uint8_t*)&currentSample) + 3) = 0xFF; // sign extension if negative
+		else *(((uint8_t*)&currentSample) + 3) = 0x00;
+		*(((uint8_t*)&currentSample) + 2) = SPIBuffer[0];
+		*(((uint8_t*)&currentSample) + 1) = SPIBuffer[1];
+		*(((uint8_t*)&currentSample) + 0) = SPIBuffer[2];
 		
-		ADC_BUFFER[sampleCount] = (int32_t) -((uint64_t)data24Bit[sampleCount] * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
-
+		//ADC_BUFFER[sampleCount] = (int32_t) -((uint64_t)currentSample * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+		var = currentSample;
+		ADC_BUFFER[sampleCount] = (int32_t) -(var * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
 		sampleCount++;
 	}
 }
@@ -744,7 +745,7 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, uint32_t* D
 	SPICS(FALSE);
 	SPIDisable();
 	enableADCMUX(FALSE);
-	ADCPower(FALSE);
+	//ADCPower(FALSE);
 }
 
 //first averaging point
@@ -870,7 +871,7 @@ void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t ga
 	SPICS(FALSE);
 	SPIDisable();
 	enableADCMUX(FALSE);
-	ADCPower(FALSE);
+	//ADCPower(FALSE);
 	
 }
 
