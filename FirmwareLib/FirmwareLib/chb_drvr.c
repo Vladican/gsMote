@@ -31,6 +31,8 @@
     Please post support questions to the FreakLabs forum.
 
 *******************************************************************/
+
+#include "E-000001-000009_firmware_rev_1_0.h"
 #include <stdio.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
@@ -39,7 +41,6 @@
 #include "chb_buf.h"
 #include "chb_spi.h"
 #include "chb_eeprom.h"
-#include "E-000001-000009_firmware_rev_1_0.h"
 
 // store string messages in flash rather than RAM
 const char chb_err_overflow[] PROGMEM = "BUFFER FULL. TOSSING INCOMING DATA\n";
@@ -160,7 +161,7 @@ U16 chb_reg_read16(U8 addr)
 /**************************************************************************/
 void chb_reg_write(U8 addr, U8 val)
 {
-    U8 dummy; 
+    //U8 dummy; 
 
     /* Add the Register Write command to the address. */
     addr |= 0xC0;
@@ -169,8 +170,10 @@ void chb_reg_write(U8 addr, U8 val)
     RadioCS(TRUE);
 
     /*Send Register address and write register content.*/
-    dummy = SPID_write(addr);
-    dummy = SPID_write(val);
+    //dummy = SPID_write(addr);
+	SPID_write(addr);
+    //dummy = SPID_write(val);
+	SPID_write(val);
 
     RadioCS(FALSE);
     CHB_LEAVE_CRIT();
@@ -229,8 +232,9 @@ void chb_reg_read_mod_write(U8 addr, U8 val, U8 mask)
 /**************************************************************************/
 void chb_frame_write(U8 *hdr, U8 hdr_len, U8 *data, U8 data_len)
 {
-    U8 i, dummy;
-
+    U8 i;
+	//U8 dummy;
+	
     // dont allow transmission longer than max frame size
     if ((hdr_len + data_len) > 127)
     {
@@ -242,18 +246,21 @@ void chb_frame_write(U8 *hdr, U8 hdr_len, U8 *data, U8 data_len)
     RadioCS(TRUE); 
 
     // send fifo write command
-    dummy = SPID_write(CHB_SPI_CMD_FW);
+    //dummy = SPID_write(CHB_SPI_CMD_FW);
+	SPID_write(CHB_SPI_CMD_FW);
 
     // write hdr contents to fifo
     for (i=0; i<hdr_len; i++)
     {
-        dummy = SPID_write(*hdr++);
+        //dummy = SPID_write(*hdr++);
+		SPID_write(*hdr++);
     }
 
     // write data contents to fifo
     for (i=0; i<data_len; i++)
     {
-        dummy = SPID_write(*data++);
+        //dummy = SPID_write(*data++);
+		SPID_write(*data++);
     }
 
     // terminate spi transaction
@@ -804,7 +811,8 @@ void chb_drvr_init()
 /**************************************************************************/
 ISR(CHB_RADIO_IRQ)
 {
-    U8 dummy, state, intp_src = 0;
+    U8 state, intp_src = 0;
+	//U8 dummy;
     pcb_t *pcb = chb_get_pcb();
 
     CHB_ENTER_CRIT();
@@ -813,7 +821,8 @@ ISR(CHB_RADIO_IRQ)
     RadioCS(TRUE);   
 
     /*Send Register address and read register content.*/
-    dummy = SPID_write(IRQ_STATUS | CHB_SPI_CMD_RR);
+    //dummy = SPID_write(IRQ_STATUS | CHB_SPI_CMD_RR);
+	SPID_write(IRQ_STATUS | CHB_SPI_CMD_RR);
     intp_src = SPID_write(0);
 
     RadioCS(FALSE);

@@ -371,7 +371,7 @@ void readFRAM (uint16_t numBytes) {
 
 //test 3 channel sampling of accelerometer. OBSOLETE
 void FRAMTest3Channel(void) {
-	uint8_t gains[3] = { GAIN_1_gc, GAIN_1_gc, GAIN_1_gc };
+	//uint8_t gains[3] = { GAIN_1_gc, GAIN_1_gc, GAIN_1_gc };
 			
 	//CO_collectSeismic3Channel(FILTER_CH_2AND6_bm | FILTER_CH_3AND7_bm |	FILTER_CH_4AND8_bm | FILTER_HP_0_bm | FILTER_LP_600_gc,	gains, SSPS_SE_64K_gc, 21, TRUE, 13, 14, 15, 16);
 	ADCPower(TRUE);
@@ -435,9 +435,9 @@ void SD_write_and_read_knowns(){
 //check writing and reading to file on sd card
 void SD_write_and_read_knowns_FAT(){
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = i;	//write 24 values to the FRAM buffer
-	error = writeFile("testing",FRAMReadBuffer,512);
+	error = writeFile((unsigned char*)"testing",FRAMReadBuffer,512);
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = 0;	//clear the FRAM buffer
-	error = readFile(READ,"testing");		//read the data into the buffer from file
+	error = readFile(READ,(unsigned char*)"testing");		//read the data into the buffer from file
 }
 
 
@@ -470,24 +470,24 @@ void TestCard(){
 	for (int i=0;i<512;i++) FRAMReadBuffer[i] = i%121;
 //for (int i=0;i<1;i++) {
 	//FRAMReadBuffer[0] = i; 
-	writeFile("testing",FRAMReadBuffer,512);//}
+	writeFile((unsigned char*)"testing",FRAMReadBuffer,512);//}
 	nop();
 }
 
 //interrupt service routine for handling received data over radio. Gets called when data received by the mote. Has cases for synching right now.
 ISR(PORTE_INT0_vect){
-	char msg[128];
+	chb_rx_data_t* msg = NULL;
 	switch (RadioMonitorMode) {
 		//case for reading sensor data - done by basestation
 		case DATA_GATHERING:
 			//check contents of the message first and if it is a synch message, increment MotesReadyToSynch variable
 			chb_read(msg);
-			if(!strncmp(msg,"reset",5)){
+			if(!strncmp((const char*)(msg->data),"reset",5)){
 				MotesReadyToSynch++;
 			}
 			//otherwise, store the message contents in the FRAM buffer
 			else{		
-				for(uint32_t i=0;i<128;i++)	FRAMReadBuffer[i] = msg[i];		//copy the message to the FRAM buffer	
+				for(uint32_t i=0;i<128;i++)	FRAMReadBuffer[i] = msg->data[i];		//copy the message to the FRAM buffer	
 				StartOfFreeSpace += 128;	//increment start of free space in FRAM buffer
 			//wrap around to the start of the buffer (making circular buffer). This should be avoided as data in the buffer will be overwritten (i.e. lost).
 				if(StartOfFreeSpace+128 >= FR_READ_BUFFER_SIZE) StartOfFreeSpace = 0;
@@ -496,7 +496,7 @@ ISR(PORTE_INT0_vect){
 		//case for synching sampling with basestation
 		case TIME_SYNCH:
 			chb_read(msg);
-			if(!strncmp(msg,"start sampling",14)){	//if basestation synch response message received, do the following
+			if(!strncmp((const char*)(msg->data),"start sampling",14)){	//if basestation synch response message received, do the following
 				RadioMonitorMode = SYNCHED;
 				TCD1.CTRLA = TC_CLKSEL_EVCH1_gc;	//restart the synch timers
 				TCC1.CTRLA = 0x01;  
@@ -510,11 +510,12 @@ ISR(PORTE_INT0_vect){
 
 void DeciToString(int32_t* DecimalArray, uint32_t length, char* ReturnString){
 	char b[20];
-	int written;
+	//int written;
 	uint32_t i;
 	ReturnString[0] = 0;
 	for(i=0;i<length;i++){
-		written = sprintf(b,"%ld",DecimalArray[i]);
+		//written = sprintf(b,"%ld",DecimalArray[i]);
+		sprintf(b,"%ld",DecimalArray[i]);
 		strcat(ReturnString,b);
 		//add a space between each value
 		strcat(ReturnString,"\n");

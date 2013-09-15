@@ -27,11 +27,11 @@ ISR(TCD1_OVF_vect, ISR_NOBLOCK) {
 	//TCC1.CTRLFSET = 0x0C;	//reset the value of the counter to 0
 	//TCD1.CTRLFSET = 0x0C;
 	RadioMonitorMode = TIME_SYNCH;
-	unsigned char message[8];
+	char message[8];
 	strcpy(message,"reset");
 	itoa((int)(moteID),buff,10);
 	strcat(message,buff);
 	ADC_Pause_Sampling();	//pause the ADC while synching
-	chb_write(0x0000,message,strlen(message));
+	chb_write(0x0000,(unsigned char*)message,strlen(message));
 }	
 

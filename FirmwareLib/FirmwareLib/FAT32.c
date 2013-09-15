@@ -89,7 +89,7 @@ unsigned long getSetNextCluster (unsigned long clusterNumber,
 unsigned int FATEntryOffset;
 unsigned long *FATEntryValue;
 unsigned long FATEntrySector;
-unsigned char retry = 0;
+//unsigned char retry = 0;
 
 //get sector number of the cluster entry in the FAT
 FATEntrySector = unusedSectors + reservedSectorCount + ((clusterNumber * 4) / bytesPerSector) ;
@@ -258,7 +258,9 @@ return 0;
 unsigned char readFile (unsigned char flag, unsigned char *fileName)
 {
 struct dir_Structure *dir;
-unsigned long cluster, byteCounter = 0, fileSize, firstSector;
+unsigned long cluster, firstSector;
+//unsigned long byteCounter;
+//unsigned long  fileSize;
 unsigned char j, error;
 
 error = convertFileName (fileName); //convert fileName into FAT format
@@ -275,7 +277,7 @@ if(flag == VERIFY) return (1);	//specified file name is already existing
 
 cluster = (((unsigned long) dir->firstClusterHI) << 16) | dir->firstClusterLO;
 
-fileSize = dir->fileSize;
+//fileSize = dir->fileSize;
 
 
 while(1)
@@ -316,9 +318,9 @@ unsigned char j, k;
 
 //store the string variable into the file name array if it is of a proper length
 
-if(strlen(fileName) > 15) return 1;
+if(strlen((const char*)fileName) > 15) return 1;
 int i=0;
-for(; i < strlen(fileName); i++){
+for(; i < strlen((const char*)fileName); i++){
 	Filename[i] = fileName[i];
 }
 for(; i < 15; i++) Filename[i] = ' ';
@@ -364,7 +366,8 @@ return 0;
 //return: 1 - invalid filename, 2 - no free cluster, 3 - end of cluster chain, 4 - error in getting cluster
 //************************************************************************************
 unsigned char writeFile (unsigned char* fileName,uint8_t* dataArray,uint32_t lengthOfData){
-unsigned char j, data, error, fileCreatedFlag = 0, start = 0, appendFile = 0, sector=0;
+unsigned char j, fileCreatedFlag = 0, start = 0, appendFile = 0, sector=0;
+//unsigned char error, data;
 unsigned int firstClusterHigh=0, firstClusterLow=0, startBlock=0;  //value 0 is assigned just to avoid warning in compilation
 struct dir_Structure *dir;
 unsigned long cluster, nextCluster, prevCluster, firstSector, clusterCount, extraMemory;

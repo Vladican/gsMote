@@ -35,8 +35,8 @@ SUBDIRS :=
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS +=  \
+../BaseStation.c \
 ../Synch.c \
-../AccelSampler2.c \
 ../../../FirmwareLib/FirmwareLib/ADC.c \
 ../../../FirmwareLib/FirmwareLib/adc_driver.c \
 ../../../FirmwareLib/FirmwareLib/chb.c \
@@ -57,8 +57,8 @@ ASM_SRCS +=
 
 
 OBJS +=  \
+BaseStation.o \
 Synch.o \
-AccelSampler2.o \
 ADC.o \
 adc_driver.o \
 chb.o \
@@ -73,8 +73,8 @@ SD_Card.o
 
 
 OBJS_AS_ARGS +=  \
+BaseStation.o \
 Synch.o \
-AccelSampler2.o \
 ADC.o \
 adc_driver.o \
 chb.o \
@@ -89,8 +89,8 @@ SD_Card.o
 
 
 C_DEPS +=  \
+BaseStation.d \
 Synch.d \
-AccelSampler2.d \
 ADC.d \
 adc_driver.d \
 chb.d \
@@ -105,8 +105,8 @@ SD_Card.d
 
 
 C_DEPS_AS_ARGS +=  \
+BaseStation.d \
 Synch.d \
-AccelSampler2.d \
 ADC.d \
 adc_driver.d \
 chb.d \
@@ -159,13 +159,13 @@ OUTPUT_FILE_DEP:= ./makedep.mk
 ./%.o: .././%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : (AVR_8_bit_GNU_Toolchain_3.4.0_663) 4.6.2
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Studio 6.0\extensions\Atmel\AVRGCC\3.4.0.65\AVRToolchain\bin\avr-gcc.exe$(QUOTE) -funsigned-char -funsigned-bitfields -I"../../../FirmwareLib/FirmwareLib"  -O0 -fpack-struct -fshort-enums -g2 -Wall -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"  -mmcu=atxmega256a3   -o"$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Studio 6.0\extensions\Atmel\AVRGCC\3.4.0.65\AVRToolchain\bin\avr-gcc.exe$(QUOTE) -funsigned-char -funsigned-bitfields -I"../../../FirmwareLib/FirmwareLib"  -O0 -fpack-struct -fshort-enums -g3 -Wall -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"  -mmcu=atxmega256a3   -o"$@" "$<" 
 	@echo Finished building: $<
 
 ./%.o: ../../../FirmwareLib/FirmwareLib/%.c
 	@echo Building file: $<
 	@echo Invoking: AVR/GNU C Compiler : (AVR_8_bit_GNU_Toolchain_3.4.0_663) 4.6.2
-	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Studio 6.0\extensions\Atmel\AVRGCC\3.4.0.65\AVRToolchain\bin\avr-gcc.exe$(QUOTE) -funsigned-char -funsigned-bitfields -I"../../../FirmwareLib/FirmwareLib"  -O0 -fpack-struct -fshort-enums -g2 -Wall -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"  -mmcu=atxmega256a3   -o"$@" "$<" 
+	$(QUOTE)C:\Program Files (x86)\Atmel\Atmel Studio 6.0\extensions\Atmel\AVRGCC\3.4.0.65\AVRToolchain\bin\avr-gcc.exe$(QUOTE) -funsigned-char -funsigned-bitfields -I"../../../FirmwareLib/FirmwareLib"  -O0 -fpack-struct -fshort-enums -g3 -Wall -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)"  -mmcu=atxmega256a3   -o"$@" "$<" 
 	@echo Finished building: $<
 
 

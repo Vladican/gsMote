@@ -5,6 +5,7 @@ volatile uint8_t checksumFRAM[3] = {0};  // checksum for FRAM test
 
 
 void CO_collectTemp(uint16_t *avgV, uint16_t *minV, uint16_t *maxV) {
+	
 	uint32_t sum = 0;
 	uint16_t tempResult;
 	uint32_t average;
@@ -88,6 +89,7 @@ void CO_collectTemp(uint16_t *avgV, uint16_t *minV, uint16_t *maxV) {
 }
 
 void CO_collectBatt(uint16_t *avgV, uint16_t *minV, uint16_t *maxV) {
+	
 	uint32_t sum = 0;
 	uint16_t tempResultB;
 	uint32_t average;
@@ -175,6 +177,7 @@ void CO_collectBatt(uint16_t *avgV, uint16_t *minV, uint16_t *maxV) {
 }
 
 void ADCPower(uint8_t on) {
+	
 	if (on) {
 		PORTA.DIRSET = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN6_bm | PIN7_bm; // portEx-CS and HV1/HV2 and A0
 		PORTB.DIRSET = PIN1_bm| PIN2_bm | PIN3_bm; // FRAM-CS and A1/A2
@@ -232,6 +235,7 @@ void ADCPower(uint8_t on) {
  *  \param gainExponent		Sets gain to 2^gainExponent[0:2].
  */
 void set_ampGain(uint8_t channel, uint8_t gainExponent) {
+	
 	// set chip select.  note: AD8231 CS is select on low
 	PortEx_OUTCLR((1 << channel), PS_BANKA);
 	//setPortEx(~(1 << channel), PS_BANKA);
@@ -313,6 +317,7 @@ void set_filter(uint8_t filterConfig) {
 }
 
 void enableADCMUX(uint8_t on) {
+	
 	if(on) {
 		PORTA.DIRSET = PIN5_bm;
 		PORTA.OUTSET = PIN5_bm;
@@ -348,7 +353,7 @@ void enableADCMUX(uint8_t on) {
  *  \param gainExponent		Sets gain to 2^gainExponent[0:2].
  *  \param spsExponent Sets samples per second = 2^spsExponent
 */
-void CO_collectADC(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t spsExponent, uint32_t numOfSamples, int32_t* DataArray) {
+void CO_collectADC(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint16_t SPS, uint32_t numOfSamples, int32_t* DataArray) {
 
 
 	uint16_t period;
@@ -385,7 +390,8 @@ void CO_collectADC(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, 
 	// Set Waveform generator mode and enable the CCx output to IO14 (PE5)
 	TCE1.CTRLB = TC_WGMODE_SS_gc | TC1_CCBEN_bm;
 	// set period
-	period = (1 << (21 - spsExponent)) - 1;
+	//period = (1 << (21 - spsExponent)) - 1;
+	period = (F_CPU/16)/SPS;
 	TCE1.PER = period;
 	TCE1.CCBBUF = period / 2;
 	// Set oscillator source and frequency and start
@@ -544,7 +550,7 @@ ISR(PORTF_INT1_vect) {
 		//PORTF.OUTSET = PIN1_bm; //re-enable ADC for further sampling
 		
 		//write code to send the data over radio instead. Include some identifying info (like mote number) with the data.
-		memmove(FRAMReadBuffer+2,FRAMReadBuffer,sampleCount*4); //move the data in the FRAM buffer up by 1 byte to make room for metadata
+		memmove((void*)FRAMReadBuffer+2,(const void*)FRAMReadBuffer,sampleCount*4); //move the data in the FRAM buffer up by 1 byte to make room for metadata
 		FRAMReadBuffer[0] = moteID;		//send moteID of the mote that gathered the data
 		FRAMReadBuffer[1] = (uint8_t)sampleCount;	//send the number of data samples gathered cast as a byte since no more than 30/31 samples should be send at a time
 		chb_write(0x0000,FRAMReadBuffer,sampleCount*4+2);	//send the samples and the metadata (for now just 1 byte containing moteID) to the base station
@@ -673,9 +679,9 @@ uint16_t averagingPtC, uint16_t averagingPtD) {
 	
 }*/
 
-void CO_collectSeismic3Axises(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
+void CO_collectSeismic3Axises(uint8_t filterConfig, uint8_t gain[], uint16_t subsamplesPerSecond,
 uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
-uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, uint32_t* DataArray) {
+uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, int32_t* DataArray) {
 	
 	ADC_BUFFER = DataArray;
 	// Turn on power to ADC and PortEx
@@ -712,7 +718,6 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, uint32_t* D
 	TCC0.INTCTRLB = TC_CCAINTLVL_HI_gc | TC_CCBINTLVL_HI_gc | TC_CCCINTLVL_HI_gc | TC_CCDINTLVL_HI_gc;
 	TCC0.CTRLA = ( TCC0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_EVCH0_gc;
 
-	FRAMAddress = FR_BASEADD;
 	sampleCount = 0;
 	SPICount = 0;
 	checksumADC[0] = checksumADC[1] = checksumADC[2] = 0;
@@ -728,8 +733,10 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, uint32_t* D
 	// Set Waveform generator mode and enable the CCx output to IO14 (PE5)
 	TCE1.CTRLB = TC_WGMODE_SS_gc | TC1_CCBEN_bm;
 	// set period
-	TCE1.PER = (0x20 << subsamplesPerSecond);
-	TCE1.CCBBUF = (0x10 << subsamplesPerSecond);
+	//TCE1.PER = (0x20 << subsamplesPerSecond);
+	TCE1.PER = (F_CPU/16)/subsamplesPerSecond;
+	//TCE1.CCBBUF = (0x10 << subsamplesPerSecond);
+	TCE1.CCBBUF = ((F_CPU/16)/subsamplesPerSecond)/2;
 	// Set oscillator source and frequency and start
 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
 	
@@ -781,9 +788,6 @@ ISR(TCC0_CCD_vect) {
 ISR(TCC0_OVF_vect) {
 	volatile int32_t sum = 0;
 	volatile int32_t currentSample;
-	//sampleCount++;
-		
-	//SPIC.CTRL = FR_SPI_CONFIG_gc;
 		
 	for(uint8_t i = 0; i < 12; i+=3) {
 		if(SPIBuffer[i] & BIT7_bm) *(((uint8_t*)&currentSample) + 3) = 0xFF; // sign extension if negative
@@ -801,10 +805,9 @@ ISR(TCC0_OVF_vect) {
 }
 
 //collect data from 1 axis of accelerometer
-void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t gain, uint8_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA, 
+void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t gain, uint16_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA, 
 								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, int32_t* DataArray) {
 	
-	uint16_t period;
 	ADC_BUFFER=DataArray;
 	// Turn on power to ADC and PortEx
 	ADCPower(TRUE);
@@ -854,8 +857,10 @@ void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t ga
 	// Set Waveform generator mode and enable the CCx output to IO14 (PE5)
 	TCE1.CTRLB = TC_WGMODE_SS_gc | TC1_CCBEN_bm;
 	// set period
-	TCE1.PER = (0x20 << subsamplesPerSecond);
-	TCE1.CCBBUF = (0x10 << subsamplesPerSecond);
+	//TCE1.PER = (0x20 << subsamplesPerSecond);
+	//TCE1.CCBBUF = (0x10 << subsamplesPerSecond);
+	TCE1.PER = (F_CPU/16)/subsamplesPerSecond;
+	TCE1.CCBBUF = ((F_CPU/16)/subsamplesPerSecond)/2;
 	// Set oscillator source and frequency and start
 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
 	
@@ -871,7 +876,6 @@ void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t ga
 	SPICS(FALSE);
 	SPIDisable();
 	enableADCMUX(FALSE);
-	//ADCPower(FALSE);
 	
 }
 
@@ -897,11 +901,9 @@ ISR(TCD0_CCD_vect) {
 
 //consolidate the 4 averaging points
 ISR(TCD0_OVF_vect) {
-	//writeSE2FRAM();
+
 	volatile int32_t sum = 0;
 	volatile int32_t currentSample;
-		
-	//SPIC.CTRL = FR_SPI_CONFIG_gc;
 		
 	for(uint8_t i = 0; i < 12; i+=3) {
 		if(SPIBuffer[i] & BIT7_bm) *(((uint8_t*)&currentSample) + 3) = 0xFF; // sign extension if negative
@@ -920,6 +922,7 @@ ISR(TCD0_OVF_vect) {
 
 //sample an axis of accelerometer with ADC
 void sampleCurrentChannel() {
+	
 	PORTF.OUTCLR = PIN1_bm; // pull ADC_CS down to enable data read
 	SPIC.DATA = 0xAA; // dummy data to start SPI clock
 	while(!(SPIC.STATUS & SPI_IF_bm));

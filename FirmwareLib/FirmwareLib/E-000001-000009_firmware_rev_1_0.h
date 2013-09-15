@@ -2,9 +2,10 @@
 #ifndef FIRMWARE_HEADER
 #define FIRMWARE_HEADER
 
+#define F_CPU 32000000UL
+
 #include <avr/io.h>
 #include <avr/pgmspace.h>
-#define F_CPU 32000000UL
 #include <util/delay.h>
 #include "adc_driver.h"
 #include "clksys_driver.h"
@@ -13,6 +14,8 @@
 #include "chb_drvr.h"
 #include "ADC.h"
 #include "SD_Card.h"
+#include <string.h>
+#include <stdio.h>
 
 
 // Hardware Defines
@@ -82,7 +85,8 @@
 // Global Variables
 volatile uint8_t bankA_DIR, bankA_OUT, bankB_DIR, bankB_OUT;  // status of port expander current configurations to allow bit level changes
 volatile uint8_t Buffer[13];
-volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
+//volatile uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
+uint8_t FRAMReadBuffer[FR_READ_BUFFER_SIZE]; // storage for reading FRAM
 volatile uint32_t StartOfFreeSpace;
 volatile uint8_t error;
 volatile uint16_t FRAMAddress;  // address counters for FRAM write/read
@@ -115,6 +119,7 @@ void upperMuxCS(uint8_t write);
 
 uint8_t readPortEx(uint8_t readRegister);
 void SPIInit(uint8_t mode);
+void SPIInit2(uint8_t mode, uint8_t prescalar);
 void SPICS(uint8_t enable);
 void SPIDisable();
 

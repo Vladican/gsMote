@@ -10,7 +10,7 @@
 
 
 int main(){
-	volatile int32_t SampledData[130];
+	int32_t SampledData[130];
 	char SampledDataInChars[1700];
 	/*
 	char buff[8];
@@ -35,6 +35,6 @@ int main(){
 	while(1){
 		CO_collectADC(ADC_CH_1_gc,(uint8_t) (FILTER_CH_1AND5_bm | FILTER_HP_0_bm | FILTER_LP_600_gc),GAIN_1_gc,SPS_1K_gc,128,SampledData);
 		DeciToString(SampledData,128,SampledDataInChars);
-		writeFile("samples",SampledDataInChars,1700);	
+		writeFile((unsigned char*)"samples",(uint8_t*)SampledDataInChars,1700);	
 	}		
 }

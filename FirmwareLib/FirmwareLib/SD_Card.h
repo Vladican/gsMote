@@ -59,7 +59,7 @@
 #define SDHC_CMD_SUCCESS 0x00
 
 //global variables for SD card
-volatile uint8_t SDBuffer[512];
+uint8_t SDBuffer[512];
 
 //SD functions
 uint8_t SD_command(uint8_t cmd, uint32_t arg, uint8_t crc, int read);

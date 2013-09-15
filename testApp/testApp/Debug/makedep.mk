@@ -2,9 +2,9 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
-Synch.c
+BaseStation.c
 
-AccelSampler2.c
+Synch.c
 
 ..\..\FirmwareLib\FirmwareLib\ADC.c
 
