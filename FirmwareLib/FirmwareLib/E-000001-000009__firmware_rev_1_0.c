@@ -41,6 +41,7 @@ void set_16MHz() {
 
 // produces consistent but inaccurate clock period.
 void set_32MHz() {
+	#define F_CPU 32000000UL
 	// select 32MHz Oscillator and prescale by 1
 	CLKSYS_Enable(OSC_RC32MEN_bm);
 	CLKSYS_Prescalers_Config( CLK_PSADIV_1_gc, CLK_PSBCDIV_1_1_gc );
@@ -98,6 +99,7 @@ void PortEx_DIRSET(uint8_t pins, uint8_t bank) {
 // Port Expander must be powered on (VDC-2)
 // all other pins are unaffected
 void PortEx_DIRCLR(uint8_t pins, uint8_t bank) {
+	
 	SPIInit(PS_SPI_MODE);
 	SPICS(TRUE);
 	portExCS(TRUE);
@@ -126,6 +128,7 @@ void PortEx_DIRCLR(uint8_t pins, uint8_t bank) {
 }
 
 void PortEx_OUTSET(uint8_t pins, uint8_t bank) {
+	
 	SPIInit(PS_SPI_MODE);
 	SPICS(TRUE);
 	portExCS(TRUE);
@@ -155,6 +158,7 @@ void PortEx_OUTSET(uint8_t pins, uint8_t bank) {
 
 
 void PortEx_OUTCLR(uint8_t pins, uint8_t bank) {
+	
 	SPIInit(PS_SPI_MODE);
 	SPICS(TRUE);
 	portExCS(TRUE);
@@ -229,6 +233,7 @@ void setPortEx(uint8_t portMask, uint8_t bank) {
 
 
 void Ext1Power(uint8_t on) {
+	
 	if (on) {
 		PORTF.DIRSET = PIN5_bm;
 		PORTF.OUTSET = PIN5_bm;
@@ -244,6 +249,7 @@ void Ext1Power(uint8_t on) {
 }
 
 void Ext2Power(uint8_t on) {
+	
 	if (on) {
 		PORTF.DIRSET = PIN6_bm;
 		PORTF.OUTSET = PIN6_bm;
@@ -255,6 +261,7 @@ void Ext2Power(uint8_t on) {
 }
 
 void HVPower(uint8_t on) {
+	
 	if (on) {
 		PORTF.DIRSET = PIN7_bm;
 		PORTF.OUTSET = PIN7_bm;
@@ -268,17 +275,21 @@ void HVPower(uint8_t on) {
 
 
 void lowerMuxCS(uint8_t write) {
+	
 	// take IO15(PE4) low to enable write
 	if (write) PORTE.OUTCLR = PIN4_bm;
 	else PORTE.OUTSET = PIN4_bm;
 }
+
 void upperMuxCS(uint8_t write) {
+	
 	// take IO16(PC
 	if (write) PORTC.OUTCLR = PIN1_bm;
 	else PORTC.OUTSET = PIN1_bm;
 }
 
 void SPIInit(uint8_t mode) {
+	
 	// init SPI SS pin
 	PORTC.DIRSET = PIN4_bm;
 	PORTC.PIN4CTRL = PORT_OPC_WIREDANDPULL_gc;
@@ -300,8 +311,10 @@ void SPIInit(uint8_t mode) {
 
 	
 }
+
 //use this if using a prescalar
 void SPIInit2(uint8_t mode, uint8_t prescalar) {
+	
 	// init SPI SS pin
 	PORTC.DIRSET = PIN4_bm;
 	PORTC.PIN4CTRL = PORT_OPC_WIREDANDPULL_gc;
@@ -324,6 +337,7 @@ void SPIInit2(uint8_t mode, uint8_t prescalar) {
 }
 
 void SPICS(uint8_t enable) {
+	
 	if (enable) PORTC.OUTCLR = PIN4_bm;
 	else {
 		PORTC.OUTSET = PIN4_bm;
@@ -331,6 +345,7 @@ void SPICS(uint8_t enable) {
 }
 
 void SPIDisable() {
+	
 	PORTC.OUTSET = PIN4_bm;
 	SPIC.CTRL = 0x00;
 	PORTC.OUTCLR = PIN4_bm;
@@ -341,6 +356,7 @@ void SPIDisable() {
 // Read from FRAM
 // FRAM power (VDC-2) must be on with CS_FRAM pulled high to write protect
 void readFRAM (uint16_t numBytes) {
+	
 	SPIInit(SPI_MODE_0_gc);
 	SPIC.CTRL = FR_SPI_CONFIG_gc;
 	SPICS(TRUE);
@@ -397,6 +413,7 @@ void FRAMTest1Channel(void) {
 
 
 void FRAMWriteKnownsCheck() {
+	
 	FRAMWriteKnowns();
 	ADCPower(TRUE);
 
@@ -409,6 +426,7 @@ void FRAMWriteKnownsCheck() {
 
 //random function for testing stuff	
 void checkMote(){
+	
 	ADCPower(TRUE);
 	Ext1Power(TRUE);
 	_delay_ms(100);
@@ -423,6 +441,7 @@ void checkMote(){
 
 //command to check reading and writing to sd card
 void SD_write_and_read_knowns(){
+	
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = i;	//write 24 values to the FRAM buffer
 	SD_write_block(20,FRAMReadBuffer,24);	//write those values to the card
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = 0;	//clear the FRAM buffer
@@ -432,8 +451,10 @@ void SD_write_and_read_knowns(){
 	for(int i=0;i<1250;i++) FRAMReadBuffer[i] = 0;	//clear FRAM buffer
 	SD_read_multiple_blocks(80,FRAMReadBuffer,3);	//read in 3 blocks of data from the memory card
 }
+
 //check writing and reading to file on sd card
 void SD_write_and_read_knowns_FAT(){
+	
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = i;	//write 24 values to the FRAM buffer
 	error = writeFile((unsigned char*)"testing",FRAMReadBuffer,512);
 	for (int i=0;i<24;i++) FRAMReadBuffer[i] = 0;	//clear the FRAM buffer
@@ -463,8 +484,10 @@ void chibi_test_radio(){
 	chb_read(FRAMReadBuffer);
 	*/
 }
+
 //another testing function for sd card
 void TestCard(){
+	
 	SD_init();
 	getBootSectorData();
 	for (int i=0;i<512;i++) FRAMReadBuffer[i] = i%121;
@@ -476,6 +499,7 @@ void TestCard(){
 
 //interrupt service routine for handling received data over radio. Gets called when data received by the mote. Has cases for synching right now.
 ISR(PORTE_INT0_vect){
+	
 	chb_rx_data_t* msg = NULL;
 	switch (RadioMonitorMode) {
 		//case for reading sensor data - done by basestation

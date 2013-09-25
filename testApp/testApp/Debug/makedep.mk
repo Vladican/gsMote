@@ -2,7 +2,9 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
-BaseStation.c
+..\..\FirmwareLib\FirmwareLib\SerialUSB.c
+
+Node.c
 
 Synch.c
 

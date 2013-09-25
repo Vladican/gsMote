@@ -24,3 +24,5 @@ FAT32.c
 
 SD_Card.c
 
+SerialUSB.c
+

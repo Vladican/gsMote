@@ -45,7 +45,8 @@ C_SRCS +=  \
 ../clksys_driver.c \
 ../E-000001-000009__firmware_rev_1_0.c \
 ../FAT32.c \
-../SD_Card.c
+../SD_Card.c \
+../SerialUSB.c
 
 
 PREPROCESSING_SRCS += 
@@ -65,7 +66,8 @@ chb_spi.o \
 clksys_driver.o \
 E-000001-000009__firmware_rev_1_0.o \
 FAT32.o \
-SD_Card.o
+SD_Card.o \
+SerialUSB.o
 
 
 OBJS_AS_ARGS +=  \
@@ -79,7 +81,8 @@ chb_spi.o \
 clksys_driver.o \
 E-000001-000009__firmware_rev_1_0.o \
 FAT32.o \
-SD_Card.o
+SD_Card.o \
+SerialUSB.o
 
 
 C_DEPS +=  \
@@ -93,7 +96,8 @@ chb_spi.d \
 clksys_driver.d \
 E-000001-000009__firmware_rev_1_0.d \
 FAT32.d \
-SD_Card.d
+SD_Card.d \
+SerialUSB.d
 
 
 C_DEPS_AS_ARGS +=  \
@@ -107,7 +111,8 @@ chb_spi.d \
 clksys_driver.d \
 E-000001-000009__firmware_rev_1_0.d \
 FAT32.d \
-SD_Card.d
+SD_Card.d \
+SerialUSB.d
 
 
 OUTPUT_FILE_PATH +=libFirmwareLib.a
@@ -119,6 +124,8 @@ ADDITIONAL_DEPENDENCIES:=
 OUTPUT_FILE_DEP:= ./makedep.mk
 
 # AVR32/GNU C Compiler
+
+
 
 
 

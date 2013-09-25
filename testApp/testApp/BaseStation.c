@@ -33,37 +33,22 @@ int main(){
 		chb_write(0xFFFF,message,strlen(message));
 	}	
 	*/
-	uint8_t data_byte;
-	//set F_CPU/F_PER to 32 MHz (default is the 2 MHz RC oscillator)
-	set_32MHz();
-	//set output on transmit pin
-	PORTC.DIRSET = PIN3_bm;
-	PORTC.OUTSET = PIN3_bm;
-	//set input on receive pin
-	PORTC.DIRCLR = PIN2_bm;
-	//prescalar of 15: baud = F_CPU/((2^bscale)*16*(scaler+1)) = 125000 (almost 128000)
-	USARTC0.BAUDCTRLA = 15;
-	//8 data bits no parity 1 stop bit
-	USARTC0.CTRLC = 3;
-	//turn on Rx and Tx for USART
-	USARTC0.CTRLB = BIT4_bm | BIT3_bm;
+	//uint8_t data_byte;
+	uint8_t length;
+	chb_init();
+	chb_set_short_addr(0x0001);
+	chb_set_channel(0);
+	StartSerial((uint32_t)9600);
+	//radio_msg_received_int_enable();
+	while(!chb_set_state(CHB_RX_AACK_ON) == RADIO_SUCCESS);
+	pcb_t* pcb = chb_get_pcb();
 	while(1){
-		//wait for reception of message
-		if ((USARTC0.STATUS & BIT7_bm) == BIT7_bm){
-			//read in byte
-			data_byte = USARTC0.DATA;
-			//increment byte
-			data_byte++;
-			//wait for transmit buffer to become available
-			while((USARTC0.STATUS & BIT5_bm) != BIT5_bm){
-				//wait
-			}				
-			//transmit incremented byte
-			USARTC0.DATA = data_byte;
-			//wait for transmit to finish
-			while((USARTC0.STATUS & BIT6_bm) != BIT6_bm) {
-			//wait
-			}
-		}
+		//wait for data over radio
+		while(pcb->data_rcv){
+			//read the data
+			length = chb_read((chb_rx_data_t*)FRAMReadBuffer);
+			//pass it to USB
+			SerialWriteBuffer(FRAMReadBuffer,(uint32_t)length);
+		}		
 	}
 }

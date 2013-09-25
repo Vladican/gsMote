@@ -29,6 +29,7 @@ E-000001-000009__firmware_rev_1_0.d E-000001-000009__firmware_rev_1_0.o: \
  ../../../FirmwareLib/FirmwareLib/chb_drvr.h \
  ../../../FirmwareLib/FirmwareLib/ADC.h \
  ../../../FirmwareLib/FirmwareLib/SD_Card.h \
+ ../../../FirmwareLib/FirmwareLib/SerialUSB.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/string.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/stdio.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/include/stdarg.h
@@ -90,6 +91,8 @@ c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.
 ../../../FirmwareLib/FirmwareLib/ADC.h:
 
 ../../../FirmwareLib/FirmwareLib/SD_Card.h:
+
+../../../FirmwareLib/FirmwareLib/SerialUSB.h:
 
 c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/string.h:
 

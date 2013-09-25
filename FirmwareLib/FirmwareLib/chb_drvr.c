@@ -782,7 +782,7 @@ static void chb_radio_init()
         strcpy_P(buf, chb_err_init);
         printf(buf);
     }
-	StartOfFreeSpace = 0; //set location in FRAM Buffer at which to start storing radio messages to the start of the buffer
+	//StartOfFreeSpace = 0; //set location in FRAM Buffer at which to start storing radio messages to the start of the buffer
 }
 
 /**************************************************************************/

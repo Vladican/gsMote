@@ -136,6 +136,12 @@
     <Compile Include="SD_Card.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="SerialUSB.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="SerialUSB.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="types.h">
       <SubType>compile</SubType>
     </Compile>

@@ -46,7 +46,8 @@ C_SRCS +=  \
 ../clksys_driver.c \
 ../E-000001-000009_firmware_rev_1_0.cpp \
 ../FAT32.cpp \
-../SD_Card.cpp
+../SD_Card.cpp \
+../SerialUSB.c
 
 
 PREPROCESSING_SRCS += 
@@ -66,7 +67,8 @@ ChibiStack/chb_spi.o \
 clksys_driver.o \
 E-000001-000009_firmware_rev_1_0.o \
 FAT32.o \
-SD_Card.o
+SD_Card.o \
+SerialUSB.o
 
 
 OBJS_AS_ARGS +=  \
@@ -80,7 +82,8 @@ ChibiStack/chb_spi.o \
 clksys_driver.o \
 E-000001-000009_firmware_rev_1_0.o \
 FAT32.o \
-SD_Card.o
+SD_Card.o \
+SerialUSB.o
 
 
 C_DEPS +=  \
@@ -94,7 +97,8 @@ ChibiStack/chb_spi.d \
 clksys_driver.d \
 E-000001-000009_firmware_rev_1_0.d \
 FAT32.d \
-SD_Card.d
+SD_Card.d \
+SerialUSB.d
 
 
 C_DEPS_AS_ARGS +=  \
@@ -108,7 +112,8 @@ ChibiStack/chb_spi.d \
 clksys_driver.d \
 E-000001-000009_firmware_rev_1_0.d \
 FAT32.d \
-SD_Card.d
+SD_Card.d \
+SerialUSB.d
 
 
 OUTPUT_FILE_PATH +=libgsMoteFirmware.a
@@ -120,6 +125,8 @@ ADDITIONAL_DEPENDENCIES:=
 OUTPUT_FILE_DEP:= ./makedep.mk
 
 # AVR32/GNU C Compiler
+
+
 
 
 

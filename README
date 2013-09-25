@@ -11,8 +11,7 @@ with SD_init() ).
 
 To use the radio, first initialize the radio stack with chb_init(). Then you can set varius radio parameters like transmit power, radio address, radio channel, etc. with the 
 corresponding configuration methods available in chb_drvr.h . The radio initializes into listen mode and transits back into listen mode after sending a transmission. When a message is received, 
-it is written to the FRAMReadBuffer array so to receive consecutive messages without loss of data, that data has to be moved and/or processed before the FRAMReadBuffer fills up and starts  
-overwriting data.
+a flag is set in the chibe "pcb_t" object (chb_get_pcb() returns the pointer to that object). 
 
 Max payload of data is 100 bytes per radio transmission. If more than that is provided as argument to chb_write then it will get broken up into several transmission.
 

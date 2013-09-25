@@ -14,6 +14,7 @@
 #include "chb_drvr.h"
 #include "ADC.h"
 #include "SD_Card.h"
+#include "SerialUSB.h"
 #include <string.h>
 #include <stdio.h>
 
