@@ -327,6 +327,10 @@ void enableADCMUX(uint8_t on) {
 	}
 }
 
+void CO_collectADC(uint8_t channel, uint8_t gainExponent, uint16_t SPS, uint16_t numOfSamples, int32_t* DataArray) {
+	
+	CO_collectADC_ext(channel, (uint8_t) (FILTER_CH_3AND7_bm | FILTER_HP_0_bm | FILTER_LP_600_gc), gainExponent, SPS, numOfSamples, DataArray);
+}
 
 /*  \brief Collects avg, min, max of NUM_SAMPLES ADC samples
  *  \param channel	0x00 = channel 1 (VIN1) ELEC1/ELEC2
@@ -353,11 +357,12 @@ void enableADCMUX(uint8_t on) {
  *  \param gainExponent		Sets gain to 2^gainExponent[0:2].
  *  \param spsExponent Sets samples per second = 2^spsExponent
 */
-void CO_collectADC(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint16_t SPS, uint32_t numOfSamples, int32_t* DataArray) {
+void CO_collectADC_ext(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint16_t SPS, uint16_t numOfSamples, int32_t* DataArray) {
 
 
 	uint16_t period;
 	ADC_BUFFER = DataArray;
+	ADC_Sampling_Finished = 0;
 	// Turn on power to ADC and PortEx
 	ADCPower(TRUE);
 	
@@ -394,89 +399,144 @@ void CO_collectADC(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, 
 	period = (F_CPU/16)/SPS;
 	TCE1.PER = period;
 	TCE1.CCBBUF = period / 2;
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	//set the period as number of samples to know when to stop sampling (and compensate for discarded samples at start of sampling)
+	TCC1.PER = numOfSamples + ADC_DISCARD;
+	//Configure IO13(PF0) to drive event channel that triggers event every time a sample is collected
+	EVSYS.CH1MUX = EVSYS_CHMUX_PORTF_PIN0_gc;
+	
+	//set event system to update counter of number of samples every sample event
+	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	// Set oscillator source and frequency and start
 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
 	
+	sampleCount = 0;
+	discardCount = 0;
+		
 	// Enable interrupts.
 	PMIC.CTRL |= PMIC_LOLVLEN_bm;
 	sei();
 
-	sampleCount = 0;
-	discardCount = 0;
 	
 	// wait for ADC to collect samples
-	while(sampleCount < numOfSamples);
+	//while(sampleCount < numOfSamples);
 
-	// turn off timer and interupts
-	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
-	PMIC.CTRL &= ~PMIC_LOLVLEN_bm;	
-	cli();
+	// turn off timer and interrupts
+	//TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+	//PMIC.CTRL &= ~PMIC_LOLVLEN_bm;	
+	//cli();
 
-	SPIDisable();	
-	enableADCMUX(FALSE);
+	//SPIDisable();	
+	//enableADCMUX(FALSE);
 	//ADCPower(FALSE);
 }
 
-//continuously take samples and send them via radio. NOT RECOMMENDET
-void CO_collectADC_cont(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t spsExponent) {
+//triggers when specified number of samples has been collected by ADC
+ISR(TCC1_OVF_vect){
 
-uint16_t period;
+	// turn off ADC timer(s)
+	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+	TCC0.CTRLA = ( TCC0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+	TCD0.CTRLA = ( TCD0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+	TCC1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
 
-// Turn on power to ADC and PortEx
-ADCPower(TRUE);
-//get data to write files to SD card
-//getBootSectorData();
-// set gain, filters, and ADC input for appropriate VIN
-set_ampGain(channel, gainExponent);
-set_filter(filterConfig);
+	//turn off SPI bus and ADC MUX used by ADC
+	SPICS(FALSE);
+	SPIDisable();
+	enableADCMUX(FALSE);
+	
+	//set a global flag to tell system that all the samples have been collected
+	ADC_Sampling_Finished = 1;
+}
 
-// if acc channel then enable DC Pass
-// it is assumed that if not using high frequency acc specific function then
-// DC Pass is wanted.
-if ((channel == ADC_CH_6_gc) ||	(channel == ADC_CH_7_gc) ||
-(channel == ADC_CH_8_gc)) ACC_DCPassEnable(TRUE);
+//continuously take samples and send them via radio. NOT RECOMMENDED
+// void CO_collectADC_cont(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t spsExponent) {
+// 
+// uint16_t period;
+// 
+// // Turn on power to ADC and PortEx
+// ADCPower(TRUE);
+// //get data to write files to SD card
+// //getBootSectorData();
+// // set gain, filters, and ADC input for appropriate VIN
+// set_ampGain(channel, gainExponent);
+// set_filter(filterConfig);
+// 
+// // if acc channel then enable DC Pass
+// // it is assumed that if not using high frequency acc specific function then
+// // DC Pass is wanted.
+// if ((channel == ADC_CH_6_gc) ||	(channel == ADC_CH_7_gc) ||
+// (channel == ADC_CH_8_gc)) ACC_DCPassEnable(TRUE);
+// 
+// enableADCMUX(TRUE);
+// setADCInput(channel);
+// SPIInit(SPI_MODE_1_gc);
+// SPIC.CTRL = ADC_SPI_CONFIG_gc;
+// 
+// // Configure IO13 (PF0) to capture ADC DRDY signal
+// PORTF.DIRCLR = PIN0_bm;
+// PORTF.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_TOTEM_gc;
+// //PORTF.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_PULLUP_gc;
+// PORTF.INT1MASK = PIN0_bm;
+// PORTF.INTCTRL = PORT_INT1LVL_MED_gc;
+// 
+// // Configure clock for AD7767 MCLK for desired sample frequency
+// //f_samples = f_MCLK / 16
+// //f_MCLK = f_peripheral(2^25Hz) / (f_period + 1Hz)
+// //the TCE1 counter increments every pulse of the system clock and once it reaches a certain value it 
+// //toggles pin 5 (clock input to ADC). This effectively divides the system clock into a desired clock rate for 
+// //the ADC. 
+// // Set IO14 (PE5) to output
+// PORTE.DIRSET = PIN5_bm;
+// // Set Waveform generator mode(single slope) and enable the CCx output to IO14 (PE5)
+// TCE1.CTRLB = TC_WGMODE_SS_gc | TC1_CCBEN_bm;
+// // set period
+// period = (1 << (21 - spsExponent)) - 1;
+// TCE1.PER = period;
+// TCE1.CCBBUF = period / 2;
+// // Set oscillator source and frequency and start
+// TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
+// 
+// // Enable interrupts.
+// PMIC.CTRL |= PMIC_MEDLVLEN_bm;
+// //enable RR of lowlvl interrupts
+// PMIC.CTRL |= PMIC_RREN_bm; 
+// //perhaps next two lines are redundant...
+// // chb_init();
+// // chb_set_short_addr(moteID);
+// 
+// sampleCount = 0;
+// TotalSampleCount = 0;
+// discardCount = 0;
+// sei();
+// }
 
-enableADCMUX(TRUE);
-setADCInput(channel);
-SPIInit(SPI_MODE_1_gc);
-SPIC.CTRL = ADC_SPI_CONFIG_gc;
+//turns off ADC timers/counters and spi bus 
+//returns number of samples collected by ADC
+void ADC_Stop_Sampling(){
+	
+	// turn off ADC timer(s)
+	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+	TCC0.CTRLA = ( TCC0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+	TCD0.CTRLA = ( TCD0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+	TCC1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
 
-// Configure IO13 (PF0) to capture ADC DRDY signal
-PORTF.DIRCLR = PIN0_bm;
-PORTF.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_TOTEM_gc;
-//PORTF.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_PULLUP_gc;
-PORTF.INT1MASK = PIN0_bm;
-PORTF.INTCTRL = PORT_INT1LVL_MED_gc;
+	//turn off SPI bus and ADC MUX used by ADC
+	SPICS(FALSE);
+	SPIDisable();
+	enableADCMUX(FALSE);
+	ADC_Sampling_Finished = 1;
+}
 
-// Configure clock for AD7767 MCLK for desired sample frequency
-//f_samples = f_MCLK / 16
-//f_MCLK = f_peripheral(2^25Hz) / (f_period + 1Hz)
-//the TCE1 counter increments every pulse of the system clock and once it reaches a certain value it 
-//toggles pin 5 (clock input to ADC). This effectively divides the system clock into a desired clock rate for 
-//the ADC. 
-// Set IO14 (PE5) to output
-PORTE.DIRSET = PIN5_bm;
-// Set Waveform generator mode(single slope) and enable the CCx output to IO14 (PE5)
-TCE1.CTRLB = TC_WGMODE_SS_gc | TC1_CCBEN_bm;
-// set period
-period = (1 << (21 - spsExponent)) - 1;
-TCE1.PER = period;
-TCE1.CCBBUF = period / 2;
-// Set oscillator source and frequency and start
-TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
-
-// Enable interrupts.
-PMIC.CTRL |= PMIC_MEDLVLEN_bm;
-//enable RR of lowlvl interrupts
-PMIC.CTRL |= PMIC_RREN_bm; 
-//perhaps next two lines are redundant...
-// chb_init();
-// chb_set_short_addr(moteID);
-
-sampleCount = 0;
-TotalSampleCount = 0;
-discardCount = 0;
-sei();
+//returns number of samples collected by last ADC sampling time
+uint16_t ADC_Get_Num_Samples(){
+	
+	return TCC1.CNT;
 }
 
 void ADC_Pause_Sampling(){
@@ -490,73 +550,73 @@ void ADC_Resume_Sampling(){
 }	
 
 //ISR used by CO_collectADC_cont function
-ISR(PORTF_INT1_vect) {
-	//freeze mote after x number of samples
-	/*
-	if(TotalSampleCount>=10){
-		SD_disable();
-		while(1){
-			nop();
-		}		
-	}
-	*/		
-	// skip first samples because cannot perform recommended reset
-	if (discardCount < ADC_DISCARD) {
-		discardCount++;
-	}		
-	else {
-		// collect data from offchip ADC
-		SPIInit(SPI_MODE_1_gc);
-		SPIC.CTRL = ADC_SPI_CONFIG_gc;
-		SPICS(TRUE); // CS SPI-SS
-		PORTF.OUTCLR = PIN1_bm; // pull ADC_CS down to enable data read
-		for(uint8_t bufIndex = 0; bufIndex < 3; bufIndex++) {
-			SPIC.DATA = 0xAA; // dummy data to start SPI clock
-			while(!(SPIC.STATUS & SPI_IF_bm));
-			SPIBuffer[bufIndex] = SPIC.DATA;
-		}
-		PORTF.OUTSET = PIN1_bm; // pull ADC_CS up to end data read
-		SPICS(FALSE);
-
-		if(SPIBuffer[0] & BIT7_bm) *(((uint8_t*)&data24Bit[0]) + 3) = 0xFF; // sign extension if negative
-		else *(((uint8_t*)&data24Bit[0]) + 3) = 0x00;				
-		*(((uint8_t*)&data24Bit[0]) + 2) = SPIBuffer[0];
-		*(((uint8_t*)&data24Bit[0]) + 1) = SPIBuffer[1];
-		*(((uint8_t*)&data24Bit[0]) + 0) = SPIBuffer[2];
-		
-		//convert ADC reading to voltage here (in uV)
-		var = data24Bit[0];
-		*((int32_t*)&FRAMReadBuffer[sampleCount*4]) = (int32_t) -(var * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
-		
-		sampleCount++;
-	//after 128 samples, store the data into sd card and reset sample buffer
-	//after 30 samples, send the data over the radio
-	if (sampleCount >= 30) { 
-		//PORTF.OUTCLR = PIN1_bm;	//set ADC cs to high
-		//SPIInit(SPI_MODE_0_gc);
-		//SPICS(TRUE);
-		//PortEx_DIRCLR(BIT3_bm, PS_BANKB);  //pull SD card CS low
-		//PortEx_OUTCLR(BIT3_bm, PS_BANKB);
-		//writeFile("samples");
-		//writeFile("data",FRAMReadBuffer,512); 
-		/*
-		SD_write_block(10,FRAMReadBuffer,512);
-		for (int i=0;i<512;i++) FRAMReadBuffer[i] = 0;
-		SD_read_block(10,FRAMReadBuffer);
-		*/
-		sampleCount=0;
-		TotalSampleCount++;
-		discardCount = ADC_DISCARD -1; //discard the next sample after pausing the sampling to send/store data since the sample ready flag will be outdated and the value might be bad
-		//PORTF.OUTSET = PIN1_bm; //re-enable ADC for further sampling
-		
-		//write code to send the data over radio instead. Include some identifying info (like mote number) with the data.
-		memmove((void*)FRAMReadBuffer+2,(const void*)FRAMReadBuffer,sampleCount*4); //move the data in the FRAM buffer up by 1 byte to make room for metadata
-		FRAMReadBuffer[0] = moteID;		//send moteID of the mote that gathered the data
-		FRAMReadBuffer[1] = (uint8_t)sampleCount;	//send the number of data samples gathered cast as a byte since no more than 30/31 samples should be send at a time
-		chb_write(0x0000,FRAMReadBuffer,sampleCount*4+2);	//send the samples and the metadata (for now just 1 byte containing moteID) to the base station
-	}	
-	}	
-}
+// ISR(PORTF_INT1_vect) {
+// 	//freeze mote after x number of samples
+// 	/*
+// 	if(TotalSampleCount>=10){
+// 		SD_disable();
+// 		while(1){
+// 			nop();
+// 		}		
+// 	}
+// 	*/		
+// 	// skip first samples because cannot perform recommended reset
+// 	if (discardCount < ADC_DISCARD) {
+// 		discardCount++;
+// 	}		
+// 	else {
+// 		// collect data from offchip ADC
+// 		SPIInit(SPI_MODE_1_gc);
+// 		SPIC.CTRL = ADC_SPI_CONFIG_gc;
+// 		SPICS(TRUE); // CS SPI-SS
+// 		PORTF.OUTCLR = PIN1_bm; // pull ADC_CS down to enable data read
+// 		for(uint8_t bufIndex = 0; bufIndex < 3; bufIndex++) {
+// 			SPIC.DATA = 0xAA; // dummy data to start SPI clock
+// 			while(!(SPIC.STATUS & SPI_IF_bm));
+// 			SPIBuffer[bufIndex] = SPIC.DATA;
+// 		}
+// 		PORTF.OUTSET = PIN1_bm; // pull ADC_CS up to end data read
+// 		SPICS(FALSE);
+// 
+// 		if(SPIBuffer[0] & BIT7_bm) *(((uint8_t*)&data24Bit[0]) + 3) = 0xFF; // sign extension if negative
+// 		else *(((uint8_t*)&data24Bit[0]) + 3) = 0x00;				
+// 		*(((uint8_t*)&data24Bit[0]) + 2) = SPIBuffer[0];
+// 		*(((uint8_t*)&data24Bit[0]) + 1) = SPIBuffer[1];
+// 		*(((uint8_t*)&data24Bit[0]) + 0) = SPIBuffer[2];
+// 		
+// 		//convert ADC reading to voltage here (in uV)
+// 		var = data24Bit[0];
+// 		*((int32_t*)&FRAMReadBuffer[sampleCount*4]) = (int32_t) -(var * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+// 		
+// 		sampleCount++;
+// 	//after 128 samples, store the data into sd card and reset sample buffer
+// 	//after 30 samples, send the data over the radio
+// 	if (sampleCount >= 30) { 
+// 		//PORTF.OUTCLR = PIN1_bm;	//set ADC cs to high
+// 		//SPIInit(SPI_MODE_0_gc);
+// 		//SPICS(TRUE);
+// 		//PortEx_DIRCLR(BIT3_bm, PS_BANKB);  //pull SD card CS low
+// 		//PortEx_OUTCLR(BIT3_bm, PS_BANKB);
+// 		//writeFile("samples");
+// 		//writeFile("data",FRAMReadBuffer,512); 
+// 		/*
+// 		SD_write_block(10,FRAMReadBuffer,512);
+// 		for (int i=0;i<512;i++) FRAMReadBuffer[i] = 0;
+// 		SD_read_block(10,FRAMReadBuffer);
+// 		*/
+// 		sampleCount=0;
+// 		TotalSampleCount++;
+// 		discardCount = ADC_DISCARD -1; //discard the next sample after pausing the sampling to send/store data since the sample ready flag will be outdated and the value might be bad
+// 		//PORTF.OUTSET = PIN1_bm; //re-enable ADC for further sampling
+// 		
+// 		//write code to send the data over radio instead. Include some identifying info (like mote number) with the data.
+// 		memmove((void*)FRAMReadBuffer+2,(const void*)FRAMReadBuffer,sampleCount*4); //move the data in the FRAM buffer up by 1 byte to make room for metadata
+// 		FRAMReadBuffer[0] = moteID;		//send moteID of the mote that gathered the data
+// 		FRAMReadBuffer[1] = (uint8_t)sampleCount;	//send the number of data samples gathered cast as a byte since no more than 30/31 samples should be send at a time
+// 		chb_write(0x0000,FRAMReadBuffer,sampleCount*4+2);	//send the samples and the metadata (for now just 1 byte containing moteID) to the base station
+// 	}	
+// 	}	
+// }
 
 //ISR used by CO_collectADC function
 ISR(PORTF_INT0_vect) {
@@ -678,12 +738,20 @@ uint16_t averagingPtC, uint16_t averagingPtD) {
 	ADCPower(FALSE);
 	
 }*/
-
-void CO_collectSeismic3Axises(uint8_t filterConfig, uint8_t gain[], uint16_t subsamplesPerSecond,
+void CO_collectSeismic3Axises(uint8_t gain[], uint16_t subsamplesPerSecond,
 uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
-uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, int32_t* DataArray) {
+uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray) {
+	
+	CO_collectSeismic3Axises_ext((uint8_t) (FILTER_CH_3AND7_bm | FILTER_HP_0_bm | FILTER_LP_600_gc), gain, subsamplesPerSecond,
+	subsamplesPerChannel, DCPassEnable, averagingPtA, averagingPtB,
+	averagingPtC, averagingPtD, numOfSamples, DataArray);
+}	
+void CO_collectSeismic3Axises_ext(uint8_t filterConfig, uint8_t gain[], uint16_t subsamplesPerSecond,
+uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
+uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray) {
 	
 	ADC_BUFFER = DataArray;
+	ADC_Sampling_Finished = 0;
 	// Turn on power to ADC and PortEx
 	ADCPower(TRUE);
 	
@@ -737,21 +805,33 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, int32_t* Da
 	TCE1.PER = (F_CPU/16)/subsamplesPerSecond;
 	//TCE1.CCBBUF = (0x10 << subsamplesPerSecond);
 	TCE1.CCBBUF = ((F_CPU/16)/subsamplesPerSecond)/2;
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+	//set the period as number of samples to know when to stop sampling
+	TCC1.PER = numOfSamples;
+	//Configure IO13(PF0) to drive event channel that triggers event every time the 4 samples are collected and averaged
+	EVSYS.CH1MUX = EVSYS_CHMUX_TCD0_OVF_gc;
+	//set event system to update counter of number of samples every sample event
+	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
+		
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
 	// Set oscillator source and frequency and start
 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
 	
 	// wait for ADC to collect samples
-	while(sampleCount < numOfSamples);
+	//while(sampleCount < numOfSamples);
 
 	// turn off timer and interrupts
-	TCC0.CTRLA = ( TCC0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
-	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
-	PMIC.CTRL &= ~(PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm);
-	cli();
-
-	SPICS(FALSE);
-	SPIDisable();
-	enableADCMUX(FALSE);
+// 	TCC0.CTRLA = ( TCC0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+// 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+// 	PMIC.CTRL &= ~(PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm);
+// 	cli();
+// 
+// 	SPICS(FALSE);
+// 	SPIDisable();
+// 	enableADCMUX(FALSE);
 	//ADCPower(FALSE);
 }
 
@@ -804,11 +884,19 @@ ISR(TCC0_OVF_vect) {
 
 }
 
+void CO_collectSeismic1Channel(uint8_t channel, uint8_t gain, uint16_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA,
+								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray) {
+	
+	CO_collectSeismic1Channel_ext(channel, (uint8_t) (FILTER_CH_3AND7_bm | FILTER_HP_0_bm | FILTER_LP_600_gc), gain, subsamplesPerSecond, subsamplesPerSample, DCPassEnable, averagingPtA,
+	averagingPtB, averagingPtC, averagingPtD, numOfSamples, DataArray);
+}
+
 //collect data from 1 axis of accelerometer
-void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t gain, uint16_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA, 
-								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, int32_t* DataArray) {
+void CO_collectSeismic1Channel_ext(uint8_t channel, uint8_t filterConfig, uint8_t gain, uint16_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA, 
+								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray) {
 	
 	ADC_BUFFER=DataArray;
+	ADC_Sampling_Finished = 0;
 	// Turn on power to ADC and PortEx
 	ADCPower(TRUE);
 	
@@ -861,21 +949,33 @@ void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t ga
 	//TCE1.CCBBUF = (0x10 << subsamplesPerSecond);
 	TCE1.PER = (F_CPU/16)/subsamplesPerSecond;
 	TCE1.CCBBUF = ((F_CPU/16)/subsamplesPerSecond)/2;
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+	//set the period as number of samples to know when to stop sampling
+	TCC1.PER = numOfSamples;
+	//Configure IO13(PF0) to drive event channel that triggers event every time the 4 samples are collected and averaged
+	EVSYS.CH1MUX = EVSYS_CHMUX_TCD0_OVF_gc;
+	//set event system to update counter of number of samples every sample event
+	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
+		
+	////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 	// Set oscillator source and frequency and start
 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
 	
 	// wait for ADC to collect samples
-	while(sampleCount < numOfSamples);
+	//while(sampleCount < numOfSamples);
 
 	// turn off timer and interrupts
-	TCD0.CTRLA = ( TCD0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
-	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
-	PMIC.CTRL &= ~(PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm);
-	cli();
-
-	SPICS(FALSE);
-	SPIDisable();
-	enableADCMUX(FALSE);
+// 	TCD0.CTRLA = ( TCD0.CTRLA & ~TC0_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+// 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_OFF_gc;
+// 	PMIC.CTRL &= ~(PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm);
+// 	cli();
+// 
+// 	SPICS(FALSE);
+// 	SPIDisable();
+// 	enableADCMUX(FALSE);
 	
 }
 

@@ -92,6 +92,7 @@ volatile uint32_t sampleCount;  // sample and discard counter for array offset
 volatile uint16_t TotalSampleCount;	// total samples collected
 //volatile int32_t* ADC_BUFFER;	// pointer used to save samples to user specified buffer
 int32_t* ADC_BUFFER;	// pointer used to save samples to user specified buffer
+volatile uint8_t ADC_Sampling_Finished;
 
 //ADC sampling functions
 void CO_collectTemp(uint16_t *avgV, uint16_t *minV, uint16_t *maxV);
@@ -99,22 +100,30 @@ void CO_collectBatt(uint16_t *avgV, uint16_t *minV, uint16_t *maxV);
 void CO_collectSP(uint8_t channel, int32_t *averageV, int32_t *minV,
 int32_t *maxV, uint8_t gainExponent);
 //collect data from one channel of ADC
-void CO_collectADC(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint16_t sps, uint32_t numOfSamples, int32_t* DataArray);
+void CO_collectADC(uint8_t channel, uint8_t gainExponent, uint16_t SPS, uint16_t numOfSamples, int32_t* DataArray);
+void CO_collectADC_ext(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint16_t sps, uint16_t numOfSamples, int32_t* DataArray);
 //collect ADC data and send it over the radio every 128 samples
-void CO_collectADC_cont(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t sps);
+//void CO_collectADC_cont(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint8_t sps);
 // //collect samples from accelerometer (3-axises). OBSOLETE
 // void CO_collectSeismic3Channel(uint8_t filterConfig, uint8_t gain[], uint8_t subsamplesPerSecond,
 // uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
 // uint16_t averagingPtC, uint16_t averagingPtD);
 //collect samples from accelerometer (single axis)
-void CO_collectSeismic1Channel(uint8_t channel, uint8_t filterConfig, uint8_t gain,
+void CO_collectSeismic1Channel(uint8_t channel, uint8_t gain,
 uint16_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable,
 uint16_t averagingPtA, uint16_t averagingPtB, uint16_t averagingPtC,
-uint16_t averagingPtD, uint32_t numOfSamples, int32_t* DataArray);
+uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray);
+void CO_collectSeismic1Channel_ext(uint8_t channel, uint8_t filterConfig, uint8_t gain,
+uint16_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable,
+uint16_t averagingPtA, uint16_t averagingPtB, uint16_t averagingPtC,
+uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray);
 //collect accelerometer readings from all 3 axises 
-void CO_collectSeismic3Axises(uint8_t filterConfig, uint8_t gain[], uint16_t subsamplesPerSecond,
+void CO_collectSeismic3Axises(uint8_t gain[], uint16_t subsamplesPerSecond,
 uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
-uint16_t averagingPtC, uint16_t averagingPtD, uint32_t numOfSamples, int32_t* DataArray);
+uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray);
+void CO_collectSeismic3Axises_ext(uint8_t filterConfig, uint8_t gain[], uint16_t subsamplesPerSecond,
+uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
+uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray);
 void sampleCurrentChannel();
 //write collected seismic channels to FRAM. OBSOLETE
 void writeSE2FRAM();
@@ -128,6 +137,8 @@ void set_ampGain(uint8_t channel, uint8_t gainExponent);
 void ACC_DCPassEnable(uint8_t enable);
 void ADC_Pause_Sampling();
 void ADC_Resume_Sampling();
+void ADC_Stop_Sampling();
+uint16_t ADC_Get_Num_Samples();
 
 
 #endif /* ADC_H_ */

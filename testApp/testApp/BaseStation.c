@@ -49,6 +49,18 @@ int main(){
 			length = chb_read((chb_rx_data_t*)FRAMReadBuffer);
 			//pass it to USB
 			SerialWriteBuffer(FRAMReadBuffer,(uint32_t)length);
+		}
+		//check for inputs over serial
+		length = 0;
+		while(USARTC0.STATUS & BIT7_bm){
+			//read bytes over serial into array
+			FRAMReadBuffer[length] = SerialReadByte();
+			length++;
+		}
+		if(length > 0){
+			//process/send the bytes over radio
+			//switch(FRAMReadBuffer[0])
+			chb_write(0xFFFF,FRAMReadBuffer,length);
 		}		
 	}
 }
