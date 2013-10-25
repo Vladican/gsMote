@@ -11,6 +11,9 @@ int main(){
 	uint8_t length;
 	uint8_t gain = GAIN_1_gc;
 	uint16_t freq = 1000;
+	uint32_t samples = 0;
+	DataAvailable = 0;
+	ADC_Sampling_Finished = 1;
 	chb_init();
 	chb_set_channel(1);
 	chb_set_short_addr(0x0002);
@@ -24,12 +27,10 @@ int main(){
 				switch ( FRAMReadBuffer[0])
 				{
 				case 's':
-					while(1){
-						//collect data if the ADC is not collecting any data right now
-						if(ADC_Sampling_Finished){
-							CO_collectADC(ADC_CH_1_gc, gain, freq, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
-						}						
-					}
+					//collect data if the ADC is not collecting any data right now
+					if(ADC_Sampling_Finished){
+						CO_collectADC(ADC_CH_1_gc, gain, freq, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
+					}						
 					break;
 				case 'g':
 					//set gain to what is specified
@@ -72,15 +73,18 @@ int main(){
 					if(!ADC_Sampling_Finished){
 						ADC_Stop_Sampling();
 					}
-					//otherwise, the ADC has finished sampling on its own and the data will be transmitted after this case statement
+					//otherwise, the ADC has finished sampling on its own and the data will be transmitted after this switch statement
 					break;
 				}	
 			}			
 		}		
 		//if all data collected or ADC was stopped while sampling, send collected data to base station
-		if(ADC_Sampling_Finished){
-			uint32_t samples = ADC_Get_Num_Samples();
+		//samples = ADC_Get_Num_Samples();
+		if(ADC_Sampling_Finished && DataAvailable){
+			//get number of data points collected
+			samples = ADC_Get_Num_Samples();
 			if(samples > 0) chb_write(0x0000,FRAMReadBuffer,samples*4);
+			DataAvailable = 0;
 		}	
 	}	
 }

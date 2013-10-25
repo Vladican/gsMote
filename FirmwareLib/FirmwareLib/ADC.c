@@ -1,4 +1,5 @@
-#include "E-000001-000009_firmware_rev_1_0.h"
+
+#include "ADC.h"
 
 volatile uint8_t checksumADC[3] = {0};  // checksum for FRAM test
 volatile uint8_t checksumFRAM[3] = {0};  // checksum for FRAM test
@@ -385,7 +386,7 @@ void CO_collectADC_ext(uint8_t channel, uint8_t filterConfig, uint8_t gainExpone
 	PORTF.DIRCLR = PIN0_bm;
 	PORTF.PIN0CTRL = PORT_ISC_FALLING_gc | PORT_OPC_TOTEM_gc;
 	PORTF.INT0MASK = PIN0_bm;
-	PORTF.INTCTRL = PORT_INT0LVL_LO_gc;				
+	PORTF.INTCTRL = PORT_INT0LVL_MED_gc;				
 
 	// Configure clock for AD7767 MCLK for desired sample frequency
 	// f_samples = f_MCLK / 16
@@ -403,12 +404,13 @@ void CO_collectADC_ext(uint8_t channel, uint8_t filterConfig, uint8_t gainExpone
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
 	//set the period as number of samples to know when to stop sampling (and compensate for discarded samples at start of sampling)
-	TCC1.PER = numOfSamples + ADC_DISCARD;
+	TCC1.PER = numOfSamples;
 	//Configure IO13(PF0) to drive event channel that triggers event every time a sample is collected
 	EVSYS.CH1MUX = EVSYS_CHMUX_PORTF_PIN0_gc;
-	
+	//set overflow interrupt to low lvl
+	TCC1.INTCTRLA =  TC_OVFINTLVL_LO_gc;
 	//set event system to update counter of number of samples every sample event
-	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
+	//TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
@@ -452,6 +454,7 @@ ISR(TCC1_OVF_vect){
 	
 	//set a global flag to tell system that all the samples have been collected
 	ADC_Sampling_Finished = 1;
+	DataAvailable = 1;
 }
 
 //continuously take samples and send them via radio. NOT RECOMMENDED
@@ -531,12 +534,19 @@ void ADC_Stop_Sampling(){
 	SPIDisable();
 	enableADCMUX(FALSE);
 	ADC_Sampling_Finished = 1;
+	DataAvailable = 1;
 }
 
 //returns number of samples collected by last ADC sampling time
 uint16_t ADC_Get_Num_Samples(){
 	
-	return TCC1.CNT;
+	if(ADC_Sampling_Finished){
+		uint16_t count;
+		count = TCC1.CNT;
+		if(count == 0) count = TCC1.PER;
+		return count;
+	}
+	else return 0;		
 }
 
 void ADC_Pause_Sampling(){
@@ -624,6 +634,10 @@ ISR(PORTF_INT0_vect) {
 	volatile int32_t currentSample;
 	if (discardCount < ADC_DISCARD) {
 		discardCount++;
+		if(discardCount == ADC_DISCARD){
+			//set event system to update counter of number of samples every sample event from now on
+			TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
+		}
 	} else { 
 		// collect data from offchip ADC
 		SPICS(TRUE); // CS SPI-SS
@@ -811,7 +825,9 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* Da
 	//set the period as number of samples to know when to stop sampling
 	TCC1.PER = numOfSamples;
 	//Configure IO13(PF0) to drive event channel that triggers event every time the 4 samples are collected and averaged
-	EVSYS.CH1MUX = EVSYS_CHMUX_TCD0_OVF_gc;
+	EVSYS.CH1MUX = EVSYS_CHMUX_TCC0_OVF_gc;
+	//set overflow interrupt to med lvl
+	TCC1.INTCTRLA =  TC_OVFINTLVL_LO_gc;
 	//set event system to update counter of number of samples every sample event
 	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
 		
@@ -956,6 +972,8 @@ void CO_collectSeismic1Channel_ext(uint8_t channel, uint8_t filterConfig, uint8_
 	TCC1.PER = numOfSamples;
 	//Configure IO13(PF0) to drive event channel that triggers event every time the 4 samples are collected and averaged
 	EVSYS.CH1MUX = EVSYS_CHMUX_TCD0_OVF_gc;
+	//set overflow interrupt to med lvl
+	TCC1.INTCTRLA =  TC_OVFINTLVL_LO_gc;
 	//set event system to update counter of number of samples every sample event
 	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
 		

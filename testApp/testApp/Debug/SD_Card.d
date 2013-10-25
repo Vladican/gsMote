@@ -1,4 +1,5 @@
 SD_Card.d SD_Card.o: ../../../FirmwareLib/FirmwareLib/SD_Card.c \
+ ../../../FirmwareLib/FirmwareLib/SD_Card.h \
  ../../../FirmwareLib/FirmwareLib/E-000001-000009_firmware_rev_1_0.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/avr/io.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/avr/sfr_defs.h \
@@ -27,11 +28,12 @@ SD_Card.d SD_Card.o: ../../../FirmwareLib/FirmwareLib/SD_Card.c \
  ../../../FirmwareLib/FirmwareLib/types.h \
  ../../../FirmwareLib/FirmwareLib/chb_drvr.h \
  ../../../FirmwareLib/FirmwareLib/ADC.h \
- ../../../FirmwareLib/FirmwareLib/SD_Card.h \
  ../../../FirmwareLib/FirmwareLib/SerialUSB.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/string.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/../../../../avr/include/stdio.h \
  c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.65\avrtoolchain\bin\../lib/gcc/avr/4.6.2/include/stdarg.h
+
+../../../FirmwareLib/FirmwareLib/SD_Card.h:
 
 ../../../FirmwareLib/FirmwareLib/E-000001-000009_firmware_rev_1_0.h:
 
@@ -88,8 +90,6 @@ c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.
 ../../../FirmwareLib/FirmwareLib/chb_drvr.h:
 
 ../../../FirmwareLib/FirmwareLib/ADC.h:
-
-../../../FirmwareLib/FirmwareLib/SD_Card.h:
 
 ../../../FirmwareLib/FirmwareLib/SerialUSB.h:
 

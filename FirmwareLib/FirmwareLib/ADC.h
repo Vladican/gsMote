@@ -9,6 +9,8 @@
 #ifndef ADC_H_
 #define ADC_H_
 
+#include "E-000001-000009_firmware_rev_1_0.h"
+
 // AD7767
 #define ADC_VREF 2500000  // 2.5volts in microvolts
 #define ADC_MAX 0x7FFFFF  // 24-bit ADC.  2^23 because signed
@@ -93,6 +95,7 @@ volatile uint16_t TotalSampleCount;	// total samples collected
 //volatile int32_t* ADC_BUFFER;	// pointer used to save samples to user specified buffer
 int32_t* ADC_BUFFER;	// pointer used to save samples to user specified buffer
 volatile uint8_t ADC_Sampling_Finished;
+volatile uint8_t DataAvailable;
 
 //ADC sampling functions
 void CO_collectTemp(uint16_t *avgV, uint16_t *minV, uint16_t *maxV);

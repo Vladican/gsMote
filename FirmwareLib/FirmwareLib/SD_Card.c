@@ -1,4 +1,4 @@
-# include "E-000001-000009_firmware_rev_1_0.h"
+# include "SD_Card.h"
 
 //the following function turns on power to the sd card and port expander and initializes the sdhc card in spi mode
 //returns 0 if successful or 1 if not

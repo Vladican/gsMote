@@ -9,6 +9,8 @@
 #ifndef SD_CARD_H_
 #define SD_CARD_H_
 
+#include "E-000001-000009_firmware_rev_1_0.h"
+
 //SD card defines
 #define SDHC_SECTOR_SIZE 512
 #define SDHC_CMD_RESET 0x00
