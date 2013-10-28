@@ -38,7 +38,7 @@ int main(){
 	chb_init();
 	chb_set_short_addr(0x0000);
 	chb_set_channel(1);
-	StartSerial((uint32_t)9600);
+	StartSerial((uint32_t)57600);
 	//radio_msg_received_int_enable();
 	while(!chb_set_state(CHB_RX_AACK_ON) == RADIO_SUCCESS);
 	pcb_t* pcb = chb_get_pcb();
