@@ -10,8 +10,8 @@ int main(){
 	
 	uint8_t length;
 	uint8_t gain = GAIN_1_gc;
-	uint16_t freq = 5000;
-	uint32_t samples = 0;
+	uint16_t freq = 6000;
+	volatile uint32_t samples = 0;
 	DataAvailable = 0;
 	ADC_Sampling_Finished = 1;
 	uint8_t RadioMessageBuffer[20];
@@ -32,7 +32,7 @@ int main(){
 					//collect data if the ADC is not collecting any data right now
 					if(ADC_Sampling_Finished){
 						//CO_collectADC(ADC_CH_1_gc, gain, freq, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
-						CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 5, TRUE, 1, 2, 3, 4, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
+						CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, TRUE, 1, 2, 3, 4, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
 					}						
 					break;
 				case 'G':
@@ -84,6 +84,7 @@ int main(){
 						samples = ADC_Get_Num_Samples();
 						if(samples > 0) chb_write(0x0000,FRAMReadBuffer,samples*4);
 						DataAvailable = 0;
+						samples = 0;
 					}
 					break;
 				}	

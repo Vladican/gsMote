@@ -361,6 +361,10 @@ void CO_collectADC(uint8_t channel, uint8_t gainExponent, uint16_t SPS, uint16_t
 void CO_collectADC_ext(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint16_t SPS, uint16_t numOfSamples, int32_t* DataArray) {
 
 
+	#ifndef F_CPU
+	#define F_CPU 32000000UL
+	#endif
+
 	uint16_t period;
 	ADC_BUFFER = DataArray;
 	ADC_Sampling_Finished = 0;
@@ -395,7 +399,7 @@ void CO_collectADC_ext(uint8_t channel, uint8_t filterConfig, uint8_t gainExpone
 	PORTE.DIRSET = PIN5_bm;
 	// Set Waveform generator mode and enable the CCx output to IO14 (PE5)
 	TCE1.CTRLB = TC_WGMODE_SS_gc | TC1_CCBEN_bm;
-	// set period
+	// set period of waveform generator and ccb as duty cycle (want half the period for duty cycle to have good clock signal)
 	//period = (1 << (21 - spsExponent)) - 1;
 	period = (F_CPU/16)/SPS;
 	TCE1.PER = period;
@@ -421,7 +425,7 @@ void CO_collectADC_ext(uint8_t channel, uint8_t filterConfig, uint8_t gainExpone
 	discardCount = 0;
 		
 	// Enable interrupts.
-	PMIC.CTRL |= PMIC_LOLVLEN_bm;
+	PMIC.CTRL |= PMIC_LOLVLEN_bm | PMIC_MEDLVLEN_bm;
 	sei();
 
 	
@@ -541,7 +545,7 @@ void ADC_Stop_Sampling(){
 uint16_t ADC_Get_Num_Samples(){
 	
 	if(ADC_Sampling_Finished){
-		uint16_t count;
+		volatile uint16_t count;
 		count = TCC1.CNT;
 		if(count == 0) count = TCC1.PER;
 		return count;
@@ -632,6 +636,7 @@ void ADC_Resume_Sampling(){
 ISR(PORTF_INT0_vect) {
 	// skip first samples because cannot perform recommended reset
 	volatile int32_t currentSample;
+	volatile int64_t var;
 	if (discardCount < ADC_DISCARD) {
 		discardCount++;
 		if(discardCount == ADC_DISCARD){
@@ -764,6 +769,10 @@ void CO_collectSeismic3Axises_ext(uint8_t filterConfig, uint8_t gain[], uint16_t
 uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
 uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray) {
 	
+	#ifndef F_CPU
+	#define F_CPU 32000000UL
+	#endif
+	
 	ADC_BUFFER = DataArray;
 	ADC_Sampling_Finished = 0;
 	// Turn on power to ADC and PortEx
@@ -805,7 +814,7 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* Da
 	checksumADC[0] = checksumADC[1] = checksumADC[2] = 0;
 
 	// Enable interrupts.
-	PMIC.CTRL |= (PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm);
+	PMIC.CTRL |= (PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_LOLVLEN_bm);
 	sei();
 
 	SPICS(TRUE);
@@ -814,7 +823,7 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* Da
 	PORTE.DIRSET = PIN5_bm;
 	// Set Waveform generator mode and enable the CCx output to IO14 (PE5)
 	TCE1.CTRLB = TC_WGMODE_SS_gc | TC1_CCBEN_bm;
-	// set period
+	// set period of waveform generator and duty cycle (want duty cycle to be half the period to get clean clock signal)
 	//TCE1.PER = (0x20 << subsamplesPerSecond);
 	TCE1.PER = (F_CPU/16)/subsamplesPerSecond;
 	//TCE1.CCBBUF = (0x10 << subsamplesPerSecond);
@@ -826,7 +835,7 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* Da
 	TCC1.PER = numOfSamples;
 	//Configure IO13(PF0) to drive event channel that triggers event every time the 4 samples are collected and averaged
 	EVSYS.CH1MUX = EVSYS_CHMUX_TCC0_OVF_gc;
-	//set overflow interrupt to med lvl
+	//set overflow interrupt to low lvl
 	TCC1.INTCTRLA =  TC_OVFINTLVL_LO_gc;
 	//set event system to update counter of number of samples every sample event
 	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
@@ -882,7 +891,7 @@ ISR(TCC0_CCD_vect) {
 
 //consolidate the 4 averaging points
 ISR(TCC0_OVF_vect) {
-	volatile int32_t sum = 0;
+	volatile int64_t sum = 0;
 	volatile int32_t currentSample;
 		
 	for(uint8_t i = 0; i < 12; i+=3) {
@@ -895,7 +904,7 @@ ISR(TCC0_OVF_vect) {
 	}
 		
 	sum = sum / 4;
-	ADC_BUFFER[sampleCount] = currentSample;
+	ADC_BUFFER[sampleCount] = (int32_t)(sum * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
 	sampleCount++;
 
 }
@@ -910,6 +919,10 @@ void CO_collectSeismic1Channel(uint8_t channel, uint8_t gain, uint16_t subsample
 //collect data from 1 axis of accelerometer
 void CO_collectSeismic1Channel_ext(uint8_t channel, uint8_t filterConfig, uint8_t gain, uint16_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA, 
 								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray) {
+	
+	#ifndef F_CPU
+	#define F_CPU 32000000UL
+	#endif
 	
 	ADC_BUFFER=DataArray;
 	ADC_Sampling_Finished = 0;
@@ -951,7 +964,7 @@ void CO_collectSeismic1Channel_ext(uint8_t channel, uint8_t filterConfig, uint8_
 	//checksumADC[0] = checksumADC[1] = checksumADC[2] = 0;
 	
 	// Enable interrupts.
-	PMIC.CTRL |= PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm;
+	PMIC.CTRL |= PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_LOLVLEN_bm;
 	sei();
 
 	SPICS(TRUE);
@@ -972,7 +985,7 @@ void CO_collectSeismic1Channel_ext(uint8_t channel, uint8_t filterConfig, uint8_
 	TCC1.PER = numOfSamples;
 	//Configure IO13(PF0) to drive event channel that triggers event every time the 4 samples are collected and averaged
 	EVSYS.CH1MUX = EVSYS_CHMUX_TCD0_OVF_gc;
-	//set overflow interrupt to med lvl
+	//set overflow interrupt to low lvl
 	TCC1.INTCTRLA =  TC_OVFINTLVL_LO_gc;
 	//set event system to update counter of number of samples every sample event
 	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
@@ -1020,7 +1033,7 @@ ISR(TCD0_CCD_vect) {
 //consolidate the 4 averaging points
 ISR(TCD0_OVF_vect) {
 
-	volatile int32_t sum = 0;
+	volatile int64_t sum = 0;
 	volatile int32_t currentSample;
 		
 	for(uint8_t i = 0; i < 12; i+=3) {
@@ -1034,7 +1047,7 @@ ISR(TCD0_OVF_vect) {
 		
 	sum = sum / 4;
 	//get average of the 4 subsamples
-	ADC_BUFFER[sampleCount] = sum;
+	ADC_BUFFER[sampleCount] = (int32_t)(sum * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
 	sampleCount++;
 }
 

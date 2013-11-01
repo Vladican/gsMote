@@ -89,7 +89,7 @@ volatile uint8_t SPICount, discardCount;
 volatile int32_t *temp32;  // for parsing SPI transactions
 volatile int64_t *temp64; // for parsing SPI transactions from 8bit pieces to 64bit whole
 volatile int64_t sumFRAM[3];  // sum of all FRAM samples for averaging
-volatile int64_t var;
+//volatile int64_t var;
 volatile uint32_t sampleCount;  // sample and discard counter for array offset
 volatile uint16_t TotalSampleCount;	// total samples collected
 //volatile int32_t* ADC_BUFFER;	// pointer used to save samples to user specified buffer
