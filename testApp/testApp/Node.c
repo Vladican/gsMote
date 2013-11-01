@@ -10,7 +10,7 @@ int main(){
 	
 	uint8_t length;
 	uint8_t gain = GAIN_1_gc;
-	uint16_t freq = 6000;
+	uint16_t freq = 1000;
 	volatile uint32_t samples = 0;
 	DataAvailable = 0;
 	ADC_Sampling_Finished = 1;
@@ -31,8 +31,8 @@ int main(){
 				case 'R':
 					//collect data if the ADC is not collecting any data right now
 					if(ADC_Sampling_Finished){
-						//CO_collectADC(ADC_CH_1_gc, gain, freq, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
-						CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, TRUE, 1, 2, 3, 4, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
+						CO_collectADC(ADC_CH_1_gc, gain, freq, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
+						//CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, TRUE, 1, 2, 3, 4, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
 					}						
 					break;
 				case 'G':
@@ -82,7 +82,14 @@ int main(){
 					if(ADC_Sampling_Finished && DataAvailable){
 						//get number of data points collected
 						samples = ADC_Get_Num_Samples();
-						if(samples > 0) chb_write(0x0000,FRAMReadBuffer,samples*4);
+						if(samples > 0){
+							for(int i=0;i<(4*samples); i+=100){ 
+								if((samples*4-i) >= 100) chb_write(0x0000,(FRAMReadBuffer+i),100);
+								else chb_write(0x0000,(FRAMReadBuffer+i),(samples*4-i));
+								//add 1 ms delay between messages
+								delay_us(10000);
+							}							
+						}							
 						DataAvailable = 0;
 						samples = 0;
 					}

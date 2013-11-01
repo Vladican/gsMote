@@ -38,7 +38,7 @@ void SerialWriteByte(uint8_t byte){
 	while((USARTC0.STATUS & BIT5_bm) != BIT5_bm){
 		//wait
 	}
-	//incremented byte
+	//send byte
 	USARTC0.DATA = byte;
 	//wait for transmit to finish
 	//while((USARTC0.STATUS & BIT6_bm) != BIT6_bm) {

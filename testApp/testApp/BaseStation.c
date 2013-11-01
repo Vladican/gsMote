@@ -34,11 +34,11 @@ int main(){
 	}	
 	*/
 	//uint8_t data_byte;
-	uint8_t length;
+	uint32_t length;
 	chb_init();
 	chb_set_short_addr(0x0000);
 	chb_set_channel(1);
-	StartSerial((uint32_t)57600);
+	StartSerial((uint32_t)128000);
 	//radio_msg_received_int_enable();
 	while(!chb_set_state(CHB_RX_AACK_ON) == RADIO_SUCCESS);
 	pcb_t* pcb = chb_get_pcb();
@@ -48,7 +48,7 @@ int main(){
 			//read the data
 			length = chb_read((chb_rx_data_t*)FRAMReadBuffer);
 			//pass it to USB
-			SerialWriteBuffer(FRAMReadBuffer,(uint32_t)length);
+			SerialWriteBuffer(FRAMReadBuffer,length);
 		}
 		//check for inputs over serial
 		length = 0;
