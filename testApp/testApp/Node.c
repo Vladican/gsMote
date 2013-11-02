@@ -31,8 +31,8 @@ int main(){
 				case 'R':
 					//collect data if the ADC is not collecting any data right now
 					if(ADC_Sampling_Finished){
-						CO_collectADC(ADC_CH_1_gc, gain, freq, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
-						//CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, TRUE, 1, 2, 3, 4, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
+						//CO_collectADC(ADC_CH_1_gc, gain, freq, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
+						CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, TRUE, 1, 2, 3, 4, FR_READ_BUFFER_SIZE/4,(int32_t*)FRAMReadBuffer);
 					}						
 					break;
 				case 'G':
@@ -83,15 +83,20 @@ int main(){
 						//get number of data points collected
 						samples = ADC_Get_Num_Samples();
 						if(samples > 0){
-							for(int i=0;i<(4*samples); i+=100){ 
-								if((samples*4-i) >= 100) chb_write(0x0000,(FRAMReadBuffer+i),100);
-								else chb_write(0x0000,(FRAMReadBuffer+i),(samples*4-i));
+							//for(int i=0;i<(4*samples); i+=100){ 
+								//if((samples*4-i) >= 100) chb_write(0x0000,(FRAMReadBuffer+i),100);
+								//else chb_write(0x0000,(FRAMReadBuffer+i),(samples*4-i));
 								//add 1 ms delay between messages
-								delay_us(10000);
-							}							
+								//delay_us(10000);
+							//}		
+							uint8_t NumMessages = ((samples*4)/CHB_MAX_PAYLOAD);
+							if ((samples*4)%CHB_MAX_PAYLOAD > 0) NumMessages++;
+							//send the number of messages the base station should expect after this message
+							chb_write(0x0000,&NumMessages,1);  
+							//send the data
+							chb_write(0x0000,FRAMReadBuffer,samples*4);					
 						}							
 						DataAvailable = 0;
-						samples = 0;
 					}
 					break;
 				}	
