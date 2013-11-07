@@ -57,7 +57,7 @@ void chb_init()
     memset(&pcb, 0, sizeof(pcb_t));
     pcb.src_addr = chb_get_short_addr();
     chb_drvr_init();
-	radio_msg_received_int_enable();
+	//radio_msg_received_int_enable();
 }
 
 // Configure PE2 to use as proxy interrupt for data being stored in radio buffer
@@ -169,7 +169,7 @@ U8 chb_write(U16 addr, U8 *data, U32 len)
         // adjust len and restart
 		frm_offset += frm_len;
         len = len - frm_len;
-		//_delay_ms(1000);				//wait a little before sending next message
+		//_delay_us(1000);				//wait a little before sending next message
     }
     return CHB_SUCCESS;
 }

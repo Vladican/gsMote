@@ -330,7 +330,7 @@ void enableADCMUX(uint8_t on) {
 
 void CO_collectADC(uint8_t channel, uint8_t gainExponent, uint16_t SPS, uint16_t numOfSamples, int32_t* DataArray) {
 	
-	CO_collectADC_ext(channel, (uint8_t) (FILTER_CH_3AND7_bm | FILTER_HP_0_bm | FILTER_LP_600_gc), gainExponent, SPS, numOfSamples, DataArray);
+	CO_collectADC_ext(channel, (uint8_t) (FILTER_CH_1AND5_bm | FILTER_HP_0_bm | FILTER_LP_600_gc), gainExponent, SPS, numOfSamples, DataArray);
 }
 
 /*  \brief Collects avg, min, max of NUM_SAMPLES ADC samples

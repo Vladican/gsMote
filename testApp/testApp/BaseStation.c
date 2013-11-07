@@ -50,6 +50,7 @@ int main(){
 			length = chb_read((chb_rx_data_t*)FRAMReadBuffer);
 			if (length == 1){
 				length = 0;
+				NumReceivedMessages = 0;
 				//get the number of messages (1 byte)
 				NumMessages = FRAMReadBuffer[0];
 				while(NumReceivedMessages <NumMessages){
