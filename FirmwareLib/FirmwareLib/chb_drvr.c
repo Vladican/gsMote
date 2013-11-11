@@ -300,8 +300,8 @@ static void chb_frame_read()
 			//generate message received event here
 			//EVSYS.STROBE = 0x04;  //generate event on channel 3
 			//generate interrupt on port E by toggling pin 2
-			PORTE.OUTSET = PIN2_bm;
-			PORTE.OUTCLR = PIN2_bm;
+			//PORTE.OUTSET = PIN2_bm;
+			//PORTE.OUTCLR = PIN2_bm;
         }
         else
         {
@@ -840,7 +840,7 @@ ISR(CHB_RADIO_IRQ)
 
             if ((state == CHB_RX_ON) || (state == CHB_RX_AACK_ON) || (state == CHB_BUSY_RX_AACK)){
 				//go to TRX_OFF state to avoid data corruption due to reception of another message
-				chb_set_state(CHB_TRX_OFF);
+				//chb_set_state(CHB_TRX_OFF);
                 // get the ed measurement
                 pcb->ed = chb_reg_read(PHY_ED_LEVEL);
 

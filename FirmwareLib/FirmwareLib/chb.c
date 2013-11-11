@@ -122,9 +122,10 @@ static U8 chb_gen_hdr(U8 *hdr, U16 addr, U8 len)
 /**************************************************************************/
 U8 chb_write(U16 addr, U8 *data, U32 len)
 {
-    U8 status, frm_len, frm_offset, hdr[CHB_HDR_SZ + 1];
+    U8 status, frm_len, hdr[CHB_HDR_SZ + 1];
+	U32 frm_offset;
 	//U8 hdr_len;
-    int rtry;
+    //int rtry;
 	
 	frm_offset = 0;
     while (len > 0)
@@ -138,8 +139,8 @@ U8 chb_write(U16 addr, U8 *data, U32 len)
 		chb_gen_hdr(hdr, addr, frm_len);
 
         // send data to chip
-		rtry = 0;
-		do{
+		//rtry = 0;
+		//do{
         status = chb_tx(hdr, data+frm_offset, frm_len);			
 
              switch (status)
@@ -152,24 +153,24 @@ U8 chb_write(U16 addr, U8 *data, U32 len)
  
              case CHB_NO_ACK:
                  pcb.txd_noack++;
-				 rtry++;
+				 //rtry++;
                  break;
  
              case CHB_CHANNEL_ACCESS_FAILURE:
                  pcb.txd_channel_fail++;
-				 rtry++;
+				 //rtry++;
                  break;
  
              default:
                  break;
              }
-			if(rtry>0) _delay_us(10);		//if not successfully sent the first time, wait some time and try again
-			if(rtry==20) return status;;		//after 20 tries give up on sending the message	
-		} while(status != CHB_SUCCESS);			
+			//if(rtry>0) _delay_us(10);		//if not successfully sent the first time, wait some time and try again
+			//if(rtry==20) return status;;		//after 20 tries give up on sending the message	
+		//} while(status != CHB_SUCCESS);			
         // adjust len and restart
 		frm_offset += frm_len;
         len = len - frm_len;
-		//_delay_us(1000);				//wait a little before sending next message
+		//_delay_ms(100);				//wait a little before sending next message
     }
     return CHB_SUCCESS;
 }
