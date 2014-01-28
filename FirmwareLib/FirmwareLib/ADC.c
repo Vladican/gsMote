@@ -524,7 +524,6 @@ ISR(TCC1_OVF_vect){
 // }
 
 //turns off ADC timers/counters and spi bus 
-//returns number of samples collected by ADC
 void ADC_Stop_Sampling(){
 	
 	// turn off ADC timer(s)

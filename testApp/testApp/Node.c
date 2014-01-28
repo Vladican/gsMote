@@ -10,34 +10,44 @@ int main(){
 	
 	uint8_t length;
 	uint8_t gain = GAIN_1_gc;
-	uint16_t freq = 1000;
+	uint8_t ack = 0;
+	volatile uint8_t RawGain;
+	uint16_t freq = 2000;
 	volatile uint32_t samples = 0;
 	DataAvailable = 0;
 	ADC_Sampling_Finished = 1;
 	uint8_t RadioMessageBuffer[20];
+	unsigned char ofile[] = {'o','u','t','p','u','t'};
 	set_32MHz();
 	chb_init();
 	chb_set_channel(1);
-	chb_set_short_addr(0x0002);
+	chb_set_short_addr(0x0001);
 	pcb_t* pcb = chb_get_pcb();
+	//SD_init();
+	//getBootSectorData();
 	while(1){
 		if(pcb->data_rcv){
 			//read the data
 			length = chb_read((chb_rx_data_t*)RadioMessageBuffer);
-			
-			if(length == 1){
+			//length should be >1 for setting gain/freq commands: the value is likely sent in a separate message 
+			//if(length == 1){
 				switch ( RadioMessageBuffer[0])
 				{
 				case 'R':
 					//collect data if the ADC is not collecting any data right now
 					if(ADC_Sampling_Finished){
-						//CO_collectADC(ADC_CH_1_gc, gain, freq, 1000,(int32_t*)FRAMReadBuffer);
-						CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, FALSE, 1, 2, 3, 4, 1000,(int32_t*)FRAMReadBuffer);
-					}						
+						CO_collectADC(ADC_CH_1_gc, gain, freq, 1000,(int32_t*)FRAMReadBuffer);
+						//CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, FALSE, 1, 2, 3, 4, 1000,(int32_t*)FRAMReadBuffer);
+					}
+					//send acknowledgment
+					chb_write(0x0000,&ack,1);						
 					break;
 				case 'G':
+					//while(!pcb->data_rcv);
+					//length = chb_read((chb_rx_data_t*)RadioMessageBuffer);
 					//set gain to what is specified
-					switch(RadioMessageBuffer[1]){
+					RawGain = (uint8_t)(*(int32_t*)(RadioMessageBuffer+1));
+					switch(RawGain){
 						case 1:
 							gain = GAIN_1_gc;
 							break;
@@ -63,13 +73,20 @@ int main(){
 							gain = GAIN_128_gc;
 							break;
 						default:
-							chb_write(0x0000,(uint8_t*)"invalid gain",strlen("invalid gain"));
+							//chb_write(0x0000,(uint8_t*)"invalid gain",strlen("invalid gain"));
 							break;
-					}					
+					}
+					//send acknowledgment
+					chb_write(0x0000,&ack,1);					
 					break;
 				case 'F':
+
+					//while(!pcb->data_rcv);
+					//length = chb_read((chb_rx_data_t*)RadioMessageBuffer);
 					//set sampling frequency to what is specified
-					freq = *(uint16_t*)(RadioMessageBuffer+1);
+					freq = (uint16_t)(*(int32_t*)(RadioMessageBuffer+1));
+					//send acknowledgment
+					chb_write(0x0000,&ack,1);
 					break;
 				case 'S':
 					//stop the ADC if it is not already
@@ -77,6 +94,8 @@ int main(){
 						ADC_Stop_Sampling();
 					}
 					//otherwise, the ADC has finished sampling on its own and the data will be transmitted after this switch statement
+					//send acknowledgment
+					chb_write(0x0000,&ack,1);
 					break;
 				case 'T':
 					if(ADC_Sampling_Finished && DataAvailable){
@@ -88,13 +107,15 @@ int main(){
 							//send the number of messages the base station should expect after this message
 							chb_write(0x0000,&NumMessages,1);  
 							//send the data							
-							chb_write(0x0000,FRAMReadBuffer,samples*4);					
+							chb_write(0x0000,FRAMReadBuffer,samples*4);	
+							//write the data to SD card for good measure (make sure transmitted and collected data is the same)	
+							//writeFile(ofile, FRAMReadBuffer, samples*4);			
 						}							
 						DataAvailable = 0;
 					}
 					break;
 				}	
-			}			
+			//}			
 		}		
 		//if all data collected or ADC was stopped while sampling, send collected data to base station
 		//samples = ADC_Get_Num_Samples();
