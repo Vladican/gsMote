@@ -35,7 +35,7 @@
 #define CHIBI_H
 
 #include "types.h"
-
+#include "constants_and_globals.h"
 
 // this enables the chibi stack to run in promiscuous mode
 // this should only be used when raw data frames will be output for analysis. in normal

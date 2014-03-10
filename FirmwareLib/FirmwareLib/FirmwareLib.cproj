@@ -118,16 +118,25 @@
     <Compile Include="clksys_driver.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="constants_and_globals.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="E-000001-000009_firmware_rev_1_0.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="E-000001-000009__firmware_rev_1_0.c">
+    <None Include="E-000001-000009__firmware_rev_1_0.c">
       <SubType>compile</SubType>
-    </Compile>
+    </None>
     <Compile Include="FAT32.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="FAT32.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="FRAM.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="FRAM.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="SD_Card.c">
@@ -143,6 +152,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="types.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="utility_functions.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="utility_functions.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

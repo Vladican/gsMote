@@ -9,7 +9,8 @@
 #ifndef SERIALUSB_H_
 #define SERIALUSB_H_
 
-#include "E-000001-000009_firmware_rev_1_0.h"
+#include "constants_and_globals.h"
+#include "utility_functions.h"
 
 bool StartSerial(uint32_t BaudRate);
 void StopSerial();

@@ -85,6 +85,7 @@
             <Value>../../../FirmwareLib/FirmwareLib</Value>
           </ListValues>
         </avrgcc.compiler.directories.IncludePaths>
+        <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
         <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
         <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
         <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
@@ -108,6 +109,18 @@
       <SubType>compile</SubType>
       <Link>ADC.h</Link>
     </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\constants_and_globals.h">
+      <SubType>compile</SubType>
+      <Link>constants_and_globals.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\FRAM.c">
+      <SubType>compile</SubType>
+      <Link>FRAM.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\FRAM.h">
+      <SubType>compile</SubType>
+      <Link>FRAM.h</Link>
+    </Compile>
     <Compile Include="..\..\FirmwareLib\FirmwareLib\SD_Card.h">
       <SubType>compile</SubType>
       <Link>SD_Card.h</Link>
@@ -126,7 +139,18 @@
     <None Include="RadioTester.c">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="Node.c">
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\utility_functions.c">
+      <SubType>compile</SubType>
+      <Link>utility_functions.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\utility_functions.h">
+      <SubType>compile</SubType>
+      <Link>utility_functions.h</Link>
+    </Compile>
+    <None Include="Node.c">
+      <SubType>compile</SubType>
+    </None>
+    <Compile Include="FRAM_test.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="Synch.c">
@@ -208,10 +232,6 @@
     <Compile Include="..\..\FirmwareLib\FirmwareLib\E-000001-000009_firmware_rev_1_0.h">
       <SubType>compile</SubType>
       <Link>E-000001-000009_firmware_rev_1_0.h</Link>
-    </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\E-000001-000009__firmware_rev_1_0.c">
-      <SubType>compile</SubType>
-      <Link>E-000001-000009__firmware_rev_1_0.c</Link>
     </Compile>
     <Compile Include="..\..\FirmwareLib\FirmwareLib\FAT32.c">
       <SubType>compile</SubType>

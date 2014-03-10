@@ -1,4 +1,11 @@
-#include "E-000001-000009_firmware_rev_1_0.h"
+/*
+ * utility_functions.c
+ *
+ * Created: 3/8/2014 1:25:15 PM
+ *  Author: VLAD
+ */ 
+
+#include "utility_functions.h"
 
 // Sets the external 16MHz crystal on XTAL1 and XTAL2 as the system clock.
 // There was a problem with some of the hardware modules not having the crystal
@@ -8,17 +15,17 @@
 // The high frequency crystal is required to clock the ADC without jitter
 
 void setXOSC_32MHz() {
-	// configure the crystal to match the chip 
+	// configure the crystal to match the chip
 	CLKSYS_XOSC_Config( OSC_FRQRANGE_12TO16_gc,
-		                    false,
-		                    OSC_XOSCSEL_XTAL_16KCLK_gc );
+	false,
+	OSC_XOSCSEL_XTAL_16KCLK_gc );
 	CLKSYS_Enable(OSC_XOSCEN_bm);
 	// wait for signal to stabilize
-	do {} while (CLKSYS_IsReady( OSC_XOSCRDY_bm ) == 0 );
-	// configure PLL to use the crystal and turn on
-	CLKSYS_PLL_Config( OSC_PLLSRC_XOSC_gc, 2);
-	CLKSYS_Enable( OSC_PLLEN_bm );
-	// wait for signal to stabilize
+do {} while (CLKSYS_IsReady( OSC_XOSCRDY_bm ) == 0 );
+// configure PLL to use the crystal and turn on
+CLKSYS_PLL_Config( OSC_PLLSRC_XOSC_gc, 2);
+CLKSYS_Enable( OSC_PLLEN_bm );
+// wait for signal to stabilize
 	do {} while (CLKSYS_IsReady( OSC_PLLRDY_bm ) == 0 );
 	// set as system clock and disable unused RC oscillator
 	CLKSYS_Main_ClockSource_Select( CLK_SCLKSEL_PLL_gc );
@@ -186,52 +193,6 @@ void PortEx_OUTCLR(uint8_t pins, uint8_t bank) {
 	SPIDisable();
 }
 
-/* replace with functions above for greater flexibility
-// turns on bits of A or B bank according to mask and bank indicator
-// Port Expander must be powered on (VDC-2)
-void setPortEx(uint8_t portMask, uint8_t bank) {
-			
-	SPIInit(PS_SPI_MODE);
-	
-	SPIBuffer[0] = PS_WRITE;
-	if(bank) SPIBuffer[1]=PS_IODIRA;
-	else SPIBuffer[1]=PS_IODIRB;
-	SPIBuffer[2] = (uint8_t) ~portMask; 
-	nop();
-	
-	SPICS(TRUE);
-	portExCS(TRUE);
-
-	for(uint8_t bufIndex = 0; bufIndex < 3; bufIndex++) {
-		SPIC.DATA = SPIBuffer[bufIndex];
-		while(!(SPIC.STATUS & SPI_IF_bm));
-		SPIBuffer[12] = SPIC.DATA;
-	}
-
-	SPICS(FALSE);
-	portExCS(FALSE);
-	
-	SPIBuffer[0] = PS_WRITE;
-	if(bank) SPIBuffer[1]=PS_OLATA;
-	else SPIBuffer[1]=PS_OLATB;
-	SPIBuffer[2] = portMask; 
-	nop();
-
-	SPICS(TRUE);
-	portExCS(TRUE);
-
-	for(uint8_t bufIndex = 0; bufIndex < 3; bufIndex++) {
-		SPIC.DATA = SPIBuffer[bufIndex];
-		while(!(SPIC.STATUS & SPI_IF_bm));
-		SPIBuffer[12] = SPIC.DATA;
-	}
-
-	portExCS(FALSE);	
-	SPIDisable();
-}
-*/
-
-
 void Ext1Power(uint8_t on) {
 	
 	if (on) {
@@ -288,6 +249,118 @@ void upperMuxCS(uint8_t write) {
 	else PORTC.OUTSET = PIN1_bm;
 }
 
+void ADCPower(uint8_t on) {
+	
+	if (on) {
+		PORTA.DIRSET = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN6_bm | PIN7_bm; // portEx-CS and HV1/HV2 and A0
+		PORTB.DIRSET = PIN1_bm| PIN2_bm | PIN3_bm; // FRAM-CS and A1/A2
+		PORTC.DIRSET = PIN0_bm | PIN1_bm;// VDCA and VDC-2 and MUX-SYNC1
+		PORTE.DIRSET = PIN4_bm; // MUX-SYNC2
+		PORTF.DIRSET = PIN1_bm | PIN2_bm | PIN3_bm; // DAC LDAC and CS
+
+		// high signal to write protect
+		PORTA.OUTSET = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN7_bm;; // portEx-CS
+		PORTB.OUTSET = PIN3_bm; // FRAM-CS
+		PORTC.OUTSET = PIN0_bm | PIN1_bm; // VDCA and VDC-2 on and MUX-SYNC1
+		PORTE.OUTSET = PIN4_bm; // MUX-SYNC2
+		PORTF.OUTSET = PIN1_bm | PIN2_bm | PIN3_bm;  // ADC-CS and DAC write/latch
+		channelStatus = 0x00; // POR to zeros
+		_delay_ms(100);
+
+		// set SPI-MISO as input
+		PORTC.DIRCLR = PIN6_bm;
+		
+		bankA_DIR = bankA_OUT = bankB_DIR = bankB_OUT = 0x00; // all pins input on reset
+		PortEx_DIRSET(0xFF, PS_BANKA);
+		PortEx_OUTSET(0xFF, PS_BANKA);  //write protect IN-AMP 1 thru 8
+		//setPortEx(0xFF, PS_BANKA);
+		set_filter(0xFF);  // set filters initially to ensure data out pulled high
+
+	} else {
+		// low signal for low power
+		PORTA.OUTCLR = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN6_bm | PIN7_bm; // portEx-CS and A0
+		PORTB.OUTCLR = PIN1_bm | PIN2_bm | PIN3_bm; // FRAM-CS and A1/A2
+		PORTC.OUTCLR = PIN0_bm | PIN1_bm; // VDCA and VDC-2 on and MUX-SYNC1
+		PORTE.OUTCLR = PIN4_bm; // MUX-SYNC2
+		PORTF.OUTCLR = PIN1_bm | PIN2_bm | PIN3_bm;  // ADC-CS and DAC write/latch
+
+
+		PORTA.DIRCLR = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN7_bm | PIN6_bm;
+		PORTB.DIRCLR = PIN1_bm | PIN2_bm| PIN3_bm;
+		PORTC.DIRCLR = PIN0_bm | PIN1_bm;
+		PORTE.DIRCLR = PIN4_bm;
+		PORTF.DIRCLR = PIN1_bm | PIN2_bm | PIN3_bm;
+		
+		// set SPI-MISO as input
+		PORTC.DIRCLR = PIN6_bm;
+		
+		
+		bankA_DIR = bankA_OUT = bankB_DIR = bankB_OUT = 0x00; // all pins input on reset
+		channelStatus = 0x00;
+		
+	}
+}
+
+/*  \brief Sets input analog filters
+ *	\param filterConfig	bit mask set as follows:
+ *	bitwise or the hardware filter config #defines together
+ *  using one each channel(CH), high pass(HP), and low pass(LP)
+ *  i.e. channel 1/5, highpass 0Hz, lowpass 600Hz => 
+ *  FILTER_CH_1AND5_bm | FILTER_HP_0_bm | FILTER_LP_600_gc
+ *
+ *  DETAILS
+ *	filterConfig[0]	Channel 1 and 5 mask
+ *	filterConfig[1]	Channel 2 and 6 mask
+ *	filterConfig[2]	Channel 3 and 7 mask
+ *	filterConfig[3]	Channel 4 and 8 mask
+ *  filterConfig[4:6] Low Pass cutoff 000=>infinite, 001=>32kHz, 010=>6kHz, 100=>600Hz
+ *	filterConfig[7] High Pass cutoff 0=>2Hz, 1=>0Hz 
+*/
+void set_filter(uint8_t filterConfig) {
+	// hack to get ADC to work
+	//filterConfig |= 0x0F;
+
+	// boolean flags for upper/lower channels CS
+	uint8_t lowerCS = filterConfig & 0x03; 
+	uint8_t upperCS = filterConfig & 0x0C;
+
+	// update left and right channel status
+	if (filterConfig & (BIT0_bm | BIT2_bm)) channelStatus = 
+		(0xF0 & channelStatus) | (filterConfig >> 4);  //right
+	if (filterConfig & (BIT1_bm | BIT3_bm)) channelStatus =
+		(0xF0 & filterConfig) | (0x0F & channelStatus); //left
+		
+	SPIInit(SPI_MODE_1_gc);
+
+	
+	SPIBuffer[0] = channelStatus;
+	
+	// enable appropriate chip select
+	if (lowerCS) lowerMuxCS(TRUE);
+	if (upperCS) upperMuxCS(TRUE);
+
+	SPICS(TRUE);
+
+	// Send all logic high to ensure that the SDO line on the chip is
+	// left in high Z state after SPI transaction.
+	// The t-1 SDI transaction is output on the SDO and the pin left in the configuration.
+	// of the last bit
+	SPIC.DATA = 0xFF;
+	while(!(SPIC.STATUS & SPI_IF_bm));
+	SPIBuffer[12] = SPIC.DATA;
+
+	nop();
+
+	SPIC.DATA = SPIBuffer[0];
+	while(!(SPIC.STATUS & SPI_IF_bm));
+	SPIBuffer[12] = SPIC.DATA;
+	SPICS(FALSE);
+
+	if (lowerCS) lowerMuxCS(FALSE);
+	if (upperCS) upperMuxCS(FALSE);
+	SPIDisable();
+}
+
 void SPIInit(uint8_t mode) {
 	
 	// init SPI SS pin
@@ -297,16 +370,16 @@ void SPIInit(uint8_t mode) {
 
 	// init SPI
 	SPIC.CTRL =	SPI_PRESCALER |  // set clock speed
-	            0x00 |  // disable clock double
-	            SPI_ENABLE_bm | // Enable SPI module
-	            0x00 |  // set data order msb first
-	            SPI_MASTER_bm | // set SPI master
-	            mode; // set SPI mode
+	0x00 |  // disable clock double
+	SPI_ENABLE_bm | // Enable SPI module
+	0x00 |  // set data order msb first
+	SPI_MASTER_bm | // set SPI master
+	mode; // set SPI mode
 
 	// disable SPI Interrupts
 	SPIC.INTCTRL = SPI_INTLVL_OFF_gc;
 
- 	// set SPI-MOSI and SPI-SCK as output
+	// set SPI-MOSI and SPI-SCK as output
 	PORTC.DIRSET  = PIN5_bm | PIN7_bm;
 
 	
@@ -341,7 +414,7 @@ void SPICS(uint8_t enable) {
 	if (enable) PORTC.OUTCLR = PIN4_bm;
 	else {
 		PORTC.OUTSET = PIN4_bm;
-	}	
+	}
 }
 
 void SPIDisable() {
@@ -351,154 +424,6 @@ void SPIDisable() {
 	PORTC.OUTCLR = PIN4_bm;
 	PORTC.DIRCLR = PIN4_bm | PIN5_bm | PIN7_bm;
 
-}
-
-
-//test 3 channel sampling of accelerometer. OBSOLETE
-void FRAMTest3Channel(void) {
-	//uint8_t gains[3] = { GAIN_1_gc, GAIN_1_gc, GAIN_1_gc };
-			
-	//CO_collectSeismic3Channel(FILTER_CH_2AND6_bm | FILTER_CH_3AND7_bm |	FILTER_CH_4AND8_bm | FILTER_HP_0_bm | FILTER_LP_600_gc,	gains, SSPS_SE_64K_gc, 21, TRUE, 13, 14, 15, 16);
-	ADCPower(TRUE);
-	_delay_us(250);
-	
-	calcChecksumFRAM();
-
-	ADCPower(FALSE);
-	
-}
-//test 1 channel sampling of accelerometer. OBSOLETE
-void FRAMTest1Channel(void) {
-
-	//CO_collectSeismic1Channel(ADC_CH_8_gc, FILTER_CH_4AND8_bm | FILTER_HP_0_bm | FILTER_LP_600_gc, GAIN_1_gc, SSPS_SE_64K_gc, 21, TRUE, 13, 14, 15, 16);
-	ADCPower(TRUE);
-	_delay_us(250);
-	
-	calcChecksumFRAM();
-
-	ADCPower(FALSE);
-
-}
-
-
-void FRAMWriteKnownsCheck() {
-	
-	FRAMWriteKnowns();
-	ADCPower(TRUE);
-
-	_delay_us(250);
-	calcChecksumFRAM();
-
-	ADCPower(FALSE);
-
-}
-
-//random function for testing stuff	
-void checkMote(){
-	
-	ADCPower(TRUE);
-	Ext1Power(TRUE);
-	_delay_ms(100);
-	PortEx_DIRSET(BIT3_bm, PS_BANKB);  //SD card CS	
-	while(1){
-		PortEx_OUTSET(BIT3_bm, PS_BANKB);	//pull SD cs high
-		_delay_ms(5000);
-		PortEx_OUTCLR(BIT3_bm, PS_BANKB);	//pull SD cs low
-		_delay_ms(5000);
-	}
-}
-
-//command to check reading and writing to sd card
-void SD_write_and_read_knowns(){
-	
-	for (int i=0;i<24;i++) FRAMReadBuffer[i] = i;	//write 24 values to the FRAM buffer
-	SD_write_block(20,FRAMReadBuffer,24);	//write those values to the card
-	for (int i=0;i<24;i++) FRAMReadBuffer[i] = 0;	//clear the FRAM buffer
-	SD_read_block(20,FRAMReadBuffer);	//read into the FRAM buffer from the SD card
-	for(int i=0;i<1250;i++) FRAMReadBuffer[i] = i%100;	//write 1250 values to the FRAM buffer	
-	SD_write_multiple_blocks(80,FRAMReadBuffer,1250);	//write those values to sd card
-	for(int i=0;i<1250;i++) FRAMReadBuffer[i] = 0;	//clear FRAM buffer
-	SD_read_multiple_blocks(80,FRAMReadBuffer,3);	//read in 3 blocks of data from the memory card
-}
-
-//check writing and reading to file on sd card
-void SD_write_and_read_knowns_FAT(){
-	
-	for (int i=0;i<24;i++) FRAMReadBuffer[i] = i;	//write 24 values to the FRAM buffer
-	error = writeFile((unsigned char*)"testing",FRAMReadBuffer,512);
-	for (int i=0;i<24;i++) FRAMReadBuffer[i] = 0;	//clear the FRAM buffer
-	error = readFile(READ,(unsigned char*)"testing");		//read the data into the buffer from file
-}
-
-
-
-
-//function for testing radio transmission
-void chibi_test_radio(){
-		
-	chb_init();
-	chb_set_short_addr(0x0002);
-	while(1) nop();								//comment this line if testing transmission
-	for (int i=0;i<333;i++) FRAMReadBuffer[i] = i%200;
-	chb_write(0x0002,FRAMReadBuffer,333);
-	/*
-	while(1){
-		Buffer[1] = chb_write(0xffff,FRAMReadBuffer,30);
-		_delay_ms(10000);
-	}
-	*/
-	//while(chb_set_state(CHB_RX_AACK_ON) != RADIO_SUCCESS);	
-	/*
-	for (int i=0;i<10;i++) FRAMReadBuffer[i] = 0;
-	chb_read(FRAMReadBuffer);
-	*/
-}
-
-//another testing function for sd card
-void TestCard(){
-	
-	SD_init();
-	getBootSectorData();
-	for (int i=0;i<512;i++) FRAMReadBuffer[i] = i%121;
-//for (int i=0;i<1;i++) {
-	//FRAMReadBuffer[0] = i; 
-	writeFile((unsigned char*)"testing",FRAMReadBuffer,512);//}
-	nop();
-}
-
-//interrupt service routine for handling received data over radio. Gets called when data received by the mote. Has cases for synching right now.
-ISR(PORTE_INT0_vect){
-	
-	chb_rx_data_t* msg = NULL;
-	switch (RadioMonitorMode) {
-		//case for reading sensor data - done by basestation
-		case DATA_GATHERING:
-			//check contents of the message first and if it is a synch message, increment MotesReadyToSynch variable
-			chb_read(msg);
-			if(!strncmp((const char*)(msg->data),"reset",5)){
-				MotesReadyToSynch++;
-			}
-			//otherwise, store the message contents in the FRAM buffer
-			else{		
-				for(uint32_t i=0;i<128;i++)	FRAMReadBuffer[i] = msg->data[i];		//copy the message to the FRAM buffer	
-				StartOfFreeSpace += 128;	//increment start of free space in FRAM buffer
-			//wrap around to the start of the buffer (making circular buffer). This should be avoided as data in the buffer will be overwritten (i.e. lost).
-				if(StartOfFreeSpace+128 >= FR_READ_BUFFER_SIZE) StartOfFreeSpace = 0;
-			}			
-			break;
-		//case for synching sampling with basestation
-		case TIME_SYNCH:
-			chb_read(msg);
-			if(!strncmp((const char*)(msg->data),"start sampling",14)){	//if basestation synch response message received, do the following
-				RadioMonitorMode = SYNCHED;
-				TCD1.CTRLA = TC_CLKSEL_EVCH1_gc;	//restart the synch timers
-				TCC1.CTRLA = 0x01;  
-				ADC_Resume_Sampling();	//resume sampling with the adc
-			}
-			break;
-		default:
-			break;
-	}
 }
 
 void DeciToString(int32_t* DecimalArray, uint32_t length, char* ReturnString){
@@ -512,5 +437,14 @@ void DeciToString(int32_t* DecimalArray, uint32_t length, char* ReturnString){
 		strcat(ReturnString,b);
 		//add a space between each value
 		strcat(ReturnString,"\n");
-	}		
+	}
+}
+
+//the following command writes/reads a byte via spi
+uint8_t SPI_write(uint8_t byteToSend){
+	uint8_t data;
+	SPIC.DATA = byteToSend;
+	while(!(SPIC.STATUS & SPI_IF_bm)); //wait for byte to be sent
+	data = SPIC.DATA; //read SPI data register to reset status flag
+	return data;
 }

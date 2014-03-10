@@ -9,7 +9,8 @@
 #ifndef SD_CARD_H_
 #define SD_CARD_H_
 
-#include "E-000001-000009_firmware_rev_1_0.h"
+#include "constants_and_globals.h"
+#include "utility_functions.h"
 
 //SD card defines
 #define SDHC_SECTOR_SIZE 512

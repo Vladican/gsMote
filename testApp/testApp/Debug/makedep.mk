@@ -2,9 +2,13 @@
 # Automatically-generated file. Do not edit or delete the file
 ################################################################################
 
+..\..\FirmwareLib\FirmwareLib\FRAM.c
+
 ..\..\FirmwareLib\FirmwareLib\SerialUSB.c
 
-Node.c
+..\..\FirmwareLib\FirmwareLib\utility_functions.c
+
+FRAM_test.c
 
 Synch.c
 
@@ -23,8 +27,6 @@ Synch.c
 ..\..\FirmwareLib\FirmwareLib\chb_spi.c
 
 ..\..\FirmwareLib\FirmwareLib\clksys_driver.c
-
-..\..\FirmwareLib\FirmwareLib\E-000001-000009__firmware_rev_1_0.c
 
 ..\..\FirmwareLib\FirmwareLib\FAT32.c
 

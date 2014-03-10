@@ -1,5 +1,6 @@
 
 #include "ADC.h"
+#include "adc_driver.h"
 
 volatile uint8_t checksumADC[3] = {0};  // checksum for FRAM test
 volatile uint8_t checksumFRAM[3] = {0};  // checksum for FRAM test
@@ -177,58 +178,6 @@ void CO_collectBatt(uint16_t *avgV, uint16_t *minV, uint16_t *maxV) {
 	*minV = (min * 1000  / 4095) - 50;
 }
 
-void ADCPower(uint8_t on) {
-	
-	if (on) {
-		PORTA.DIRSET = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN6_bm | PIN7_bm; // portEx-CS and HV1/HV2 and A0
-		PORTB.DIRSET = PIN1_bm| PIN2_bm | PIN3_bm; // FRAM-CS and A1/A2
-		PORTC.DIRSET = PIN0_bm | PIN1_bm;// VDCA and VDC-2 and MUX-SYNC1
-		PORTE.DIRSET = PIN4_bm; // MUX-SYNC2
-		PORTF.DIRSET = PIN1_bm | PIN2_bm | PIN3_bm; // DAC LDAC and CS
-
-		// high signal to write protect
-		PORTA.OUTSET = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN7_bm;; // portEx-CS
-		PORTB.OUTSET = PIN3_bm; // FRAM-CS
-		PORTC.OUTSET = PIN0_bm | PIN1_bm; // VDCA and VDC-2 on and MUX-SYNC1
-		PORTE.OUTSET = PIN4_bm; // MUX-SYNC2
-		PORTF.OUTSET = PIN1_bm | PIN2_bm | PIN3_bm;  // ADC-CS and DAC write/latch
-		channelStatus = 0x00; // POR to zeros
-		_delay_ms(100);
-
-		// set SPI-MISO as input
-		PORTC.DIRCLR = PIN6_bm;
-		
-		bankA_DIR = bankA_OUT = bankB_DIR = bankB_OUT = 0x00; // all pins input on reset
-		PortEx_DIRSET(0xFF, PS_BANKA);
-		PortEx_OUTSET(0xFF, PS_BANKA);  //write protect IN-AMP 1 thru 8
-		//setPortEx(0xFF, PS_BANKA);
-		set_filter(0xFF);  // set filters initially to ensure data out pulled high
-
-	} else {
-		// low signal for low power
-		PORTA.OUTCLR = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN6_bm | PIN7_bm; // portEx-CS and A0
-		PORTB.OUTCLR = PIN1_bm | PIN2_bm | PIN3_bm; // FRAM-CS and A1/A2
-		PORTC.OUTCLR = PIN0_bm | PIN1_bm; // VDCA and VDC-2 on and MUX-SYNC1
-		PORTE.OUTCLR = PIN4_bm; // MUX-SYNC2
-		PORTF.OUTCLR = PIN1_bm | PIN2_bm | PIN3_bm;  // ADC-CS and DAC write/latch
-
-
-		PORTA.DIRCLR = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN7_bm | PIN6_bm;
-		PORTB.DIRCLR = PIN1_bm | PIN2_bm| PIN3_bm;
-		PORTC.DIRCLR = PIN0_bm | PIN1_bm;
-		PORTE.DIRCLR = PIN4_bm;
-		PORTF.DIRCLR = PIN1_bm | PIN2_bm | PIN3_bm;
-		
-		// set SPI-MISO as input
-		PORTC.DIRCLR = PIN6_bm;
-		
-		
-		bankA_DIR = bankA_OUT = bankB_DIR = bankB_OUT = 0x00; // all pins input on reset
-		channelStatus = 0x00;
-		
-	}
-}
-
 /*! \brief Sets gain on upto 8 on board AD8231 Op Amps via the A0, A1, A2 control lines.
  *	All selected op-amps will be set to the same gain value.
  *
@@ -256,65 +205,6 @@ void set_ampGain(uint8_t channel, uint8_t gainExponent) {
 	PortEx_OUTSET(0xFF, PS_BANKA);	// write protect all AD8231 amps
 	//setPortEx(0xFF, PS_BANKA);
 
-}
-/*  \brief Sets input analog filters
- *	\param filterConfig	bit mask set as follows:
- *	bitwise or the hardware filter config #defines together
- *  using one each channel(CH), high pass(HP), and low pass(LP)
- *  i.e. channel 1/5, highpass 0Hz, lowpass 600Hz => 
- *  FILTER_CH_1AND5_bm | FILTER_HP_0_bm | FILTER_LP_600_gc
- *
- *  DETAILS
- *	filterConfig[0]	Channel 1 and 5 mask
- *	filterConfig[1]	Channel 2 and 6 mask
- *	filterConfig[2]	Channel 3 and 7 mask
- *	filterConfig[3]	Channel 4 and 8 mask
- *  filterConfig[4:6] Low Pass cutoff 000=>infinite, 001=>32kHz, 010=>6kHz, 100=>600Hz
- *	filterConfig[7] High Pass cutoff 0=>2Hz, 1=>0Hz 
-*/
-void set_filter(uint8_t filterConfig) {
-	// hack to get ADC to work
-	//filterConfig |= 0x0F;
-
-	// boolean flags for upper/lower channels CS
-	uint8_t lowerCS = filterConfig & 0x03; 
-	uint8_t upperCS = filterConfig & 0x0C;
-
-	// update left and right channel status
-	if (filterConfig & (BIT0_bm | BIT2_bm)) channelStatus = 
-		(0xF0 & channelStatus) | (filterConfig >> 4);  //right
-	if (filterConfig & (BIT1_bm | BIT3_bm)) channelStatus =
-		(0xF0 & filterConfig) | (0x0F & channelStatus); //left
-		
-	SPIInit(SPI_MODE_1_gc);
-
-	
-	SPIBuffer[0] = channelStatus;
-	
-	// enable appropriate chip select
-	if (lowerCS) lowerMuxCS(TRUE);
-	if (upperCS) upperMuxCS(TRUE);
-
-	SPICS(TRUE);
-
-	// Send all logic high to ensure that the SDO line on the chip is
-	// left in high Z state after SPI transaction.
-	// The t-1 SDI transaction is output on the SDO and the pin left in the configuration.
-	// of the last bit
-	SPIC.DATA = 0xFF;
-	while(!(SPIC.STATUS & SPI_IF_bm));
-	SPIBuffer[12] = SPIC.DATA;
-
-	nop();
-
-	SPIC.DATA = SPIBuffer[0];
-	while(!(SPIC.STATUS & SPI_IF_bm));
-	SPIBuffer[12] = SPIC.DATA;
-	SPICS(FALSE);
-
-	if (lowerCS) lowerMuxCS(FALSE);
-	if (upperCS) upperMuxCS(FALSE);
-	SPIDisable();
 }
 
 void enableADCMUX(uint8_t on) {
@@ -1069,6 +959,7 @@ void sampleCurrentChannel() {
 
 //write collected accelerometer samples to FRAM. OBSOLETE
 void writeSE2FRAM() {
+
 	volatile int32_t sum = 0;
 	volatile int32_t currentSample;
 	sampleCount++;
@@ -1131,38 +1022,39 @@ void writeSE2FRAM() {
 	checksumADC[2] += SPIBuffer[2];
 }
 
-//calcuate checksum for FRAM. Not used
-void calcChecksumFRAM() {
-	sumFRAM[0] = sumFRAM[1] = sumFRAM[2] = 0;
-	checksumFRAM[0] = checksumFRAM[1] = checksumFRAM[2] = 0;
-	FRAMAddress = FR_BASEADD;
-	for (uint16_t bufferNum = 0; bufferNum < FR_NUM_READ_BUFFERS; bufferNum++) {
-		readFRAM(FR_READ_BUFFER_SIZE);
-		FRAMAddress += FR_READ_BUFFER_SIZE;
-		for(uint16_t k = 0; k < FR_READ_BUFFER_SIZE; k++) {
-			checksumFRAM[k%3] += FRAMReadBuffer[k];
-			
-			// create 64 bits from 3 sample bytes
-			if(k%3 == 0) {
-				if(FRAMReadBuffer[k] & BIT7_bm) *temp64 = 0xFFFFFFFFFF000000; // sign extension if negative
-				else *temp64 = 0x0000000000000000;
-				*(((uint8_t*)temp64) + 2) = FRAMReadBuffer[k];
-			} else if(k%3 == 1) {
-				*(((uint8_t*)temp64) + 1) = FRAMReadBuffer[k];
-			} else {
-				*(((uint8_t*)temp64) + 0) = FRAMReadBuffer[k];
-			}
-			
-			if(k%9 == 2) sumFRAM[0] += *temp64;
-			if(k%9 == 5) sumFRAM[1] += *temp64;
-			if(k%9 == 8) sumFRAM[2] += *temp64;
 
-			
-		}
-		
-	}
-	
-}
+//calculate checksum for FRAM. Not used
+// void calcChecksumFRAM() {
+// 	sumFRAM[0] = sumFRAM[1] = sumFRAM[2] = 0;
+// 	checksumFRAM[0] = checksumFRAM[1] = checksumFRAM[2] = 0;
+// 	FRAMAddress = FR_BASEADD;
+// 	for (uint16_t bufferNum = 0; bufferNum < FR_NUM_READ_BUFFERS; bufferNum++) {
+// 		readFRAM(FR_READ_BUFFER_SIZE);
+// 		FRAMAddress += FR_READ_BUFFER_SIZE;
+// 		for(uint16_t k = 0; k < FR_READ_BUFFER_SIZE; k++) {
+// 			checksumFRAM[k%3] += FRAMReadBuffer[k];
+// 			
+// 			// create 64 bits from 3 sample bytes
+// 			if(k%3 == 0) {
+// 				if(FRAMReadBuffer[k] & BIT7_bm) *temp64 = 0xFFFFFFFFFF000000; // sign extension if negative
+// 				else *temp64 = 0x0000000000000000;
+// 				*(((uint8_t*)temp64) + 2) = FRAMReadBuffer[k];
+// 			} else if(k%3 == 1) {
+// 				*(((uint8_t*)temp64) + 1) = FRAMReadBuffer[k];
+// 			} else {
+// 				*(((uint8_t*)temp64) + 0) = FRAMReadBuffer[k];
+// 			}
+// 			
+// 			if(k%9 == 2) sumFRAM[0] += *temp64;
+// 			if(k%9 == 5) sumFRAM[1] += *temp64;
+// 			if(k%9 == 8) sumFRAM[2] += *temp64;
+// 
+// 			
+// 		}
+// 		
+// 	}
+// 	
+// }
 
 //test function for FRAM
 void FRAMWriteKnowns() {

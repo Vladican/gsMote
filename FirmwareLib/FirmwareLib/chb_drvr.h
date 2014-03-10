@@ -34,6 +34,7 @@
 #ifndef CHIBI_DRVR_H
 #define CHIBI_DRVR_H
 
+#include "constants_and_globals.h"
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "types.h"

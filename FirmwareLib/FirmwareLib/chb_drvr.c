@@ -32,12 +32,12 @@
 
 *******************************************************************/
 
-#include "E-000001-000009_firmware_rev_1_0.h"
+
+#include "chb_drvr.h"
 #include <stdio.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
 #include "chb.h"
-#include "chb_drvr.h"
 #include "chb_buf.h"
 #include "chb_spi.h"
 #include "chb_eeprom.h"

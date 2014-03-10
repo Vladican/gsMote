@@ -31,13 +31,12 @@
     Please post support questions to the FreakLabs forum.
 
 *******************************************************************/
-#include "E-000001-000009_firmware_rev_1_0.h"
 
+#include "chb.h"
 #include <stdio.h>
 #include <string.h>
 #include <util/delay.h>
 
-#include "chb.h"
 #include "chb_drvr.h"
 #include "chb_buf.h"
 

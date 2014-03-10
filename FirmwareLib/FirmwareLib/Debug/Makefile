@@ -43,10 +43,11 @@ C_SRCS +=  \
 ../chb_eeprom.c \
 ../chb_spi.c \
 ../clksys_driver.c \
-../E-000001-000009__firmware_rev_1_0.c \
 ../FAT32.c \
+../FRAM.c \
 ../SD_Card.c \
-../SerialUSB.c
+../SerialUSB.c \
+../utility_functions.c
 
 
 PREPROCESSING_SRCS += 
@@ -64,10 +65,11 @@ chb_drvr.o \
 chb_eeprom.o \
 chb_spi.o \
 clksys_driver.o \
-E-000001-000009__firmware_rev_1_0.o \
 FAT32.o \
+FRAM.o \
 SD_Card.o \
-SerialUSB.o
+SerialUSB.o \
+utility_functions.o
 
 
 OBJS_AS_ARGS +=  \
@@ -79,10 +81,11 @@ chb_drvr.o \
 chb_eeprom.o \
 chb_spi.o \
 clksys_driver.o \
-E-000001-000009__firmware_rev_1_0.o \
 FAT32.o \
+FRAM.o \
 SD_Card.o \
-SerialUSB.o
+SerialUSB.o \
+utility_functions.o
 
 
 C_DEPS +=  \
@@ -94,10 +97,11 @@ chb_drvr.d \
 chb_eeprom.d \
 chb_spi.d \
 clksys_driver.d \
-E-000001-000009__firmware_rev_1_0.d \
 FAT32.d \
+FRAM.d \
 SD_Card.d \
-SerialUSB.d
+SerialUSB.d \
+utility_functions.d
 
 
 C_DEPS_AS_ARGS +=  \
@@ -109,10 +113,11 @@ chb_drvr.d \
 chb_eeprom.d \
 chb_spi.d \
 clksys_driver.d \
-E-000001-000009__firmware_rev_1_0.d \
 FAT32.d \
+FRAM.d \
 SD_Card.d \
-SerialUSB.d
+SerialUSB.d \
+utility_functions.d
 
 
 OUTPUT_FILE_PATH +=libFirmwareLib.a
@@ -124,6 +129,8 @@ ADDITIONAL_DEPENDENCIES:=
 OUTPUT_FILE_DEP:= ./makedep.mk
 
 # AVR32/GNU C Compiler
+
+
 
 
 

@@ -18,11 +18,13 @@ chb_spi.c
 
 clksys_driver.c
 
-E-000001-000009__firmware_rev_1_0.c
-
 FAT32.c
+
+FRAM.c
 
 SD_Card.c
 
 SerialUSB.c
+
+utility_functions.c
 
