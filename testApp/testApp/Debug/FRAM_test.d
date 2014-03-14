@@ -31,9 +31,9 @@ FRAM_test.d FRAM_test.o: .././FRAM_test.c \
  ../../../FirmwareLib/FirmwareLib/types.h \
  ../../../FirmwareLib/FirmwareLib/chb_drvr.h \
  ../../../FirmwareLib/FirmwareLib/ADC.h \
+ ../../../FirmwareLib/FirmwareLib/FRAM.h \
  ../../../FirmwareLib/FirmwareLib/SD_Card.h \
- ../../../FirmwareLib/FirmwareLib/SerialUSB.h \
- ../../../FirmwareLib/FirmwareLib/FRAM.h
+ ../../../FirmwareLib/FirmwareLib/SerialUSB.h
 
 ../../../FirmwareLib/FirmwareLib/E-000001-000009_firmware_rev_1_0.h:
 
@@ -99,8 +99,8 @@ c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.
 
 ../../../FirmwareLib/FirmwareLib/ADC.h:
 
+../../../FirmwareLib/FirmwareLib/FRAM.h:
+
 ../../../FirmwareLib/FirmwareLib/SD_Card.h:
 
 ../../../FirmwareLib/FirmwareLib/SerialUSB.h:
-
-../../../FirmwareLib/FirmwareLib/FRAM.h:

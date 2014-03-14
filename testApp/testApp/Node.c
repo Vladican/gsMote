@@ -29,14 +29,13 @@ int main(){
 		if(pcb->data_rcv){
 			//read the data
 			length = chb_read((chb_rx_data_t*)RadioMessageBuffer);
-			//length should be >1 for setting gain/freq commands: the value is likely sent in a separate message 
-			//if(length == 1){
+			//length should be >1 for setting gain/freq commands: the value is likely sent in a separate message
 				switch ( RadioMessageBuffer[0])
 				{
 				case 'R':
 					//collect data if the ADC is not collecting any data right now
 					if(ADC_Sampling_Finished){
-						CO_collectADC(ADC_CH_1_gc, gain, freq, 1000,(int32_t*)FRAMReadBuffer);
+						CO_collectADC(ADC_CH_1_gc, gain, freq, 1000, (int32_t*)FRAMReadBuffer, FR_READ_BUFFER_SIZE, TRUE);
 						//CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, FALSE, 1, 2, 3, 4, 1000,(int32_t*)FRAMReadBuffer);
 					}
 					//send acknowledgment
@@ -93,7 +92,7 @@ int main(){
 					if(!ADC_Sampling_Finished){
 						ADC_Stop_Sampling();
 					}
-					//otherwise, the ADC has finished sampling on its own and the data will be transmitted after this switch statement
+					//otherwise, the ADC has finished sampling on its own and the data is ready to be transmitted
 					//send acknowledgment
 					chb_write(0x0000,&ack,1);
 					break;
@@ -102,28 +101,30 @@ int main(){
 						//get number of data points collected
 						samples = ADC_Get_Num_Samples();
 						if(samples > 0){	
-							uint8_t NumMessages = ((samples*4)/CHB_MAX_PAYLOAD);
+							uint16_t NumMessages = ((samples*4)/CHB_MAX_PAYLOAD);
 							if ((samples*4)%CHB_MAX_PAYLOAD > 0) NumMessages++;
 							//send the number of messages the base station should expect after this message
 							chb_write(0x0000,&NumMessages,1);  
-							//send the data							
-							chb_write(0x0000,FRAMReadBuffer,samples*4);	
+							//read the data from FRAM and send it
+							for(uint16_t i =0; i<(samples*4);;){	
+								if(samples*4 - i > 7200){
+									readFRAM(7200,i);						
+									chb_write(0x0000,FRAMReadBuffer,7200);
+									i += 7200;
+								}
+								else{
+									readFRAM(samples*4 - i,i);
+									chb_write(0x0000,FRAMReadBuffer,samples*4 - i);
+									i += samples*4 - i;
+								}									
+							}								
 							//write the data to SD card for good measure (make sure transmitted and collected data is the same)	
 							//writeFile(ofile, FRAMReadBuffer, samples*4);			
 						}							
 						DataAvailable = 0;
 					}
 					break;
-				}	
-			//}			
+				}		
 		}		
-		//if all data collected or ADC was stopped while sampling, send collected data to base station
-		//samples = ADC_Get_Num_Samples();
-// 		if(ADC_Sampling_Finished && DataAvailable){
-// 			//get number of data points collected
-// 			samples = ADC_Get_Num_Samples();
-// 			if(samples > 0) chb_write(0x0000,FRAMReadBuffer,samples*4);
-// 			DataAvailable = 0;
-// 		}	
 	}	
 }

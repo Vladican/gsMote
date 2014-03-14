@@ -8,7 +8,10 @@
 
 void writeFRAM(uint8_t* buffer, uint16_t length) {
 	
+	uint8_t prev_SPI_settings;
 	ADCPower(TRUE);
+	
+	prev_SPI_settings = SPIC.CTRL;
 	SPIInit(SPI_MODE_0_gc);
 	SPIC.CTRL = FR_SPI_CONFIG_gc;
 	SPICS(TRUE);
@@ -40,6 +43,7 @@ void writeFRAM(uint8_t* buffer, uint16_t length) {
 	
 	PORTB.OUTSET = PIN3_bm;  // pull up CS_FRAM to write protect
 	SPICS(FALSE);
+	SPIC.CTRL = prev_SPI_settings;
 	//SPIC.CTRL = ADC_SPI_CONFIG_gc;
 	//PORTC.OUTCLR = PIN4_bm;  // enable SPI-SS
 	
@@ -49,9 +53,13 @@ void writeFRAM(uint8_t* buffer, uint16_t length) {
 
 // Read from FRAM
 // FRAM power (VDC-2) must be on with CS_FRAM pulled high to write protect
-void readFRAM (uint16_t numBytes) {
+void readFRAM (uint16_t numBytes, uint16_t startAddress) {
 	
+	//save SPI registers
+	uint8_t prev_SPI_settings;
 	ADCPower(TRUE);
+	
+	prev_SPI_settings = SPIC.CTRL;
 	SPIInit(SPI_MODE_0_gc);
 	SPIC.CTRL = FR_SPI_CONFIG_gc;
 	SPICS(TRUE);
@@ -61,10 +69,10 @@ void readFRAM (uint16_t numBytes) {
 	SPIC.DATA = FR_READ;
 	while(!(SPIC.STATUS & SPI_IF_bm));
 	SPIBuffer[12] = SPIC.DATA;
-	SPIC.DATA = *(((uint8_t*)&FRAMAddress) + 1);;
+	SPIC.DATA = *(((uint8_t*)&startAddress) + 1);;
 	while(!(SPIC.STATUS & SPI_IF_bm));
 	SPIBuffer[12] = SPIC.DATA;
-	SPIC.DATA = *(((uint8_t*)&FRAMAddress) + 0);;
+	SPIC.DATA = *(((uint8_t*)&startAddress) + 0);;
 	while(!(SPIC.STATUS & SPI_IF_bm));
 	SPIBuffer[12] = SPIC.DATA;
 	
@@ -76,6 +84,6 @@ void readFRAM (uint16_t numBytes) {
 
 	PORTB.OUTSET = PIN3_bm;  // CS_FRAM write protect
 	SPICS(FALSE);
-	SPIDisable();
+	SPIC.CTRL = prev_SPI_settings;
 
 }

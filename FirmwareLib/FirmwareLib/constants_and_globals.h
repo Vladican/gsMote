@@ -97,5 +97,4 @@ volatile uint8_t SPIBuffer[13];
 volatile uint8_t channelStatus;  // copy of channel filter configuration to allow bit level changes
 
 
-
 #endif /* CONSTANTS_AND_GLOBALS_H_ */

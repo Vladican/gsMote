@@ -14,6 +14,10 @@
 //  - SFLX02-A03 does contain the crystal
 // The high frequency crystal is required to clock the ADC without jitter
 
+void init(){
+	ADC_POWER_ON = 0;
+}
+
 void setXOSC_32MHz() {
 	// configure the crystal to match the chip
 	CLKSYS_XOSC_Config( OSC_FRQRANGE_12TO16_gc,
@@ -251,7 +255,7 @@ void upperMuxCS(uint8_t write) {
 
 void ADCPower(uint8_t on) {
 	
-	if (on) {
+	if (on && !ADC_POWER_ON) {
 		PORTA.DIRSET = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN6_bm | PIN7_bm; // portEx-CS and HV1/HV2 and A0
 		PORTB.DIRSET = PIN1_bm| PIN2_bm | PIN3_bm; // FRAM-CS and A1/A2
 		PORTC.DIRSET = PIN0_bm | PIN1_bm;// VDCA and VDC-2 and MUX-SYNC1
@@ -259,7 +263,7 @@ void ADCPower(uint8_t on) {
 		PORTF.DIRSET = PIN1_bm | PIN2_bm | PIN3_bm; // DAC LDAC and CS
 
 		// high signal to write protect
-		PORTA.OUTSET = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN7_bm;; // portEx-CS
+		PORTA.OUTSET = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN7_bm; // portEx-CS
 		PORTB.OUTSET = PIN3_bm; // FRAM-CS
 		PORTC.OUTSET = PIN0_bm | PIN1_bm; // VDCA and VDC-2 on and MUX-SYNC1
 		PORTE.OUTSET = PIN4_bm; // MUX-SYNC2
@@ -275,8 +279,9 @@ void ADCPower(uint8_t on) {
 		PortEx_OUTSET(0xFF, PS_BANKA);  //write protect IN-AMP 1 thru 8
 		//setPortEx(0xFF, PS_BANKA);
 		set_filter(0xFF);  // set filters initially to ensure data out pulled high
+		ADC_POWER_ON = TRUE;
 
-	} else {
+	} else if(!on && ADC_POWER_ON) {
 		// low signal for low power
 		PORTA.OUTCLR = PIN1_bm| PIN2_bm | PIN3_bm | PIN4_bm | PIN6_bm | PIN7_bm; // portEx-CS and A0
 		PORTB.OUTCLR = PIN1_bm | PIN2_bm | PIN3_bm; // FRAM-CS and A1/A2
@@ -297,7 +302,7 @@ void ADCPower(uint8_t on) {
 		
 		bankA_DIR = bankA_OUT = bankB_DIR = bankB_OUT = 0x00; // all pins input on reset
 		channelStatus = 0x00;
-		
+		ADC_POWER_ON = FALSE;
 	}
 }
 

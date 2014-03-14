@@ -31,9 +31,9 @@ Synch.d Synch.o: .././Synch.c .././Synch.h \
  ../../../FirmwareLib/FirmwareLib/types.h \
  ../../../FirmwareLib/FirmwareLib/chb_drvr.h \
  ../../../FirmwareLib/FirmwareLib/ADC.h \
+ ../../../FirmwareLib/FirmwareLib/FRAM.h \
  ../../../FirmwareLib/FirmwareLib/SD_Card.h \
- ../../../FirmwareLib/FirmwareLib/SerialUSB.h \
- ../../../FirmwareLib/FirmwareLib/FRAM.h
+ ../../../FirmwareLib/FirmwareLib/SerialUSB.h
 
 .././Synch.h:
 
@@ -101,8 +101,8 @@ c:\program\ files\ (x86)\atmel\atmel\ studio\ 6.0\extensions\atmel\avrgcc\3.4.0.
 
 ../../../FirmwareLib/FirmwareLib/ADC.h:
 
+../../../FirmwareLib/FirmwareLib/FRAM.h:
+
 ../../../FirmwareLib/FirmwareLib/SD_Card.h:
 
 ../../../FirmwareLib/FirmwareLib/SerialUSB.h:
-
-../../../FirmwareLib/FirmwareLib/FRAM.h:

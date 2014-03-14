@@ -28,7 +28,6 @@ int main(){
 		FRAMReadBuffer[i] = 0;
 	}
 	nop();
-	FRAMAddress = 0;
-	readFRAM(1000);
+	readFRAM(1000, 0);
 	nop();
 }

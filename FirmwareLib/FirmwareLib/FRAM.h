@@ -8,6 +8,6 @@
 #include "utility_functions.h"
 
 void writeFRAM(uint8_t* buffer, uint16_t length);
-void readFRAM (uint16_t numBytes);
+void readFRAM (uint16_t numBytes, uint16_t startAddress);
 
 #endif

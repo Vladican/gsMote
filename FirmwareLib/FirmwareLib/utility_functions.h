@@ -17,6 +17,7 @@
 #include <string.h>
 #include <stdio.h>
 
+uint8_t ADC_POWER_ON;
 // Utility functions
 void set_16MHz();
 void set_32MHz();
@@ -45,5 +46,6 @@ uint8_t SPI_write(uint8_t byteToSend);
 
 void DeciToString(int32_t* DecimalArray, uint32_t length, char* ReturnString);
 
+void init();
 
 #endif /* UTILITY_FUNCTIONS_H_ */

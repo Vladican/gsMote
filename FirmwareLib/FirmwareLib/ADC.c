@@ -218,9 +218,9 @@ void enableADCMUX(uint8_t on) {
 	}
 }
 
-void CO_collectADC(uint8_t channel, uint8_t gainExponent, uint16_t SPS, uint16_t numOfSamples, int32_t* DataArray) {
+void CO_collectADC(uint8_t channel, uint8_t gainExponent, uint16_t SPS, uint16_t numOfSamples, int32_t* DataArray, uint16_t BufferSize, uint8_t use_FRAM) {
 	
-	CO_collectADC_ext(channel, (uint8_t) (FILTER_CH_1AND5_bm | FILTER_HP_0_bm | FILTER_LP_600_gc), gainExponent, SPS, numOfSamples, DataArray);
+	CO_collectADC_ext(channel, (uint8_t) (FILTER_CH_1AND5_bm | FILTER_HP_0_bm | FILTER_LP_600_gc), gainExponent, SPS, numOfSamples, DataArray, BufferSize, use_FRAM);
 }
 
 /*  \brief Collects avg, min, max of NUM_SAMPLES ADC samples
@@ -248,16 +248,23 @@ void CO_collectADC(uint8_t channel, uint8_t gainExponent, uint16_t SPS, uint16_t
  *  \param gainExponent		Sets gain to 2^gainExponent[0:2].
  *  \param spsExponent Sets samples per second = 2^spsExponent
 */
-void CO_collectADC_ext(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint16_t SPS, uint16_t numOfSamples, int32_t* DataArray) {
+void CO_collectADC_ext(uint8_t channel, uint8_t filterConfig, uint8_t gainExponent, uint16_t SPS, uint16_t numOfSamples, int32_t* DataArray, uint16_t BufferSize, uint8_t use_FRAM) {
 
 
-	#ifndef F_CPU
-	#define F_CPU 32000000UL
-	#endif
-
+// 	#ifndef F_CPU
+// 	#define F_CPU 32000000UL
+// 	#endif
+	
 	uint16_t period;
 	ADC_BUFFER = DataArray;
 	ADC_Sampling_Finished = 0;
+	ADC_buffer_size = BufferSize;
+	if(use_FRAM){
+		write_to_FRAM = 1;
+	}
+	else{
+		write_to_FRAM = 0;
+	}
 	// Turn on power to ADC and PortEx
 	ADCPower(TRUE);
 	
@@ -553,7 +560,10 @@ ISR(PORTF_INT0_vect) {
 		
 		//ADC_BUFFER[sampleCount] = (int32_t) -((uint64_t)currentSample * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
 		var = currentSample;
-		ADC_BUFFER[sampleCount] = (int32_t) -(var * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+		ADC_BUFFER[sampleCount%ADC_buffer_size] = (int32_t) -(var * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+		if(write_to_FRAM){
+			writeFRAM(((uint8_t*)ADC_BUFFER)+(sampleCount%ADC_buffer_size), 1);
+		}
 		sampleCount++;
 	}
 }
@@ -648,22 +658,29 @@ uint16_t averagingPtC, uint16_t averagingPtD) {
 }*/
 void CO_collectSeismic3Axises(uint8_t gain[], uint16_t subsamplesPerSecond,
 uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
-uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray) {
+uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray, uint16_t BufferSize, uint8_t use_FRAM) {
 	
 	CO_collectSeismic3Axises_ext((uint8_t) (FILTER_CH_3AND7_bm | FILTER_HP_0_bm | FILTER_LP_600_gc), gain, subsamplesPerSecond,
 	subsamplesPerChannel, DCPassEnable, averagingPtA, averagingPtB,
-	averagingPtC, averagingPtD, numOfSamples, DataArray);
+	averagingPtC, averagingPtD, numOfSamples, DataArray, BufferSize, use_FRAM);
 }	
 void CO_collectSeismic3Axises_ext(uint8_t filterConfig, uint8_t gain[], uint16_t subsamplesPerSecond,
 uint8_t subsamplesPerChannel, uint8_t DCPassEnable, uint16_t averagingPtA, uint16_t averagingPtB,
-uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray) {
+uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray, uint16_t BufferSize, uint8_t use_FRAM) {
 	
-	#ifndef F_CPU
-	#define F_CPU 32000000UL
-	#endif
+// 	#ifndef F_CPU
+// 	#define F_CPU 32000000UL
+// 	#endif
 	
 	ADC_BUFFER = DataArray;
 	ADC_Sampling_Finished = 0;
+	ADC_buffer_size = BufferSize;
+	if(use_FRAM){
+		write_to_FRAM = 1;
+	}
+	else{
+		write_to_FRAM = 0;
+	}
 	// Turn on power to ADC and PortEx
 	ADCPower(TRUE);
 	
@@ -793,28 +810,38 @@ ISR(TCC0_OVF_vect) {
 	}
 		
 	sum = sum / 4;
-	ADC_BUFFER[sampleCount] = (int32_t)(sum * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+	ADC_BUFFER[sampleCount%ADC_buffer_size] = (int32_t)(sum * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+	if(write_to_FRAM){
+		writeFRAM(((uint8_t*)ADC_BUFFER)+(sampleCount%ADC_buffer_size), 1);
+	}
 	sampleCount++;
 
 }
 
 void CO_collectSeismic1Channel(uint8_t channel, uint8_t gain, uint16_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA,
-								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray) {
+								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray, uint16_t BufferSize, uint8_t use_FRAM) {
 	
 	CO_collectSeismic1Channel_ext(channel, (uint8_t) (FILTER_CH_3AND7_bm | FILTER_HP_0_bm | FILTER_LP_600_gc), gain, subsamplesPerSecond, subsamplesPerSample, DCPassEnable, averagingPtA,
-	averagingPtB, averagingPtC, averagingPtD, numOfSamples, DataArray);
+	averagingPtB, averagingPtC, averagingPtD, numOfSamples, DataArray, BufferSize, use_FRAM);
 }
 
 //collect data from 1 axis of accelerometer
 void CO_collectSeismic1Channel_ext(uint8_t channel, uint8_t filterConfig, uint8_t gain, uint16_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA, 
-								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray) {
+								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray, uint16_t BufferSize, uint8_t use_FRAM) {
 	
-	#ifndef F_CPU
-	#define F_CPU 32000000UL
-	#endif
+// 	#ifndef F_CPU
+// 	#define F_CPU 32000000UL
+// 	#endif
 	
 	ADC_BUFFER=DataArray;
 	ADC_Sampling_Finished = 0;
+	ADC_buffer_size = BufferSize;
+	if(use_FRAM){
+		write_to_FRAM = 1;
+	}
+	else{
+		write_to_FRAM = 0;
+	}
 	// Turn on power to ADC and PortEx
 	ADCPower(TRUE);
 	
@@ -936,7 +963,10 @@ ISR(TCD0_OVF_vect) {
 		
 	sum = sum / 4;
 	//get average of the 4 subsamples
-	ADC_BUFFER[sampleCount] = (int32_t)(sum * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+	ADC_BUFFER[sampleCount%ADC_buffer_size] = (int32_t)(sum * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+	if(write_to_FRAM){
+		writeFRAM(((uint8_t*)ADC_BUFFER)+(sampleCount%ADC_buffer_size), 1);
+	}
 	sampleCount++;
 }
 
