@@ -8,7 +8,7 @@
 
 ..\..\FirmwareLib\FirmwareLib\utility_functions.c
 
-FRAM_test.c
+Node.c
 
 Synch.c
 

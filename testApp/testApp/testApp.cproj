@@ -147,12 +147,12 @@
       <SubType>compile</SubType>
       <Link>utility_functions.h</Link>
     </Compile>
-    <None Include="Node.c">
-      <SubType>compile</SubType>
-    </None>
-    <Compile Include="FRAM_test.c">
+    <Compile Include="Node.c">
       <SubType>compile</SubType>
     </Compile>
+    <None Include="FRAM_test.c">
+      <SubType>compile</SubType>
+    </None>
     <Compile Include="Synch.c">
       <SubType>compile</SubType>
     </Compile>

@@ -10,7 +10,7 @@ int main(){
 	
 	uint8_t length;
 	uint8_t gain = GAIN_1_gc;
-	uint8_t ack = 0;
+	uint16_t ack = 0;
 	volatile uint8_t RawGain;
 	uint16_t freq = 2000;
 	volatile uint32_t samples = 0;
@@ -35,11 +35,11 @@ int main(){
 				case 'R':
 					//collect data if the ADC is not collecting any data right now
 					if(ADC_Sampling_Finished){
-						CO_collectADC(ADC_CH_1_gc, gain, freq, 1000, (int32_t*)FRAMReadBuffer, FR_READ_BUFFER_SIZE, TRUE);
-						//CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, FALSE, 1, 2, 3, 4, 1000,(int32_t*)FRAMReadBuffer);
+						//CO_collectADC(ADC_CH_1_gc, gain, freq, 10000, (int32_t*)FRAMReadBuffer, FR_READ_BUFFER_SIZE/4, TRUE);
+						CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, FALSE, 1, 2, 3, 4, 16000,(int32_t*)FRAMReadBuffer, FR_READ_BUFFER_SIZE/4, TRUE);
 					}
 					//send acknowledgment
-					chb_write(0x0000,&ack,1);						
+					chb_write(0x0000,&ack,2);						
 					break;
 				case 'G':
 					//while(!pcb->data_rcv);
@@ -76,7 +76,7 @@ int main(){
 							break;
 					}
 					//send acknowledgment
-					chb_write(0x0000,&ack,1);					
+					chb_write(0x0000,&ack,2);					
 					break;
 				case 'F':
 
@@ -85,7 +85,7 @@ int main(){
 					//set sampling frequency to what is specified
 					freq = (uint16_t)(*(int32_t*)(RadioMessageBuffer+1));
 					//send acknowledgment
-					chb_write(0x0000,&ack,1);
+					chb_write(0x0000,&ack,2);
 					break;
 				case 'S':
 					//stop the ADC if it is not already
@@ -94,7 +94,7 @@ int main(){
 					}
 					//otherwise, the ADC has finished sampling on its own and the data is ready to be transmitted
 					//send acknowledgment
-					chb_write(0x0000,&ack,1);
+					chb_write(0x0000,&ack,2);
 					break;
 				case 'T':
 					if(ADC_Sampling_Finished && DataAvailable){
@@ -104,20 +104,21 @@ int main(){
 							uint16_t NumMessages = ((samples*4)/CHB_MAX_PAYLOAD);
 							if ((samples*4)%CHB_MAX_PAYLOAD > 0) NumMessages++;
 							//send the number of messages the base station should expect after this message
-							chb_write(0x0000,&NumMessages,1);  
+							chb_write(0x0000,&NumMessages,2);  
 							//read the data from FRAM and send it
-							for(uint16_t i =0; i<(samples*4);;){	
+							for(uint16_t i =0; i<(samples*4);){	
 								if(samples*4 - i > 7200){
-									readFRAM(7200,i);						
+									readFRAM(7200,(FRAMAddress-(samples*4))+i);						
 									chb_write(0x0000,FRAMReadBuffer,7200);
 									i += 7200;
 								}
 								else{
-									readFRAM(samples*4 - i,i);
+									readFRAM(samples*4 - i,(FRAMAddress-(samples*4))+i);
 									chb_write(0x0000,FRAMReadBuffer,samples*4 - i);
 									i += samples*4 - i;
 								}									
-							}								
+							}
+							//chb_write(0x0000,FRAMReadBuffer,samples*4);								
 							//write the data to SD card for good measure (make sure transmitted and collected data is the same)	
 							//writeFile(ofile, FRAMReadBuffer, samples*4);			
 						}							

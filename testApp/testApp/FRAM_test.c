@@ -30,4 +30,6 @@ int main(){
 	nop();
 	readFRAM(1000, 0);
 	nop();
+	readFRAM(1000, 5);
+	nop();
 }

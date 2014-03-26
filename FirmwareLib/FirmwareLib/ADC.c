@@ -310,6 +310,9 @@ void CO_collectADC_ext(uint8_t channel, uint8_t filterConfig, uint8_t gainExpone
 	EVSYS.CH1MUX = EVSYS_CHMUX_PORTF_PIN0_gc;
 	//set overflow interrupt to low lvl
 	TCC1.INTCTRLA =  TC_OVFINTLVL_LO_gc;
+	//reset count to zero
+	TCC1.CTRLA = 0x00;
+	TCC1.CTRLFSET = 0x0C;
 	//set event system to update counter of number of samples every sample event
 	//TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
 	
@@ -562,7 +565,7 @@ ISR(PORTF_INT0_vect) {
 		var = currentSample;
 		ADC_BUFFER[sampleCount%ADC_buffer_size] = (int32_t) -(var * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
 		if(write_to_FRAM){
-			writeFRAM(((uint8_t*)ADC_BUFFER)+(sampleCount%ADC_buffer_size), 1);
+			writeFRAM((uint8_t*)(ADC_BUFFER+(sampleCount%ADC_buffer_size)), 4);
 		}
 		sampleCount++;
 	}
@@ -743,6 +746,9 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* Da
 	EVSYS.CH1MUX = EVSYS_CHMUX_TCC0_OVF_gc;
 	//set overflow interrupt to low lvl
 	TCC1.INTCTRLA =  TC_OVFINTLVL_LO_gc;
+	//reset count to zero
+	TCC1.CTRLA = 0x00;
+	TCC1.CTRLFSET = 0x0C;
 	//set event system to update counter of number of samples every sample event
 	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
 		
@@ -812,7 +818,7 @@ ISR(TCC0_OVF_vect) {
 	sum = sum / 4;
 	ADC_BUFFER[sampleCount%ADC_buffer_size] = (int32_t)(sum * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
 	if(write_to_FRAM){
-		writeFRAM(((uint8_t*)ADC_BUFFER)+(sampleCount%ADC_buffer_size), 1);
+		writeFRAM((uint8_t*)(ADC_BUFFER+(sampleCount%ADC_buffer_size)), 4);
 	}
 	sampleCount++;
 
@@ -903,6 +909,9 @@ void CO_collectSeismic1Channel_ext(uint8_t channel, uint8_t filterConfig, uint8_
 	EVSYS.CH1MUX = EVSYS_CHMUX_TCD0_OVF_gc;
 	//set overflow interrupt to low lvl
 	TCC1.INTCTRLA =  TC_OVFINTLVL_LO_gc;
+	//reset count to zero
+	TCC1.CTRLA = 0x00;
+	TCC1.CTRLFSET = 0x0C;
 	//set event system to update counter of number of samples every sample event
 	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
 		
@@ -965,7 +974,7 @@ ISR(TCD0_OVF_vect) {
 	//get average of the 4 subsamples
 	ADC_BUFFER[sampleCount%ADC_buffer_size] = (int32_t)(sum * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
 	if(write_to_FRAM){
-		writeFRAM(((uint8_t*)ADC_BUFFER)+(sampleCount%ADC_buffer_size), 1);
+		writeFRAM((uint8_t*)(ADC_BUFFER+(sampleCount%ADC_buffer_size)), 4);
 	}
 	sampleCount++;
 }

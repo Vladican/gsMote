@@ -38,7 +38,7 @@ C_SRCS +=  \
 ../../../FirmwareLib/FirmwareLib/FRAM.c \
 ../../../FirmwareLib/FirmwareLib/SerialUSB.c \
 ../../../FirmwareLib/FirmwareLib/utility_functions.c \
-../FRAM_test.c \
+../Node.c \
 ../Synch.c \
 ../../../FirmwareLib/FirmwareLib/ADC.c \
 ../../../FirmwareLib/FirmwareLib/adc_driver.c \
@@ -62,7 +62,7 @@ OBJS +=  \
 FRAM.o \
 SerialUSB.o \
 utility_functions.o \
-FRAM_test.o \
+Node.o \
 Synch.o \
 ADC.o \
 adc_driver.o \
@@ -80,7 +80,7 @@ OBJS_AS_ARGS +=  \
 FRAM.o \
 SerialUSB.o \
 utility_functions.o \
-FRAM_test.o \
+Node.o \
 Synch.o \
 ADC.o \
 adc_driver.o \
@@ -98,7 +98,7 @@ C_DEPS +=  \
 FRAM.d \
 SerialUSB.d \
 utility_functions.d \
-FRAM_test.d \
+Node.d \
 Synch.d \
 ADC.d \
 adc_driver.d \
@@ -116,7 +116,7 @@ C_DEPS_AS_ARGS +=  \
 FRAM.d \
 SerialUSB.d \
 utility_functions.d \
-FRAM_test.d \
+Node.d \
 Synch.d \
 ADC.d \
 adc_driver.d \
