@@ -2431,8 +2431,8 @@ int main(){
 	chb_set_channel(1);
      de2:	81 e0       	ldi	r24, 0x01	; 1
      de4:	0e 94 ec 1c 	call	0x39d8	; 0x39d8 <chb_set_channel>
-	chb_set_short_addr(0x0001);
-     de8:	81 e0       	ldi	r24, 0x01	; 1
+	chb_set_short_addr(0x0002);
+     de8:	82 e0       	ldi	r24, 0x02	; 2
      dea:	90 e0       	ldi	r25, 0x00	; 0
      dec:	0e 94 ae 1b 	call	0x375c	; 0x375c <chb_set_short_addr>
 	pcb_t* pcb = chb_get_pcb();
@@ -2467,7 +2467,7 @@ int main(){
      e06:	91 e2       	ldi	r25, 0x21	; 33
      e08:	38 2e       	mov	r3, r24
      e0a:	29 2e       	mov	r2, r25
-	chb_set_short_addr(0x0001);
+	chb_set_short_addr(0x0002);
 	pcb_t* pcb = chb_get_pcb();
 	//SD_init();
 	//getBootSectorData();
