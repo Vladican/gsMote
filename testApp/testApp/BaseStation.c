@@ -5,17 +5,48 @@
  *  Author: Vlad
  */ 
 # include "E-000001-000009_firmware_rev_1_0.h"
+//#include "dma_driver.h"
 
 volatile uint8_t TimedOut = 0;
+// 
+// void SetupTransmitChannel( void* MessageBuffer, uint16_t length)
+// {
+// 	DMA_SetupBlock(
+// 	&DMA.CH0,
+// 	MessageBuffer,
+// 	DMA_CH_SRCRELOAD_BLOCK_gc,
+// 	DMA_CH_SRCDIR_INC_gc,
+// 	(void *) &USARTC0.DATA,
+// 	DMA_CH_DESTRELOAD_BLOCK_gc,
+// 	DMA_CH_DESTDIR_FIXED_gc,
+// 	length,
+// 	DMA_CH_BURSTLEN_1BYTE_gc,
+// 	0, // Perform once
+// 	FALSE
+// 	);
+// 	DMA_EnableSingleShot( &DMA.CH0);
+// 	// USART Trigger source, Data Register Empty, 0x4C
+// 	DMA_SetTriggerSource( &DMA.CH0, DMA_CH_TRIGSRC_USARTC0_DRE_gc);
+// }
+
 
 int main(){
 
 	uint32_t length;
 	uint16_t dest_addr;
 	uint8_t  MessageBuffer[100];
-	uint16_t NumReceivedMessages, NumMessages, TimeoutCount;
+	uint16_t NumReceivedMessages, NumMessages;
 	//set timeout about 2 sec
 	uint16_t timeout = 4000;
+	//DMA_Enable();
+	//enable DMA
+// 	DMA.CTRL |= BIT7_bm;
+// 	DMA.CH0.CTRLA = BIT2_bm;
+// 	DMA.CH0.ADDRCTRL = BIT0_bm;
+// 	//trigger on USARTC0 data register empty
+// 	DMA.CH0.TRIGSRC = 0x4C;
+	//SetupTransmitChannel((void *)FRAMReadBuffer, 100);
+	
 	
 	set_32MHz();
 	
@@ -85,10 +116,14 @@ int main(){
 			//TCE0.CTRLA = 0x07;
 			while(NumReceivedMessages <NumMessages){
 				//wait for all messages to come in
+				//if(pcb->data_rcv && DMA_IsOngoing() == 0){
 				if(pcb->data_rcv){
 					length = chb_read((chb_rx_data_t*)(FRAMReadBuffer));
 					//pass the data to USB
 					SerialWriteBuffer(FRAMReadBuffer,length);
+					//DMA.CH0.TRFCNT = (uint16_t)length;
+					//SetupTransmitChannel((void *)FRAMReadBuffer, (uint16_t)length);
+					//DMA_EnableChannel(&DMA.CH0);
 					NumReceivedMessages++;
 					//reset timeout count
 					//TimeoutCount = TCF0.CNT;
@@ -115,5 +150,7 @@ ISR(TCE0_OVF_vect){
 	//TCE0.CTRLA = 0x00;
 	//TCE0.CTRLFSET = 0x0C;
 	//set timeout flag
+	nop();
 	TimedOut = 1;
+	nop();
 }

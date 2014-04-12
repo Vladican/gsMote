@@ -33,7 +33,7 @@
       </OverrideVtorValue>
       <Channel>
         <host>127.0.0.1</host>
-        <port>53378</port>
+        <port>49609</port>
         <ssl>False</ssl>
       </Channel>
       <ToolOptions>
@@ -151,6 +151,12 @@
       <SubType>compile</SubType>
     </Compile>
     <None Include="FRAM_test.c">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="dma_driver.c">
+      <SubType>compile</SubType>
+    </None>
+    <None Include="dma_driver.h">
       <SubType>compile</SubType>
     </None>
     <Compile Include="Synch.c">
