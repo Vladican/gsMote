@@ -133,9 +133,9 @@
       <SubType>compile</SubType>
       <Link>SerialUSB.h</Link>
     </Compile>
-    <None Include="BaseStation.c">
+    <Compile Include="BaseStation.c">
       <SubType>compile</SubType>
-    </None>
+    </Compile>
     <None Include="RadioTester.c">
       <SubType>compile</SubType>
     </None>
@@ -147,9 +147,9 @@
       <SubType>compile</SubType>
       <Link>utility_functions.h</Link>
     </Compile>
-    <Compile Include="Node.c">
+    <None Include="Node.c">
       <SubType>compile</SubType>
-    </Compile>
+    </None>
     <None Include="FRAM_test.c">
       <SubType>compile</SubType>
     </None>

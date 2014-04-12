@@ -12,6 +12,7 @@ int main(){
 
 	uint32_t length;
 	uint16_t dest_addr;
+	uint16_t ack = 0;
 	uint8_t  MessageBuffer[100];
 	uint16_t NumReceivedMessages, NumMessages, TimeoutCount;
 	//set timeout about 2 sec
@@ -94,6 +95,8 @@ int main(){
 					//TimeoutCount = TCF0.CNT;
 					//reset timer count
 					//TCE0.CTRLA = 0x00;
+					//send acknowledgment
+					chb_write(dest_addr,&ack,2);
 					TCE0.CTRLFSET = 0x08;
 					//clear timeout flag
 					TimedOut = 0;

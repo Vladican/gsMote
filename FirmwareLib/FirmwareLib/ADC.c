@@ -304,15 +304,16 @@ void CO_collectADC_ext(uint8_t channel, uint8_t filterConfig, uint8_t gainExpone
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	//reset count to zero
+	TCC1.CTRLA = 0x00;
+	TCC1.CTRLFSET = 0x0C;
+	
 	//set the period as number of samples to know when to stop sampling (and compensate for discarded samples at start of sampling)
 	TCC1.PER = numOfSamples;
 	//Configure IO13(PF0) to drive event channel that triggers event every time a sample is collected
 	EVSYS.CH1MUX = EVSYS_CHMUX_PORTF_PIN0_gc;
 	//set overflow interrupt to low lvl
 	TCC1.INTCTRLA =  TC_OVFINTLVL_LO_gc;
-	//reset count to zero
-	TCC1.CTRLA = 0x00;
-	TCC1.CTRLFSET = 0x0C;
 	//set event system to update counter of number of samples every sample event
 	//TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
 	
@@ -722,12 +723,6 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* Da
 	SPICount = 0;
 	checksumADC[0] = checksumADC[1] = checksumADC[2] = 0;
 
-	// Enable interrupts.
-	PMIC.CTRL |= (PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_LOLVLEN_bm);
-	sei();
-
-	SPICS(TRUE);
-
 	// Configure clock signal for AD7767 MCLK
 	PORTE.DIRSET = PIN5_bm;
 	// Set Waveform generator mode and enable the CCx output to IO14 (PE5)
@@ -739,16 +734,15 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* Da
 	TCE1.CCBBUF = ((F_CPU/16)/subsamplesPerSecond)/2;
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+	//reset count to zero
+	TCC1.CTRLA = 0x00;
+	TCC1.CTRLFSET = 0x0C;	
 	//set the period as number of samples to know when to stop sampling
 	TCC1.PER = numOfSamples;
 	//Configure IO13(PF0) to drive event channel that triggers event every time the 4 samples are collected and averaged
 	EVSYS.CH1MUX = EVSYS_CHMUX_TCC0_OVF_gc;
 	//set overflow interrupt to low lvl
 	TCC1.INTCTRLA =  TC_OVFINTLVL_LO_gc;
-	//reset count to zero
-	TCC1.CTRLA = 0x00;
-	TCC1.CTRLFSET = 0x0C;
 	//set event system to update counter of number of samples every sample event
 	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
 		
@@ -756,6 +750,10 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* Da
 		
 	// Set oscillator source and frequency and start
 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
+	
+	// Enable interrupts.
+	PMIC.CTRL |= (PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_LOLVLEN_bm);
+	sei();
 	
 	// wait for ADC to collect samples
 	//while(sampleCount < numOfSamples);
@@ -885,11 +883,6 @@ void CO_collectSeismic1Channel_ext(uint8_t channel, uint8_t filterConfig, uint8_
 	SPICount = 0;
 	//checksumADC[0] = checksumADC[1] = checksumADC[2] = 0;
 	
-	// Enable interrupts.
-	PMIC.CTRL |= PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_LOLVLEN_bm;
-	sei();
-
-	SPICS(TRUE);
 
 	// Configure clock signal for AD7767 MCLK
 	PORTE.DIRSET = PIN5_bm;
@@ -902,16 +895,15 @@ void CO_collectSeismic1Channel_ext(uint8_t channel, uint8_t filterConfig, uint8_
 	TCE1.CCBBUF = ((F_CPU/16)/subsamplesPerSecond)/2;
 	
 	////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+	//reset count to zero
+	TCC1.CTRLA = 0x00;
+	TCC1.CTRLFSET = 0x0C;	
 	//set the period as number of samples to know when to stop sampling
 	TCC1.PER = numOfSamples;
 	//Configure IO13(PF0) to drive event channel that triggers event every time the 4 samples are collected and averaged
 	EVSYS.CH1MUX = EVSYS_CHMUX_TCD0_OVF_gc;
 	//set overflow interrupt to low lvl
 	TCC1.INTCTRLA =  TC_OVFINTLVL_LO_gc;
-	//reset count to zero
-	TCC1.CTRLA = 0x00;
-	TCC1.CTRLFSET = 0x0C;
 	//set event system to update counter of number of samples every sample event
 	TCC1.CTRLA = ( TCC1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_EVCH1_gc;
 		
@@ -919,6 +911,10 @@ void CO_collectSeismic1Channel_ext(uint8_t channel, uint8_t filterConfig, uint8_
 	
 	// Set oscillator source and frequency and start
 	TCE1.CTRLA = ( TCE1.CTRLA & ~TC1_CLKSEL_gm ) | TC_CLKSEL_DIV1_gc;
+	
+	// Enable interrupts.
+	PMIC.CTRL |= PMIC_HILVLEN_bm | PMIC_MEDLVLEN_bm | PMIC_LOLVLEN_bm;
+	sei();
 	
 	// wait for ADC to collect samples
 	//while(sampleCount < numOfSamples);
@@ -982,6 +978,7 @@ ISR(TCD0_OVF_vect) {
 //sample an axis of accelerometer with ADC
 void sampleCurrentChannel() {
 	
+	SPICS(TRUE);
 	PORTF.OUTCLR = PIN1_bm; // pull ADC_CS down to enable data read
 	SPIC.DATA = 0xAA; // dummy data to start SPI clock
 	while(!(SPIC.STATUS & SPI_IF_bm));
@@ -994,6 +991,7 @@ void sampleCurrentChannel() {
 	SPIBuffer[SPICount+2] = SPIC.DATA;
 	PORTF.OUTSET = PIN1_bm; // pull ADC_CS up to end data read
 	SPICount +=3;
+	SPICS(FALSE);
 }
 
 //write collected accelerometer samples to FRAM. OBSOLETE
