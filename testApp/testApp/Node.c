@@ -36,7 +36,7 @@ int main(){
 					//collect data if the ADC is not collecting any data right now
 					if(ADC_Sampling_Finished){
 						//CO_collectADC(ADC_CH_1_gc, gain, freq, 10000, (int32_t*)FRAMReadBuffer, FR_READ_BUFFER_SIZE/4, TRUE);
-						CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, FALSE, 1, 2, 3, 4, 10000,(int32_t*)FRAMReadBuffer, FR_READ_BUFFER_SIZE/4, TRUE);
+						CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, FALSE, 1, 2, 3, 4, 16000,(int32_t*)FRAMReadBuffer, FR_READ_BUFFER_SIZE/4, TRUE);
 					}
 					//send acknowledgment
 					chb_write(0x0000,&ack,2);						
@@ -108,28 +108,13 @@ int main(){
 							//read the data from FRAM and send it
 							for(uint16_t i =0; i<(samples*4);){	
 								if(samples*4 - i > 7200){
-									readFRAM(7200,(FRAMAddress-(samples*4))+i);		
-									for(uint32_t j = 0; j<7200;){				
-										chb_write(0x0000,FRAMReadBuffer+j,100);
-										_delay_ms(100);
-										j+=100;
-									}									
+									readFRAM(7200,(FRAMAddress-(samples*4))+i);						
+									chb_write(0x0000,FRAMReadBuffer,7200);
 									i += 7200;
 								}
 								else{
 									readFRAM(samples*4 - i,(FRAMAddress-(samples*4))+i);
-									for(uint32_t j = 0; j<samples*4-i;){
-										if(samples*4-i-j >= 100){	
-											chb_write(0x0000,FRAMReadBuffer+j,100);
-											_delay_ms(100);
-											j+=100;
-										}
-										else{
-											chb_write(0x0000,FRAMReadBuffer+j,samples*4 - i - j);
-											_delay_ms(100);
-											j+=samples*4 - i - j;
-										}											
-									}										
+									chb_write(0x0000,FRAMReadBuffer,samples*4 - i);
 									i += samples*4 - i;
 								}									
 							}
