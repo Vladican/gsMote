@@ -45,12 +45,16 @@ int main(){
 		for(uint32_t i = 0; i<length; i++){
 			MessageBuffer[i] = SerialReadByte();
 		}
-		dest_addr = (uint16_t)(MessageBuffer[0]);
+		dest_addr = ((uint16_t*)MessageBuffer)[0];
 			
 		
-		if(length > 0){
+		if(length > 2){
+			//clear out message buffer in case any stray message was received
+			if(pcb->data_rcv){ 
+				chb_read((chb_rx_data_t*)FRAMReadBuffer);
+			}				
 			//process/send the bytes over radio
-			chb_write(dest_addr,MessageBuffer+1,length-1);
+			chb_write(dest_addr,MessageBuffer+2,length-2);
 		}
 		
 		TCE0.CTRLA = 0x07;
