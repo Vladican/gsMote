@@ -152,6 +152,9 @@ int main(){
 						}														
 						DataAvailable = 0;
 					}
+					else {
+						chb_write(0x0000,(uint8_t*)(&ack),2);
+					}
 					break;
 				}		
 		}		
