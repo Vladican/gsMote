@@ -6,9 +6,9 @@
 
 ..\..\FirmwareLib\FirmwareLib\SerialUSB.c
 
-BaseStation.c
-
 ..\..\FirmwareLib\FirmwareLib\utility_functions.c
+
+Node.c
 
 Synch.c
 

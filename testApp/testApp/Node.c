@@ -114,20 +114,32 @@ int main(){
 						if(samples > 0){	
 							uint16_t NumMessages = ((samples*4)/CHB_MAX_PAYLOAD);
 							if ((samples*4)%CHB_MAX_PAYLOAD > 0) NumMessages++;
-							//send the number of messages the base station should expect after this message
-							chb_write(0x0000,(uint8_t*)(&NumMessages),2);  
 							//start timeout timer
 							TCE0.CTRLA = 0x07;
+							TimedOut = 0;
+							//send the number of messages the base station should expect after this message
+							while(chb_write(0x0000,(uint8_t*)(&NumMessages),2) != CHB_SUCCESS){
+								if(TimedOut) break;
+							}
+							if(TimedOut){
+								//stop timeout counter and go back to waiting for command
+								TimedOut = 0;
+								TCE0.CTRLA = 0;
+								break;
+							}
+							//reset timeout timer
+							TimedOut = 0;
+							TCE0.CTRLFSET = 0x08;  
 							//read the data from FRAM and send it
 							for(uint16_t i =0; i<(samples*4);){	
 								if(samples*4 - i >= 100){
 									readFRAM(100,(FRAMAddress-(samples*4))+i);						
-									chb_write(0x0000,FRAMReadBuffer,100);
+									while(chb_write(0x0000,FRAMReadBuffer,100) != CHB_SUCCESS);
 									i += 100;
 								}
 								else{
 									readFRAM(samples*4 - i,(FRAMAddress-(samples*4))+i);
-									chb_write(0x0000,FRAMReadBuffer,samples*4 - i);
+									while(chb_write(0x0000,FRAMReadBuffer,samples*4 - i) != CHB_SUCCESS);
 									i += samples*4 - i;
 								}
 								//reset timeout timer
@@ -153,7 +165,7 @@ int main(){
 						DataAvailable = 0;
 					}
 					else {
-						chb_write(0x0000,(uint8_t*)(&ack),2);
+						while(chb_write(0x0000,(uint8_t*)(&ack),2) != CHB_SUCCESS);
 					}
 					break;
 				}		

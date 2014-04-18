@@ -37,8 +37,8 @@ SUBDIRS :=
 C_SRCS +=  \
 ../../../FirmwareLib/FirmwareLib/FRAM.c \
 ../../../FirmwareLib/FirmwareLib/SerialUSB.c \
-../BaseStation.c \
 ../../../FirmwareLib/FirmwareLib/utility_functions.c \
+../Node.c \
 ../Synch.c \
 ../../../FirmwareLib/FirmwareLib/ADC.c \
 ../../../FirmwareLib/FirmwareLib/adc_driver.c \
@@ -61,8 +61,8 @@ ASM_SRCS +=
 OBJS +=  \
 FRAM.o \
 SerialUSB.o \
-BaseStation.o \
 utility_functions.o \
+Node.o \
 Synch.o \
 ADC.o \
 adc_driver.o \
@@ -79,8 +79,8 @@ SD_Card.o
 OBJS_AS_ARGS +=  \
 FRAM.o \
 SerialUSB.o \
-BaseStation.o \
 utility_functions.o \
+Node.o \
 Synch.o \
 ADC.o \
 adc_driver.o \
@@ -97,8 +97,8 @@ SD_Card.o
 C_DEPS +=  \
 FRAM.d \
 SerialUSB.d \
-BaseStation.d \
 utility_functions.d \
+Node.d \
 Synch.d \
 ADC.d \
 adc_driver.d \
@@ -115,8 +115,8 @@ SD_Card.d
 C_DEPS_AS_ARGS +=  \
 FRAM.d \
 SerialUSB.d \
-BaseStation.d \
 utility_functions.d \
+Node.d \
 Synch.d \
 ADC.d \
 adc_driver.d \

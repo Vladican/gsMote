@@ -171,7 +171,8 @@ U8 chb_write(U16 addr, U8 *data, U32 len)
 		//if (len > CHB_MAX_PAYLOAD) _delay_ms(100);				//wait a little before sending next message
         len = len - frm_len;
     }
-    return CHB_SUCCESS;
+	if(status == CHB_SUCCESS || CHB_SUCCESS_DATA_PENDING) return CHB_SUCCESS;
+	else return 1;
 }
 
 /**************************************************************************/

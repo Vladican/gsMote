@@ -52,69 +52,83 @@ int main(){
 			//clear out message buffer in case any stray message was received
 			if(pcb->data_rcv){ 
 				chb_read((chb_rx_data_t*)FRAMReadBuffer);
-			}				
-			//process/send the bytes over radio
-			chb_write(dest_addr,MessageBuffer+2,length-2);
-		}
-		
-		TCE0.CTRLA = 0x07;
-		TimedOut = 0;
-		//set prescalar of 1024... each timer tick is 512 micro seconds
-		//TCE0.CTRLA = 0x07;
-		//wait for response/data over radio
-		while(!pcb->data_rcv){
-			//no response detected so go back to waiting for next serial command
-			if(TimedOut) break;
-			//if(TCF0.CNT - TimeoutCount >= timeout) break;
-		}
- 		if(TimedOut) {
-			TCE0.CTRLA = 0x00;
-			TCE0.CTRLFSET = 0x08;
- 			continue;
- 		}			
-		//if(TCF0.CNT - TimeoutCount >= timeout) continue;
-		//read the data. expecting a 1 byte message containing number of messages that follow
-		length = chb_read((chb_rx_data_t*)FRAMReadBuffer);
-		if (length == 2){
-			length = 0;
-			NumReceivedMessages = 0;
-			//get the number of messages (2 bytes)
-			NumMessages = ((uint16_t*)FRAMReadBuffer)[0];
-			//start timeout clock
-			//TimeoutCount = TCF0.CNT;
-			//reset timer count
-			//TCE0.CTRLA = 0x00;
-			TCE0.CTRLFSET = 0x08;
-			//clear timeout flag
-			TimedOut = 0;
-			//TCE0.CTRLA = 0x07;
-			while(NumReceivedMessages <NumMessages){
-				//wait for all messages to come in
-				if(pcb->data_rcv){
-					length = chb_read((chb_rx_data_t*)(FRAMReadBuffer));
-					//pass the data to USB
-					SerialWriteBuffer(FRAMReadBuffer,length);
-					NumReceivedMessages++;
-					//reset timeout count
-					//TimeoutCount = TCF0.CNT;
-					//reset timer count
-					//TCE0.CTRLA = 0x00;
-					//send acknowledgment
-					chb_write(dest_addr,&ack,2);
-					TCE0.CTRLFSET = 0x08;
-					//clear timeout flag
-					TimedOut = 0;
-					//TCE0.CTRLA = 0x07;
-				}
-				//if(TCF0.CNT - TimeoutCount >= timeout) break;
-				if(TimedOut) break;		
 			}
-			//SerialWriteBuffer(FRAMReadBuffer,length);
-			//check if timed out
-			TCE0.CTRLA = 0x00;
+			TCE0.CTRLA = 0x07;
+			TimedOut = 0;				
+			//process/send the bytes over radio
+			while(chb_write(dest_addr,MessageBuffer+2,length-2) != CHB_SUCCESS){
+				if(TimedOut) break;
+			}
+			if(TimedOut) {
+				TCE0.CTRLA = 0x00;
+				TCE0.CTRLFSET = 0x08;
+				continue;
+			}				
+		
 			TCE0.CTRLFSET = 0x08;
-		}	
-	}
+			TimedOut = 0;
+			//set prescalar of 1024... each timer tick is 512 micro seconds
+			//TCE0.CTRLA = 0x07;
+			//wait for response/data over radio
+			while(!pcb->data_rcv){
+				//no response detected so go back to waiting for next serial command
+				if(TimedOut) break;
+				//if(TCF0.CNT - TimeoutCount >= timeout) break;
+			}
+ 			if(TimedOut) {
+				TCE0.CTRLA = 0x00;
+				TCE0.CTRLFSET = 0x08;
+ 				continue;
+ 			}			
+			//if(TCF0.CNT - TimeoutCount >= timeout) continue;
+			//read the data. expecting a 1 byte message containing number of messages that follow
+			length = chb_read((chb_rx_data_t*)FRAMReadBuffer);
+			if (length == 2){
+				length = 0;
+				NumReceivedMessages = 0;
+				//get the number of messages (2 bytes)
+				NumMessages = ((uint16_t*)FRAMReadBuffer)[0];
+				//start timeout clock
+				//TimeoutCount = TCF0.CNT;
+				//reset timer count
+				//TCE0.CTRLA = 0x00;
+				TCE0.CTRLFSET = 0x08;
+				//clear timeout flag
+				TimedOut = 0;
+				//TCE0.CTRLA = 0x07;
+				while(NumReceivedMessages <NumMessages){
+					//wait for all messages to come in
+					if(pcb->data_rcv){
+						length = chb_read((chb_rx_data_t*)(FRAMReadBuffer));
+						//pass the data to USB
+						SerialWriteBuffer(FRAMReadBuffer,length);
+						NumReceivedMessages++;
+						//reset timeout count
+						//TimeoutCount = TCF0.CNT;
+						//reset timer count
+						//TCE0.CTRLA = 0x00;
+						//send acknowledgment
+						TCE0.CTRLFSET = 0x08;
+						//clear timeout flag
+						TimedOut = 0;
+						while(chb_write(dest_addr,&ack,2) != CHB_SUCCESS){
+							if(TimedOut) break;	
+						}
+						TCE0.CTRLFSET = 0x08;
+						//clear timeout flag
+						TimedOut = 0;
+						//TCE0.CTRLA = 0x07;
+					}
+					//if(TCF0.CNT - TimeoutCount >= timeout) break;
+					if(TimedOut) break;		
+				}
+				//SerialWriteBuffer(FRAMReadBuffer,length);
+				//check if timed out
+				TCE0.CTRLA = 0x00;
+				TCE0.CTRLFSET = 0x08;
+			}	
+		}
+	}	
 }
 
 ISR(TCE0_OVF_vect){

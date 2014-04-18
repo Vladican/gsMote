@@ -35,7 +35,7 @@ c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/a
 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodhi4.o)
                               chb_buf.o (__divmodhi4)
 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodsi4.o)
-                              ADC.o (__udivmodsi4)
+                              Node.o (__udivmodsi4)
 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodsi4.o)
                               ADC.o (__divmodsi4)
 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
@@ -92,53 +92,53 @@ c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/a
 Allocating common symbols
 Common symbol       size              file
 
-DataAvailable       0x1               BaseStation.o
-SDBuffer            0x200             BaseStation.o
+DataAvailable       0x1               Node.o
+SDBuffer            0x200             Node.o
 bankA_OUT           0x1               FRAM.o
-write_to_FRAM       0x1               BaseStation.o
-appendFileLocation  0x4               BaseStation.o
-firstDataSector     0x4               BaseStation.o
+write_to_FRAM       0x1               Node.o
+appendFileLocation  0x4               Node.o
+firstDataSector     0x4               Node.o
 FRAMReadBuffer      0x1c71            FRAM.o
-fileSize            0x4               BaseStation.o
-bytesPerSector      0x2               BaseStation.o
-saved_sreg          0x1               BaseStation.o
+fileSize            0x4               Node.o
+bytesPerSector      0x2               Node.o
+saved_sreg          0x1               Node.o
 FRAMAddress         0x2               FRAM.o
 buff                0x8               Synch.o
-totalClusters       0x4               BaseStation.o
-discardCount        0x1               BaseStation.o
+totalClusters       0x4               Node.o
+discardCount        0x1               Node.o
 RadioMonitorMode    0x1               FRAM.o
-rootCluster         0x4               BaseStation.o
-data24Bit           0x1000            BaseStation.o
-temp64              0x2               BaseStation.o
+rootCluster         0x4               Node.o
+data24Bit           0x1000            Node.o
+temp64              0x2               Node.o
 SPIBuffer           0xd               FRAM.o
-ADC_BUFFER          0x2               BaseStation.o
-sampleCount         0x4               BaseStation.o
+ADC_BUFFER          0x2               Node.o
+sampleCount         0x4               Node.o
 MotesReadyToSynch   0x2               FRAM.o
 bankA_DIR           0x1               FRAM.o
-sectorPerCluster    0x2               BaseStation.o
-unusedSectors       0x4               BaseStation.o
+sectorPerCluster    0x2               Node.o
+unusedSectors       0x4               Node.o
 channelStatus       0x1               FRAM.o
 bankB_OUT           0x1               FRAM.o
 reservedSectorCount
-                    0x2               BaseStation.o
-temp32              0x2               BaseStation.o
-appendStartCluster  0x4               BaseStation.o
-sumFRAM             0x18              BaseStation.o
+                    0x2               Node.o
+temp32              0x2               Node.o
+appendStartCluster  0x4               Node.o
+sumFRAM             0x18              Node.o
 ADC_POWER_ON        0x1               FRAM.o
 error               0x1               FRAM.o
-TotalSampleCount    0x2               BaseStation.o
+TotalSampleCount    0x2               Node.o
 Buffer              0xd               FRAM.o
-Filename            0xf               BaseStation.o
+Filename            0xf               Node.o
 StartOfFreeSpace    0x4               FRAM.o
-SPICount            0x1               BaseStation.o
+SPICount            0x1               Node.o
 freeClusterCountUpdated
-                    0x1               BaseStation.o
+                    0x1               Node.o
 __iob               0x6               c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
 moteID              0x1               FRAM.o
-appendFileSector    0x4               BaseStation.o
+appendFileSector    0x4               Node.o
 ADC_Sampling_Finished
-                    0x1               BaseStation.o
-ADC_buffer_size     0x2               BaseStation.o
+                    0x1               Node.o
+ADC_buffer_size     0x2               Node.o
 bankB_DIR           0x1               FRAM.o
 
 Memory Configuration
@@ -157,8 +157,8 @@ Linker script and memory map
 LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6/crtx256a3.o
 LOAD FRAM.o
 LOAD SerialUSB.o
-LOAD BaseStation.o
 LOAD utility_functions.o
+LOAD Node.o
 LOAD Synch.o
 LOAD ADC.o
 LOAD adc_driver.o
@@ -267,7 +267,7 @@ LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x774a
+.text           0x00000000     0x7a2c
  *(.vectors)
  .vectors       0x00000000      0x1e8 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6/crtx256a3.o
                 0x00000000                __vector_default
@@ -442,312 +442,312 @@ LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0
                 0x00000586                SerialReadByte
                 0x00000596                SerialWriteBuffer
                 0x000005f2                StopSerial
- .text          0x00000608      0x1d2 BaseStation.o
-                0x00000608                main
-                0x000007bc                __vector_47
- .text          0x000007da      0x7ae utility_functions.o
-                0x000007da                init
-                0x000007e0                setXOSC_32MHz
-                0x00000820                set_16MHz
-                0x0000084a                set_32MHz
-                0x00000874                portExCS
-                0x00000894                Ext1Power
-                0x000008c2                Ext2Power
-                0x000008f0                HVPower
-                0x0000092a                lowerMuxCS
-                0x00000942                upperMuxCS
-                0x0000095a                SPIInit
-                0x0000097c                SPIInit2
-                0x000009a0                SPICS
-                0x000009b8                SPIDisable
-                0x000009cc                set_filter
-                0x00000a92                PortEx_OUTCLR
-                0x00000b40                PortEx_OUTSET
-                0x00000bea                PortEx_DIRCLR
-                0x00000c9a                PortEx_DIRSET
-                0x00000d46                ADCPower
-                0x00000e6a                DeciToString
-                0x00000f74                SPI_write
- .text          0x00000f88      0x14c Synch.o
-                0x00000f88                synch
-                0x00000ff8                __vector_83
- .text          0x000010d4     0x1ebe ADC.o
-                0x000010d4                CO_collectTemp
-                0x00001308                CO_collectBatt
-                0x00001560                set_ampGain
-                0x000015d2                enableADCMUX
-                0x000015ee                __vector_20
-                0x0000167a                ADC_Stop_Sampling
-                0x000016bc                ADC_Get_Num_Samples
-                0x00001700                ADC_Pause_Sampling
-                0x00001708                ADC_Resume_Sampling
-                0x00001712                __vector_104
-                0x00001994                ACC_DCPassEnable
-                0x000019b4                __vector_14
-                0x00001d72                __vector_77
-                0x00002130                sampleCurrentChannel
-                0x000021b4                __vector_82
-                0x00002208                __vector_81
-                0x00002258                __vector_80
-                0x000022a8                __vector_79
-                0x000022f8                __vector_19
-                0x00002384                __vector_18
-                0x000023d4                __vector_17
-                0x00002424                __vector_16
-                0x00002474                writeSE2FRAM
-                0x00002686                FRAMWriteKnowns
-                0x000028e4                setADCInput
-                0x00002928                CO_collectSeismic1Channel_ext
-                0x00002ac6                CO_collectSeismic1Channel
-                0x00002b84                CO_collectSeismic3Axises_ext
-                0x00002d58                CO_collectSeismic3Axises
-                0x00002e1c                CO_collectADC_ext
-                0x00002f48                CO_collectADC
- .text          0x00002f92      0x188 adc_driver.o
-                0x00002f92                ADC_ResultCh_GetWord_Unsigned
-                0x00002fa2                ADC_ResultCh_GetWord_Signed
-                0x00002fb8                ADC_ResultCh_GetWord
-                0x00002fc4                ADC_ResultCh_GetLowByte
-                0x00002fce                ADC_ResultCh_GetHighByte
-                0x00002fd8                ADC_Wait_8MHz
-                0x00002fea                ADC_Wait_32MHz
-                0x00002ffe                ADC_Offset_Get_Unsigned
-                0x00003062                ADC_Offset_Get_Signed
-                0x000030ce                SP_ReadCalibrationByte
-                0x000030e0                ADC_CalibrationValues_Load
- .text          0x0000311a      0x246 chb.o
-                0x0000311a                chb_init
-                0x0000313a                radio_msg_received_int_enable
-                0x0000315c                chb_get_pcb
-                0x00003162                chb_write
-                0x000032a2                chb_read
- .text          0x00003360       0x6c chb_buf.o
-                0x00003360                chb_buf_init
-                0x0000336e                chb_buf_write
-                0x00003398                chb_buf_read
-                0x000033c6                chb_buf_get_len
- .text          0x000033cc      0x7e0 chb_drvr.o
-                0x000033cc                chb_get_ieee_addr
-                0x000033dc                chb_get_short_addr
-                0x00003408                RadioCS
-                0x00003420                chb_frame_write
-                0x000034b6                chb_reg_write
-                0x000034ee                chb_set_pwr
-                0x000034f8                chb_reg_write64
-                0x00003522                chb_set_ieee_addr
-                0x00003544                chb_reg_write16
-                0x00003560                chb_set_short_addr
-                0x000035ae                chb_reg_read
-                0x000035ec                chb_reg_read_mod_write
-                0x00003614                chb_set_state
-                0x000036c4                chb_sleep
-                0x000036f8                chb_tx
-                0x00003772                chb_set_mode
-                0x000037dc                chb_set_channel
-                0x00003822                chb_reg_read16
-                0x0000383a                chb_reset
-                0x00003880                chb_drvr_init
-                0x00003984                __vector_64
- .text          0x00003bac      0x136 chb_eeprom.o
-                0x00003bac                chb_eeprom_write
-                0x00003c72                chb_eeprom_read
- .text          0x00003ce2       0x3a chb_spi.o
-                0x00003ce2                chb_spi_init
-                0x00003d08                SPID_write
- .text          0x00003d1c       0xf6 clksys_driver.o
-                0x00003d1c                CCPWrite
-                0x00003d46                CLKSYS_XOSC_Config
-                0x00003d5c                CLKSYS_PLL_Config
-                0x00003d68                CLKSYS_Disable
-                0x00003d7c                CLKSYS_Prescalers_Config
-                0x00003d88                CLKSYS_Main_ClockSource_Select
-                0x00003dae                CLKSYS_RTC_ClockSource_Enable
-                0x00003dbe                CLKSYS_AutoCalibration_Enable
-                0x00003dfa                CLKSYS_XOSC_FailureDetection_Enable
-                0x00003e06                CLKSYS_Configuration_Lock
- .text          0x00003e12     0x122c FAT32.o
-                0x00003e12                getFirstSector
-                0x00003e60                getSetNextCluster
-                0x00003f84                getSetFreeCluster
-                0x000040d4                getBootSectorData
-                0x0000429e                convertFileName
-                0x0000441c                searchNextFreeCluster
-                0x00004582                freeMemoryUpdate
-                0x0000465e                findFiles
-                0x00004996                deleteFile
-                0x000049aa                readFile
-                0x00004aa2                writeFile
- .text          0x0000503e      0x8f8 SD_Card.o
-                0x0000503e                SD_command
-                0x00005100                SD_init
-                0x000052b4                SD_write_block
-                0x0000541e                SD_read_block
-                0x000054ec                SD_write_multiple_blocks
-                0x000057a0                SD_read_multiple_blocks
-                0x000058fc                SD_disable
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(addsf3.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(addsf3x.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(divsf3.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(divsf3x.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fixunssfsi.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(floatsisf.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_inf.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_nan.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_pscA.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_pscB.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_round.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_split3.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_zero.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(gesf2.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_cmp.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_mulsi3.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodhi4.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodsi4.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodsi4.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_copy_data.o)
- .text          0x00005936        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clear_bss.o)
- .text          0x00005936      0x1a6 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
-                0x00005936                __muldi3
- .text          0x00005adc       0xe8 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
-                0x00005adc                __ashldi3
- .text          0x00005bc4       0xd0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
-                0x00005bc4                __ashrdi3
- .text          0x00005c94      0xf78 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
-                0x00005c94                __divdi3
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodhi4.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_prologue.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_epilogue.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clz.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strcpy_P.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(memmove.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strcat.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(itoa.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strnlen_P.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(memcpy.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strnlen.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strrev.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
- .text          0x00006c0c        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(ultoa_invert.o)
-                0x00006c0c                . = ALIGN (0x2)
+ .text          0x00000608      0x7ae utility_functions.o
+                0x00000608                init
+                0x0000060e                setXOSC_32MHz
+                0x0000064e                set_16MHz
+                0x00000678                set_32MHz
+                0x000006a2                portExCS
+                0x000006c2                Ext1Power
+                0x000006f0                Ext2Power
+                0x0000071e                HVPower
+                0x00000758                lowerMuxCS
+                0x00000770                upperMuxCS
+                0x00000788                SPIInit
+                0x000007aa                SPIInit2
+                0x000007ce                SPICS
+                0x000007e6                SPIDisable
+                0x000007fa                set_filter
+                0x000008c0                PortEx_OUTCLR
+                0x0000096e                PortEx_OUTSET
+                0x00000a18                PortEx_DIRCLR
+                0x00000ac8                PortEx_DIRSET
+                0x00000b74                ADCPower
+                0x00000c98                DeciToString
+                0x00000da2                SPI_write
+ .text          0x00000db6      0x4b4 Node.o
+                0x00000db6                main
+                0x0000124c                __vector_47
+ .text          0x0000126a      0x14c Synch.o
+                0x0000126a                synch
+                0x000012da                __vector_83
+ .text          0x000013b6     0x1ebe ADC.o
+                0x000013b6                CO_collectTemp
+                0x000015ea                CO_collectBatt
+                0x00001842                set_ampGain
+                0x000018b4                enableADCMUX
+                0x000018d0                __vector_20
+                0x0000195c                ADC_Stop_Sampling
+                0x0000199e                ADC_Get_Num_Samples
+                0x000019e2                ADC_Pause_Sampling
+                0x000019ea                ADC_Resume_Sampling
+                0x000019f4                __vector_104
+                0x00001c76                ACC_DCPassEnable
+                0x00001c96                __vector_14
+                0x00002054                __vector_77
+                0x00002412                sampleCurrentChannel
+                0x00002496                __vector_82
+                0x000024ea                __vector_81
+                0x0000253a                __vector_80
+                0x0000258a                __vector_79
+                0x000025da                __vector_19
+                0x00002666                __vector_18
+                0x000026b6                __vector_17
+                0x00002706                __vector_16
+                0x00002756                writeSE2FRAM
+                0x00002968                FRAMWriteKnowns
+                0x00002bc6                setADCInput
+                0x00002c0a                CO_collectSeismic1Channel_ext
+                0x00002da8                CO_collectSeismic1Channel
+                0x00002e66                CO_collectSeismic3Axises_ext
+                0x0000303a                CO_collectSeismic3Axises
+                0x000030fe                CO_collectADC_ext
+                0x0000322a                CO_collectADC
+ .text          0x00003274      0x188 adc_driver.o
+                0x00003274                ADC_ResultCh_GetWord_Unsigned
+                0x00003284                ADC_ResultCh_GetWord_Signed
+                0x0000329a                ADC_ResultCh_GetWord
+                0x000032a6                ADC_ResultCh_GetLowByte
+                0x000032b0                ADC_ResultCh_GetHighByte
+                0x000032ba                ADC_Wait_8MHz
+                0x000032cc                ADC_Wait_32MHz
+                0x000032e0                ADC_Offset_Get_Unsigned
+                0x00003344                ADC_Offset_Get_Signed
+                0x000033b0                SP_ReadCalibrationByte
+                0x000033c2                ADC_CalibrationValues_Load
+ .text          0x000033fc      0x246 chb.o
+                0x000033fc                chb_init
+                0x0000341c                radio_msg_received_int_enable
+                0x0000343e                chb_get_pcb
+                0x00003444                chb_write
+                0x00003584                chb_read
+ .text          0x00003642       0x6c chb_buf.o
+                0x00003642                chb_buf_init
+                0x00003650                chb_buf_write
+                0x0000367a                chb_buf_read
+                0x000036a8                chb_buf_get_len
+ .text          0x000036ae      0x7e0 chb_drvr.o
+                0x000036ae                chb_get_ieee_addr
+                0x000036be                chb_get_short_addr
+                0x000036ea                RadioCS
+                0x00003702                chb_frame_write
+                0x00003798                chb_reg_write
+                0x000037d0                chb_set_pwr
+                0x000037da                chb_reg_write64
+                0x00003804                chb_set_ieee_addr
+                0x00003826                chb_reg_write16
+                0x00003842                chb_set_short_addr
+                0x00003890                chb_reg_read
+                0x000038ce                chb_reg_read_mod_write
+                0x000038f6                chb_set_state
+                0x000039a6                chb_sleep
+                0x000039da                chb_tx
+                0x00003a54                chb_set_mode
+                0x00003abe                chb_set_channel
+                0x00003b04                chb_reg_read16
+                0x00003b1c                chb_reset
+                0x00003b62                chb_drvr_init
+                0x00003c66                __vector_64
+ .text          0x00003e8e      0x136 chb_eeprom.o
+                0x00003e8e                chb_eeprom_write
+                0x00003f54                chb_eeprom_read
+ .text          0x00003fc4       0x3a chb_spi.o
+                0x00003fc4                chb_spi_init
+                0x00003fea                SPID_write
+ .text          0x00003ffe       0xf6 clksys_driver.o
+                0x00003ffe                CCPWrite
+                0x00004028                CLKSYS_XOSC_Config
+                0x0000403e                CLKSYS_PLL_Config
+                0x0000404a                CLKSYS_Disable
+                0x0000405e                CLKSYS_Prescalers_Config
+                0x0000406a                CLKSYS_Main_ClockSource_Select
+                0x00004090                CLKSYS_RTC_ClockSource_Enable
+                0x000040a0                CLKSYS_AutoCalibration_Enable
+                0x000040dc                CLKSYS_XOSC_FailureDetection_Enable
+                0x000040e8                CLKSYS_Configuration_Lock
+ .text          0x000040f4     0x122c FAT32.o
+                0x000040f4                getFirstSector
+                0x00004142                getSetNextCluster
+                0x00004266                getSetFreeCluster
+                0x000043b6                getBootSectorData
+                0x00004580                convertFileName
+                0x000046fe                searchNextFreeCluster
+                0x00004864                freeMemoryUpdate
+                0x00004940                findFiles
+                0x00004c78                deleteFile
+                0x00004c8c                readFile
+                0x00004d84                writeFile
+ .text          0x00005320      0x8f8 SD_Card.o
+                0x00005320                SD_command
+                0x000053e2                SD_init
+                0x00005596                SD_write_block
+                0x00005700                SD_read_block
+                0x000057ce                SD_write_multiple_blocks
+                0x00005a82                SD_read_multiple_blocks
+                0x00005bde                SD_disable
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(addsf3.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(addsf3x.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(divsf3.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(divsf3x.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fixunssfsi.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(floatsisf.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_inf.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_nan.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_pscA.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_pscB.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_round.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_split3.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_zero.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(gesf2.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_cmp.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_mulsi3.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodhi4.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodsi4.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodsi4.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_copy_data.o)
+ .text          0x00005c18        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clear_bss.o)
+ .text          0x00005c18      0x1a6 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
+                0x00005c18                __muldi3
+ .text          0x00005dbe       0xe8 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
+                0x00005dbe                __ashldi3
+ .text          0x00005ea6       0xd0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
+                0x00005ea6                __ashrdi3
+ .text          0x00005f76      0xf78 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
+                0x00005f76                __divdi3
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodhi4.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_prologue.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_epilogue.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clz.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strcpy_P.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(memmove.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strcat.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(itoa.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strnlen_P.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(memcpy.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strnlen.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strrev.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
+ .text          0x00006eee        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(ultoa_invert.o)
+                0x00006eee                . = ALIGN (0x2)
  *(.text.*)
  .text.avr-libc.fplib
-                0x00006c0c        0xa c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(addsf3.o)
-                0x00006c0c                __subsf3
-                0x00006c0e                __addsf3
+                0x00006eee        0xa c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(addsf3.o)
+                0x00006eee                __subsf3
+                0x00006ef0                __addsf3
  .text.avr-libc.fplib
-                0x00006c16       0xc0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(addsf3x.o)
-                0x00006c30                __addsf3x
+                0x00006ef8       0xc0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(addsf3x.o)
+                0x00006f12                __addsf3x
  .text.avr-libc.fplib
-                0x00006cd6        0x4 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(divsf3.o)
-                0x00006cd6                __divsf3
+                0x00006fb8        0x4 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(divsf3.o)
+                0x00006fb8                __divsf3
  .text.avr-libc.fplib
-                0x00006cda       0xcc c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(divsf3x.o)
-                0x00006cf0                __divsf3x
-                0x00006cf4                __divsf3_pse
+                0x00006fbc       0xcc c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(divsf3x.o)
+                0x00006fd2                __divsf3x
+                0x00006fd6                __divsf3_pse
  .text.avr-libc.fplib
-                0x00006da6       0x58 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fixunssfsi.o)
-                0x00006da6                __fixunssfsi
+                0x00007088       0x58 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fixunssfsi.o)
+                0x00007088                __fixunssfsi
  .text.avr-libc.fplib
-                0x00006dfe       0x7a c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(floatsisf.o)
-                0x00006dfe                __floatunsisf
-                0x00006e02                __floatsisf
+                0x000070e0       0x7a c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(floatsisf.o)
+                0x000070e0                __floatunsisf
+                0x000070e4                __floatsisf
  .text.avr-libc.fplib
-                0x00006e78        0xc c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_inf.o)
-                0x00006e78                __fp_inf
+                0x0000715a        0xc c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_inf.o)
+                0x0000715a                __fp_inf
  .text.avr-libc.fplib
-                0x00006e84        0x6 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_nan.o)
-                0x00006e84                __fp_nan
+                0x00007166        0x6 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_nan.o)
+                0x00007166                __fp_nan
  .text.avr-libc.fplib
-                0x00006e8a        0xe c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_pscA.o)
-                0x00006e8a                __fp_pscA
+                0x0000716c        0xe c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_pscA.o)
+                0x0000716c                __fp_pscA
  .text.avr-libc.fplib
-                0x00006e98        0xe c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_pscB.o)
-                0x00006e98                __fp_pscB
+                0x0000717a        0xe c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_pscB.o)
+                0x0000717a                __fp_pscB
  .text.avr-libc.fplib
-                0x00006ea6       0x22 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_round.o)
-                0x00006ea6                __fp_round
+                0x00007188       0x22 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_round.o)
+                0x00007188                __fp_round
  .text.avr-libc.fplib
-                0x00006ec8       0x44 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_split3.o)
-                0x00006ec8                __fp_split3
-                0x00006ed8                __fp_splitA
+                0x000071aa       0x44 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_split3.o)
+                0x000071aa                __fp_split3
+                0x000071ba                __fp_splitA
  .text.avr-libc.fplib
-                0x00006f0c        0xe c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_zero.o)
-                0x00006f0c                __fp_zero
-                0x00006f0e                __fp_szero
+                0x000071ee        0xe c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_zero.o)
+                0x000071ee                __fp_zero
+                0x000071f0                __fp_szero
  .text.avr-libc.fplib
-                0x00006f1a        0x8 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(gesf2.o)
-                0x00006f1a                __gesf2
-                0x00006f1a                __gtsf2
+                0x000071fc        0x8 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(gesf2.o)
+                0x000071fc                __gesf2
+                0x000071fc                __gtsf2
  .text.avr-libc.fplib
-                0x00006f22       0x48 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_cmp.o)
-                0x00006f22                __fp_cmp
- .text.libgcc   0x00006f6a       0x3e c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_mulsi3.o)
-                0x00006f6a                __mulsi3
- .text.libgcc   0x00006fa8       0x26 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodhi4.o)
-                0x00006fa8                _div
-                0x00006fa8                __divmodhi4
- .text.libgcc   0x00006fce       0x44 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodsi4.o)
-                0x00006fce                __udivmodsi4
- .text.libgcc   0x00007012       0x36 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodsi4.o)
-                0x00007012                __divmodsi4
- .text.libgcc   0x00007048        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
- .text.libgcc   0x00007048        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_copy_data.o)
- .text.libgcc   0x00007048        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clear_bss.o)
- .text.libgcc   0x00007048       0x28 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodhi4.o)
-                0x00007048                __udivmodhi4
- .text.libgcc   0x00007070       0x32 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_prologue.o)
-                0x00007070                __prologue_saves__
- .text.libgcc   0x000070a2       0x30 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_epilogue.o)
-                0x000070a2                __epilogue_restores__
+                0x00007204       0x48 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libm.a(fp_cmp.o)
+                0x00007204                __fp_cmp
+ .text.libgcc   0x0000724c       0x3e c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_mulsi3.o)
+                0x0000724c                __mulsi3
+ .text.libgcc   0x0000728a       0x26 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodhi4.o)
+                0x0000728a                _div
+                0x0000728a                __divmodhi4
+ .text.libgcc   0x000072b0       0x44 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodsi4.o)
+                0x000072b0                __udivmodsi4
+ .text.libgcc   0x000072f4       0x36 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodsi4.o)
+                0x000072f4                __divmodsi4
+ .text.libgcc   0x0000732a        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
+ .text.libgcc   0x0000732a        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_copy_data.o)
+ .text.libgcc   0x0000732a        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clear_bss.o)
+ .text.libgcc   0x0000732a       0x28 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodhi4.o)
+                0x0000732a                __udivmodhi4
+ .text.libgcc   0x00007352       0x32 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_prologue.o)
+                0x00007352                __prologue_saves__
+ .text.libgcc   0x00007384       0x30 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_epilogue.o)
+                0x00007384                __epilogue_restores__
  .text.avr-libc
-                0x000070d2        0xe c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strcpy_P.o)
-                0x000070d2                strcpy_P
+                0x000073b4        0xe c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strcpy_P.o)
+                0x000073b4                strcpy_P
  .text.avr-libc
-                0x000070e0       0x24 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(memmove.o)
-                0x000070e0                memmove
+                0x000073c2       0x24 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(memmove.o)
+                0x000073c2                memmove
  .text.avr-libc
-                0x00007104       0x16 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strcat.o)
-                0x00007104                strcat
+                0x000073e6       0x16 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strcat.o)
+                0x000073e6                strcat
  .text.avr-libc
-                0x0000711a       0x42 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(itoa.o)
-                0x0000711a                itoa
+                0x000073fc       0x42 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(itoa.o)
+                0x000073fc                itoa
  .text.avr-libc
-                0x0000715c       0x24 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
-                0x0000715c                printf
+                0x0000743e       0x24 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
+                0x0000743e                printf
  .text.avr-libc
-                0x00007180       0x52 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
-                0x00007180                sprintf
+                0x00007462       0x52 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
+                0x00007462                sprintf
  .text.avr-libc
-                0x000071d2      0x402 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
-                0x000071d2                vfprintf
+                0x000074b4      0x402 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
+                0x000074b4                vfprintf
  .text.avr-libc
-                0x000075d4       0x16 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strnlen_P.o)
-                0x000075d4                strnlen_P
+                0x000078b6       0x16 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strnlen_P.o)
+                0x000078b6                strnlen_P
  .text.avr-libc
-                0x000075ea       0x12 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(memcpy.o)
-                0x000075ea                memcpy
+                0x000078cc       0x12 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(memcpy.o)
+                0x000078cc                memcpy
  .text.avr-libc
-                0x000075fc       0x16 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strnlen.o)
-                0x000075fc                strnlen
+                0x000078de       0x16 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strnlen.o)
+                0x000078de                strnlen
  .text.avr-libc
-                0x00007612       0x20 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strrev.o)
-                0x00007612                strrev
+                0x000078f4       0x20 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(strrev.o)
+                0x000078f4                strrev
  .text.avr-libc
-                0x00007632       0x58 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
-                0x00007632                fputc
+                0x00007914       0x58 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
+                0x00007914                fputc
  .text.avr-libc
-                0x0000768a       0xbc c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(ultoa_invert.o)
-                0x0000768a                __ultoa_invert
-                0x00007746                . = ALIGN (0x2)
+                0x0000796c       0xbc c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(ultoa_invert.o)
+                0x0000796c                __ultoa_invert
+                0x00007a28                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x00007746        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
-                0x00007746                _exit
-                0x00007746                exit
+ .fini9         0x00007a28        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
+                0x00007a28                _exit
+                0x00007a28                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -766,18 +766,18 @@ LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x00007746        0x4 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
+ .fini0         0x00007a28        0x4 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
  *(.fini0)
-                0x0000774a                _etext = .
+                0x00007a2c                _etext = .
 
-.data           0x00802000      0x10e load address 0x0000774a
+.data           0x00802000      0x10e load address 0x00007a2c
                 0x00802000                PROVIDE (__data_start, .)
  *(.data)
  .data          0x00802000        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6/crtx256a3.o
  .data          0x00802000        0x0 FRAM.o
  .data          0x00802000        0x0 SerialUSB.o
- .data          0x00802000        0x0 BaseStation.o
  .data          0x00802000        0x4 utility_functions.o
+ .data          0x00802004        0x0 Node.o
  .data          0x00802004        0x6 Synch.o
  .data          0x0080200a        0x0 ADC.o
  .data          0x0080200a        0x0 adc_driver.o
@@ -849,9 +849,9 @@ LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0
  .bss           0x0080210e        0x0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6/crtx256a3.o
  .bss           0x0080210e        0x0 FRAM.o
  .bss           0x0080210e        0x0 SerialUSB.o
- .bss           0x0080210e        0x1 BaseStation.o
+ .bss           0x0080210e        0x0 utility_functions.o
+ .bss           0x0080210e        0x1 Node.o
                 0x0080210e                TimedOut
- .bss           0x0080210f        0x0 utility_functions.o
  .bss           0x0080210f        0x0 Synch.o
  .bss           0x0080210f        0x6 ADC.o
                 0x0080210f                checksumFRAM
@@ -927,7 +927,7 @@ LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0
                 0x00803e42                StartOfFreeSpace
                 0x00803e46                moteID
                 0x00803e47                bankB_DIR
- COMMON         0x00803e48     0x1262 BaseStation.o
+ COMMON         0x00803e48     0x1262 Node.o
                 0x00803e48                DataAvailable
                 0x00803e49                SDBuffer
                 0x00804049                write_to_FRAM
@@ -961,8 +961,8 @@ LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0
  COMMON         0x008050b2        0x6 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
                 0x008050b2                __iob
                 0x008050b8                PROVIDE (__bss_end, .)
-                0x0000774a                __data_load_start = LOADADDR (.data)
-                0x00007858                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x00007a2c                __data_load_start = LOADADDR (.data)
+                0x00007b3a                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x008050b8        0x0
                 0x008050b8                PROVIDE (__noinit_start, .)
@@ -1077,9 +1077,9 @@ LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0
  .debug_aranges
                 0x00000020       0x20 SerialUSB.o
  .debug_aranges
-                0x00000040       0x20 BaseStation.o
+                0x00000040       0x20 utility_functions.o
  .debug_aranges
-                0x00000060       0x20 utility_functions.o
+                0x00000060       0x20 Node.o
  .debug_aranges
                 0x00000080       0x20 Synch.o
  .debug_aranges
@@ -1142,224 +1142,224 @@ LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0xc28f
+.debug_info     0x00000000     0xc192
  *(.debug_info)
  .debug_info    0x00000000      0x4c2 FRAM.o
  .debug_info    0x000004c2      0x4dd SerialUSB.o
- .debug_info    0x0000099f      0xe66 BaseStation.o
- .debug_info    0x00001805      0xcba utility_functions.o
- .debug_info    0x000024bf      0xf24 Synch.o
- .debug_info    0x000033e3     0x2794 ADC.o
- .debug_info    0x00005b77      0x9a8 adc_driver.o
- .debug_info    0x0000651f      0x8e8 chb.o
- .debug_info    0x00006e07      0x2a5 chb_buf.o
- .debug_info    0x000070ac     0x11a9 chb_drvr.o
- .debug_info    0x00008255      0x39b chb_eeprom.o
- .debug_info    0x000085f0      0x112 chb_spi.o
- .debug_info    0x00008702      0x5a4 clksys_driver.o
- .debug_info    0x00008ca6      0xee7 FAT32.o
- .debug_info    0x00009b8d      0x76d SD_Card.o
- .debug_info    0x0000a2fa       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_mulsi3.o)
- .debug_info    0x0000a3dc       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodhi4.o)
- .debug_info    0x0000a4be       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodsi4.o)
- .debug_info    0x0000a5a0       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodsi4.o)
- .debug_info    0x0000a682       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
- .debug_info    0x0000a764       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_copy_data.o)
- .debug_info    0x0000a846       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clear_bss.o)
- .debug_info    0x0000a928      0x20c c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
- .debug_info    0x0000ab34      0x184 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
- .debug_info    0x0000acb8      0x184 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
- .debug_info    0x0000ae3c      0x792 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
- .debug_info    0x0000b5ce       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodhi4.o)
- .debug_info    0x0000b6b0       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_prologue.o)
- .debug_info    0x0000b792       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_epilogue.o)
- .debug_info    0x0000b874       0xa6 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clz.o)
- .debug_info    0x0000b91a      0x1c6 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
- .debug_info    0x0000bae0      0x1b7 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
- .debug_info    0x0000bc97      0x342 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
- .debug_info    0x0000bfd9      0x167 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
- .debug_info    0x0000c140      0x14f c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
+ .debug_info    0x0000099f      0xcba utility_functions.o
+ .debug_info    0x00001659      0xd69 Node.o
+ .debug_info    0x000023c2      0xf24 Synch.o
+ .debug_info    0x000032e6     0x2794 ADC.o
+ .debug_info    0x00005a7a      0x9a8 adc_driver.o
+ .debug_info    0x00006422      0x8e8 chb.o
+ .debug_info    0x00006d0a      0x2a5 chb_buf.o
+ .debug_info    0x00006faf     0x11a9 chb_drvr.o
+ .debug_info    0x00008158      0x39b chb_eeprom.o
+ .debug_info    0x000084f3      0x112 chb_spi.o
+ .debug_info    0x00008605      0x5a4 clksys_driver.o
+ .debug_info    0x00008ba9      0xee7 FAT32.o
+ .debug_info    0x00009a90      0x76d SD_Card.o
+ .debug_info    0x0000a1fd       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_mulsi3.o)
+ .debug_info    0x0000a2df       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodhi4.o)
+ .debug_info    0x0000a3c1       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodsi4.o)
+ .debug_info    0x0000a4a3       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodsi4.o)
+ .debug_info    0x0000a585       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
+ .debug_info    0x0000a667       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_copy_data.o)
+ .debug_info    0x0000a749       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clear_bss.o)
+ .debug_info    0x0000a82b      0x20c c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
+ .debug_info    0x0000aa37      0x184 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
+ .debug_info    0x0000abbb      0x184 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
+ .debug_info    0x0000ad3f      0x792 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
+ .debug_info    0x0000b4d1       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodhi4.o)
+ .debug_info    0x0000b5b3       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_prologue.o)
+ .debug_info    0x0000b695       0xe2 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_epilogue.o)
+ .debug_info    0x0000b777       0xa6 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clz.o)
+ .debug_info    0x0000b81d      0x1c6 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
+ .debug_info    0x0000b9e3      0x1b7 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
+ .debug_info    0x0000bb9a      0x342 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
+ .debug_info    0x0000bedc      0x167 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
+ .debug_info    0x0000c043      0x14f c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
  *(.gnu.linkonce.wi.*)
 
-.debug_abbrev   0x00000000     0x272a
+.debug_abbrev   0x00000000     0x270c
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x125 FRAM.o
  .debug_abbrev  0x00000125      0x16b SerialUSB.o
- .debug_abbrev  0x00000290      0x1ec BaseStation.o
- .debug_abbrev  0x0000047c      0x2b8 utility_functions.o
- .debug_abbrev  0x00000734      0x15c Synch.o
- .debug_abbrev  0x00000890      0x30c ADC.o
- .debug_abbrev  0x00000b9c      0x27b adc_driver.o
- .debug_abbrev  0x00000e17      0x209 chb.o
- .debug_abbrev  0x00001020       0xfc chb_buf.o
- .debug_abbrev  0x0000111c      0x3b7 chb_drvr.o
- .debug_abbrev  0x000014d3      0x162 chb_eeprom.o
- .debug_abbrev  0x00001635       0xb3 chb_spi.o
- .debug_abbrev  0x000016e8      0x19f clksys_driver.o
- .debug_abbrev  0x00001887      0x1eb FAT32.o
- .debug_abbrev  0x00001a72      0x1e8 SD_Card.o
- .debug_abbrev  0x00001c5a       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_mulsi3.o)
- .debug_abbrev  0x00001c6e       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodhi4.o)
- .debug_abbrev  0x00001c82       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodsi4.o)
- .debug_abbrev  0x00001c96       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodsi4.o)
- .debug_abbrev  0x00001caa       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
- .debug_abbrev  0x00001cbe       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_copy_data.o)
- .debug_abbrev  0x00001cd2       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clear_bss.o)
- .debug_abbrev  0x00001ce6       0xf0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
- .debug_abbrev  0x00001dd6       0xf0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
- .debug_abbrev  0x00001ec6       0xf0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
- .debug_abbrev  0x00001fb6      0x1bf c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
- .debug_abbrev  0x00002175       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodhi4.o)
- .debug_abbrev  0x00002189       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_prologue.o)
- .debug_abbrev  0x0000219d       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_epilogue.o)
- .debug_abbrev  0x000021b1       0x61 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clz.o)
- .debug_abbrev  0x00002212      0x11c c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
- .debug_abbrev  0x0000232e       0xfd c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
- .debug_abbrev  0x0000242b      0x161 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
- .debug_abbrev  0x0000258c       0xd9 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
- .debug_abbrev  0x00002665       0xc5 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
+ .debug_abbrev  0x00000290      0x2b8 utility_functions.o
+ .debug_abbrev  0x00000548      0x1ce Node.o
+ .debug_abbrev  0x00000716      0x15c Synch.o
+ .debug_abbrev  0x00000872      0x30c ADC.o
+ .debug_abbrev  0x00000b7e      0x27b adc_driver.o
+ .debug_abbrev  0x00000df9      0x209 chb.o
+ .debug_abbrev  0x00001002       0xfc chb_buf.o
+ .debug_abbrev  0x000010fe      0x3b7 chb_drvr.o
+ .debug_abbrev  0x000014b5      0x162 chb_eeprom.o
+ .debug_abbrev  0x00001617       0xb3 chb_spi.o
+ .debug_abbrev  0x000016ca      0x19f clksys_driver.o
+ .debug_abbrev  0x00001869      0x1eb FAT32.o
+ .debug_abbrev  0x00001a54      0x1e8 SD_Card.o
+ .debug_abbrev  0x00001c3c       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_mulsi3.o)
+ .debug_abbrev  0x00001c50       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodhi4.o)
+ .debug_abbrev  0x00001c64       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodsi4.o)
+ .debug_abbrev  0x00001c78       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodsi4.o)
+ .debug_abbrev  0x00001c8c       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
+ .debug_abbrev  0x00001ca0       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_copy_data.o)
+ .debug_abbrev  0x00001cb4       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clear_bss.o)
+ .debug_abbrev  0x00001cc8       0xf0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
+ .debug_abbrev  0x00001db8       0xf0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
+ .debug_abbrev  0x00001ea8       0xf0 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
+ .debug_abbrev  0x00001f98      0x1bf c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
+ .debug_abbrev  0x00002157       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodhi4.o)
+ .debug_abbrev  0x0000216b       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_prologue.o)
+ .debug_abbrev  0x0000217f       0x14 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_epilogue.o)
+ .debug_abbrev  0x00002193       0x61 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clz.o)
+ .debug_abbrev  0x000021f4      0x11c c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
+ .debug_abbrev  0x00002310       0xfd c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
+ .debug_abbrev  0x0000240d      0x161 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
+ .debug_abbrev  0x0000256e       0xd9 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
+ .debug_abbrev  0x00002647       0xc5 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
 
-.debug_line     0x00000000     0x58a7
+.debug_line     0x00000000     0x58de
  *(.debug_line)
  .debug_line    0x00000000      0x458 FRAM.o
  .debug_line    0x00000458      0x43e SerialUSB.o
- .debug_line    0x00000896      0x4d5 BaseStation.o
- .debug_line    0x00000d6b      0x660 utility_functions.o
- .debug_line    0x000013cb      0x492 Synch.o
- .debug_line    0x0000185d      0x776 ADC.o
- .debug_line    0x00001fd3      0x411 adc_driver.o
- .debug_line    0x000023e4      0x43b chb.o
- .debug_line    0x0000281f      0x3b9 chb_buf.o
- .debug_line    0x00002bd8      0x5e4 chb_drvr.o
- .debug_line    0x000031bc      0x2e0 chb_eeprom.o
- .debug_line    0x0000349c      0x2ac chb_spi.o
- .debug_line    0x00003748      0x3f1 clksys_driver.o
- .debug_line    0x00003b39      0x6fe FAT32.o
- .debug_line    0x00004237      0x610 SD_Card.o
- .debug_line    0x00004847       0xa5 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_mulsi3.o)
- .debug_line    0x000048ec       0x99 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodhi4.o)
- .debug_line    0x00004985       0xa8 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodsi4.o)
- .debug_line    0x00004a2d       0xa1 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodsi4.o)
- .debug_line    0x00004ace       0x88 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
- .debug_line    0x00004b56       0x93 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_copy_data.o)
- .debug_line    0x00004be9       0x8e c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clear_bss.o)
- .debug_line    0x00004c77       0xb6 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
- .debug_line    0x00004d2d       0x97 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
- .debug_line    0x00004dc4       0x97 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
- .debug_line    0x00004e5b      0x118 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
- .debug_line    0x00004f73       0x9a c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodhi4.o)
- .debug_line    0x0000500d       0xa1 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_prologue.o)
- .debug_line    0x000050ae       0x9e c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_epilogue.o)
- .debug_line    0x0000514c       0x7a c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clz.o)
- .debug_line    0x000051c6      0x151 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
- .debug_line    0x00005317      0x157 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
- .debug_line    0x0000546e      0x291 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
- .debug_line    0x000056ff       0xe1 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
- .debug_line    0x000057e0       0xc7 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
+ .debug_line    0x00000896      0x660 utility_functions.o
+ .debug_line    0x00000ef6      0x508 Node.o
+ .debug_line    0x000013fe      0x492 Synch.o
+ .debug_line    0x00001890      0x776 ADC.o
+ .debug_line    0x00002006      0x411 adc_driver.o
+ .debug_line    0x00002417      0x43f chb.o
+ .debug_line    0x00002856      0x3b9 chb_buf.o
+ .debug_line    0x00002c0f      0x5e4 chb_drvr.o
+ .debug_line    0x000031f3      0x2e0 chb_eeprom.o
+ .debug_line    0x000034d3      0x2ac chb_spi.o
+ .debug_line    0x0000377f      0x3f1 clksys_driver.o
+ .debug_line    0x00003b70      0x6fe FAT32.o
+ .debug_line    0x0000426e      0x610 SD_Card.o
+ .debug_line    0x0000487e       0xa5 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_mulsi3.o)
+ .debug_line    0x00004923       0x99 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodhi4.o)
+ .debug_line    0x000049bc       0xa8 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodsi4.o)
+ .debug_line    0x00004a64       0xa1 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divmodsi4.o)
+ .debug_line    0x00004b05       0x88 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_exit.o)
+ .debug_line    0x00004b8d       0x93 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_copy_data.o)
+ .debug_line    0x00004c20       0x8e c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clear_bss.o)
+ .debug_line    0x00004cae       0xb6 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
+ .debug_line    0x00004d64       0x97 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
+ .debug_line    0x00004dfb       0x97 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
+ .debug_line    0x00004e92      0x118 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
+ .debug_line    0x00004faa       0x9a c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_udivmodhi4.o)
+ .debug_line    0x00005044       0xa1 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_prologue.o)
+ .debug_line    0x000050e5       0x9e c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_epilogue.o)
+ .debug_line    0x00005183       0x7a c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clz.o)
+ .debug_line    0x000051fd      0x151 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
+ .debug_line    0x0000534e      0x157 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
+ .debug_line    0x000054a5      0x291 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
+ .debug_line    0x00005736       0xe1 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
+ .debug_line    0x00005817       0xc7 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
 
-.debug_frame    0x00000000     0x1be4
+.debug_frame    0x00000000     0x1bec
  *(.debug_frame)
  .debug_frame   0x00000000       0x90 FRAM.o
  .debug_frame   0x00000090       0xc0 SerialUSB.o
- .debug_frame   0x00000150       0x54 BaseStation.o
- .debug_frame   0x000001a4      0x228 utility_functions.o
- .debug_frame   0x000003cc       0xac Synch.o
- .debug_frame   0x00000478      0x960 ADC.o
- .debug_frame   0x00000dd8      0x110 adc_driver.o
- .debug_frame   0x00000ee8       0xe8 chb.o
- .debug_frame   0x00000fd0       0x54 chb_buf.o
- .debug_frame   0x00001024      0x308 chb_drvr.o
- .debug_frame   0x0000132c       0x58 chb_eeprom.o
- .debug_frame   0x00001384       0x34 chb_spi.o
- .debug_frame   0x000013b8       0xdc clksys_driver.o
- .debug_frame   0x00001494      0x2f8 FAT32.o
- .debug_frame   0x0000178c      0x214 SD_Card.o
- .debug_frame   0x000019a0       0x48 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
- .debug_frame   0x000019e8       0x4c c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
- .debug_frame   0x00001a34       0x38 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
- .debug_frame   0x00001a6c       0x4c c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
- .debug_frame   0x00001ab8       0x34 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
- .debug_frame   0x00001aec       0x3c c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
- .debug_frame   0x00001b28       0x84 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
- .debug_frame   0x00001bac       0x38 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
+ .debug_frame   0x00000150      0x228 utility_functions.o
+ .debug_frame   0x00000378       0x5c Node.o
+ .debug_frame   0x000003d4       0xac Synch.o
+ .debug_frame   0x00000480      0x960 ADC.o
+ .debug_frame   0x00000de0      0x110 adc_driver.o
+ .debug_frame   0x00000ef0       0xe8 chb.o
+ .debug_frame   0x00000fd8       0x54 chb_buf.o
+ .debug_frame   0x0000102c      0x308 chb_drvr.o
+ .debug_frame   0x00001334       0x58 chb_eeprom.o
+ .debug_frame   0x0000138c       0x34 chb_spi.o
+ .debug_frame   0x000013c0       0xdc clksys_driver.o
+ .debug_frame   0x0000149c      0x2f8 FAT32.o
+ .debug_frame   0x00001794      0x214 SD_Card.o
+ .debug_frame   0x000019a8       0x48 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
+ .debug_frame   0x000019f0       0x4c c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
+ .debug_frame   0x00001a3c       0x38 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
+ .debug_frame   0x00001a74       0x4c c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
+ .debug_frame   0x00001ac0       0x34 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
+ .debug_frame   0x00001af4       0x3c c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
+ .debug_frame   0x00001b30       0x84 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
+ .debug_frame   0x00001bb4       0x38 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
 
-.debug_str      0x00000000     0x4686
+.debug_str      0x00000000     0x4676
  *(.debug_str)
  .debug_str     0x00000000      0x2c1 FRAM.o
                                 0x329 (size before relaxing)
  .debug_str     0x000002c1       0xcb SerialUSB.o
                                 0x346 (size before relaxing)
- .debug_str     0x0000038c      0x77c BaseStation.o
-                                0x9ad (size before relaxing)
- .debug_str     0x00000b08      0x655 utility_functions.o
+ .debug_str     0x0000038c      0x655 utility_functions.o
                                 0x938 (size before relaxing)
- .debug_str     0x0000115d      0xe57 Synch.o
+ .debug_str     0x000009e1      0x5dc Node.o
+                                0x7d1 (size before relaxing)
+ .debug_str     0x00000fbd      0xe57 Synch.o
                                0x142f (size before relaxing)
- .debug_str     0x00001fb4      0xb90 ADC.o
+ .debug_str     0x00001e14      0xb8b ADC.o
                                0x2182 (size before relaxing)
- .debug_str     0x00002b44      0x448 adc_driver.o
+ .debug_str     0x0000299f      0x448 adc_driver.o
                                 0x80d (size before relaxing)
- .debug_str     0x00002f8c      0x2ce chb.o
+ .debug_str     0x00002de7      0x389 chb.o
                                 0x8b0 (size before relaxing)
- .debug_str     0x0000325a       0x79 chb_buf.o
+ .debug_str     0x00003170       0x79 chb_buf.o
                                 0x1f5 (size before relaxing)
- .debug_str     0x000032d3      0x625 chb_drvr.o
+ .debug_str     0x000031e9      0x6ff chb_drvr.o
                                 0xe3b (size before relaxing)
- .debug_str     0x000038f8       0xc6 chb_eeprom.o
+ .debug_str     0x000038e8       0xc6 chb_eeprom.o
                                 0x4b2 (size before relaxing)
- .debug_str     0x000039be       0x43 chb_spi.o
+ .debug_str     0x000039ae       0x43 chb_spi.o
                                 0x134 (size before relaxing)
- .debug_str     0x00003a01      0x2f1 clksys_driver.o
+ .debug_str     0x000039f1      0x2f1 clksys_driver.o
                                 0x6ee (size before relaxing)
- .debug_str     0x00003cf2      0x4fe FAT32.o
+ .debug_str     0x00003ce2      0x4fe FAT32.o
                                 0x86b (size before relaxing)
- .debug_str     0x000041f0       0xd4 SD_Card.o
+ .debug_str     0x000041e0       0xd4 SD_Card.o
                                 0x333 (size before relaxing)
- .debug_str     0x000042c4      0x10f c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
+ .debug_str     0x000042b4      0x10f c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
                                 0x19b (size before relaxing)
- .debug_str     0x000043d3       0x23 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
+ .debug_str     0x000043c3       0x23 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
                                 0x18d (size before relaxing)
- .debug_str     0x000043f6        0xa c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
+ .debug_str     0x000043e6        0xa c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
                                 0x18d (size before relaxing)
- .debug_str     0x00004400       0x53 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
+ .debug_str     0x000043f0       0x53 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
                                 0x1e5 (size before relaxing)
  .debug_str     0x00000000      0x150 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_clz.o)
- .debug_str     0x00004453       0x91 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
+ .debug_str     0x00004443       0x91 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
                                 0x125 (size before relaxing)
- .debug_str     0x000044e4       0x5a c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
+ .debug_str     0x000044d4       0x5a c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
                                 0x121 (size before relaxing)
- .debug_str     0x0000453e       0xa4 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
+ .debug_str     0x0000452e       0xa4 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
                                 0x16b (size before relaxing)
- .debug_str     0x000045e2       0x56 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
+ .debug_str     0x000045d2       0x56 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
                                  0xfb (size before relaxing)
- .debug_str     0x00004638       0x4e c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
+ .debug_str     0x00004628       0x4e c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(iob.o)
                                  0xf2 (size before relaxing)
 
-.debug_loc      0x00000000     0x8271
+.debug_loc      0x00000000     0x8293
  *(.debug_loc)
  .debug_loc     0x00000000      0x21d FRAM.o
  .debug_loc     0x0000021d      0x1fc SerialUSB.o
- .debug_loc     0x00000419      0x1de BaseStation.o
- .debug_loc     0x000005f7      0x71c utility_functions.o
- .debug_loc     0x00000d13      0x189 Synch.o
- .debug_loc     0x00000e9c     0x1ff5 ADC.o
- .debug_loc     0x00002e91      0x419 adc_driver.o
- .debug_loc     0x000032aa      0x415 chb.o
- .debug_loc     0x000036bf       0x1f chb_buf.o
- .debug_loc     0x000036de      0xdab chb_drvr.o
- .debug_loc     0x00004489      0x162 chb_eeprom.o
- .debug_loc     0x000045eb       0x1f chb_spi.o
- .debug_loc     0x0000460a      0x221 clksys_driver.o
- .debug_loc     0x0000482b     0x159c FAT32.o
- .debug_loc     0x00005dc7      0x9f6 SD_Card.o
- .debug_loc     0x000067bd      0x1ed c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
- .debug_loc     0x000069aa      0x102 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
- .debug_loc     0x00006aac       0xce c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
- .debug_loc     0x00006b7a      0xfe5 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
- .debug_loc     0x00007b5f       0x3b c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
- .debug_loc     0x00007b9a       0x55 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
- .debug_loc     0x00007bef      0x5e9 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
- .debug_loc     0x000081d8       0x99 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
+ .debug_loc     0x00000419      0x71c utility_functions.o
+ .debug_loc     0x00000b35      0x200 Node.o
+ .debug_loc     0x00000d35      0x189 Synch.o
+ .debug_loc     0x00000ebe     0x1ff5 ADC.o
+ .debug_loc     0x00002eb3      0x419 adc_driver.o
+ .debug_loc     0x000032cc      0x415 chb.o
+ .debug_loc     0x000036e1       0x1f chb_buf.o
+ .debug_loc     0x00003700      0xdab chb_drvr.o
+ .debug_loc     0x000044ab      0x162 chb_eeprom.o
+ .debug_loc     0x0000460d       0x1f chb_spi.o
+ .debug_loc     0x0000462c      0x221 clksys_driver.o
+ .debug_loc     0x0000484d     0x159c FAT32.o
+ .debug_loc     0x00005de9      0x9f6 SD_Card.o
+ .debug_loc     0x000067df      0x1ed c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_muldi3.o)
+ .debug_loc     0x000069cc      0x102 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashldi3.o)
+ .debug_loc     0x00006ace       0xce c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_ashrdi3.o)
+ .debug_loc     0x00006b9c      0xfe5 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
+ .debug_loc     0x00007b81       0x3b c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
+ .debug_loc     0x00007bbc       0x55 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
+ .debug_loc     0x00007c11      0x5e9 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
+ .debug_loc     0x000081fa       0x99 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
 
 .debug_macinfo  0x00000000   0x17fd97
  *(.debug_macinfo)
@@ -1368,9 +1368,9 @@ LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0
  .debug_macinfo
                 0x00019de7    0x19ded SerialUSB.o
  .debug_macinfo
-                0x00033bd4    0x1af61 BaseStation.o
+                0x00033bd4    0x19dec utility_functions.o
  .debug_macinfo
-                0x0004eb35    0x19dec utility_functions.o
+                0x0004d9c0    0x1af61 Node.o
  .debug_macinfo
                 0x00068921    0x1af70 Synch.o
  .debug_macinfo
@@ -1396,14 +1396,15 @@ LOAD c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0
 OUTPUT(testApp.elf elf32-avr)
 LOAD linker stubs
 
-.debug_ranges   0x00000000      0x1a8
- .debug_ranges  0x00000000       0x30 chb.o
- .debug_ranges  0x00000030       0x48 chb_drvr.o
- .debug_ranges  0x00000078       0x30 chb_eeprom.o
- .debug_ranges  0x000000a8       0x28 FAT32.o
- .debug_ranges  0x000000d0       0x68 SD_Card.o
- .debug_ranges  0x00000138       0x30 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
- .debug_ranges  0x00000168       0x10 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
- .debug_ranges  0x00000178       0x10 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
- .debug_ranges  0x00000188       0x10 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
- .debug_ranges  0x00000198       0x10 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
+.debug_ranges   0x00000000      0x1d8
+ .debug_ranges  0x00000000       0x30 Node.o
+ .debug_ranges  0x00000030       0x30 chb.o
+ .debug_ranges  0x00000060       0x48 chb_drvr.o
+ .debug_ranges  0x000000a8       0x30 chb_eeprom.o
+ .debug_ranges  0x000000d8       0x28 FAT32.o
+ .debug_ranges  0x00000100       0x68 SD_Card.o
+ .debug_ranges  0x00000168       0x30 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/avrxmega6\libgcc.a(_divdi3.o)
+ .debug_ranges  0x00000198       0x10 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(printf.o)
+ .debug_ranges  0x000001a8       0x10 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(sprintf.o)
+ .debug_ranges  0x000001b8       0x10 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(vfprintf_std.o)
+ .debug_ranges  0x000001c8       0x10 c:/program files (x86)/atmel/atmel studio 6.0/extensions/atmel/avrgcc/3.4.0.65/avrtoolchain/bin/../lib/gcc/avr/4.6.2/../../../../avr/lib/avrxmega6\libc.a(fputc.o)
