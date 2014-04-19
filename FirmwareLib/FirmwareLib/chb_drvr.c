@@ -552,7 +552,12 @@ U8 chb_set_state(U8 state)
 
     /* When the PLL is active most states can be reached in 1us. However, from */
     /* TRX_OFF the PLL needs time to activate. */
-    _delay_us(TIME_TRX_OFF_PLL_ON);
+	if(curr_state == CHB_TRX_OFF){
+		_delay_us(TIME_TRX_OFF_PLL_ON);	
+	}
+	else{
+		_delay_us(TIME_RX_ON_PLL_ON);
+	}				
 
     if (chb_get_state() == state)
     {
@@ -838,9 +843,8 @@ ISR(CHB_RADIO_IRQ)
         {
             state = chb_get_state();
 
-            if ((state == CHB_RX_ON) || (state == CHB_RX_AACK_ON) || (state == CHB_BUSY_RX_AACK)){
-				//go to TRX_OFF state to avoid data corruption due to reception of another message
-				//chb_set_state(CHB_TRX_OFF);
+            if ((state == CHB_RX_ON) || (state == CHB_RX_AACK_ON) || (state == CHB_BUSY_RX_AACK))
+            {
                 // get the ed measurement
                 pcb->ed = chb_reg_read(PHY_ED_LEVEL);
 
@@ -889,7 +893,6 @@ ISR(CHB_RADIO_IRQ)
         }
     }
     CHB_LEAVE_CRIT();
-	chb_reg_read(IRQ_STATUS);		//clear any interrupts that might have been seen when handling this interrupt
 }
 
 //select radio SPI on port D with cs

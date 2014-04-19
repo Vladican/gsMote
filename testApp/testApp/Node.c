@@ -4,6 +4,7 @@
  * Created: 9/22/2013 7:28:35 PM
  *  Author: Vlad
  */ 
+
 #include "E-000001-000009_firmware_rev_1_0.h"
 
 volatile uint8_t TimedOut = 0;
@@ -35,7 +36,7 @@ int main(){
 	TCE0.INTCTRLA = TC_OVFINTLVL_LO_gc;
 	PMIC.CTRL |= PMIC_LOLVLEN_bm;
 	sei();
-	
+
 	while(1){
 		if(pcb->data_rcv){
 			//read the data
