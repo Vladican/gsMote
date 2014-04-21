@@ -75,34 +75,58 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <ToolchainSettings>
       <AvrGcc>
-        <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
-        <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
-        <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
-        <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
-        <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
-        <avrgcc.compiler.directories.IncludePaths>
-          <ListValues>
-            <Value>../../../FirmwareLib/FirmwareLib</Value>
-          </ListValues>
-        </avrgcc.compiler.directories.IncludePaths>
-        <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
-        <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
-        <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
-        <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
-        <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
-        <avrgcc.linker.libraries.Libraries>
-          <ListValues>
-            <Value>m</Value>
-          </ListValues>
-        </avrgcc.linker.libraries.Libraries>
-        <avrgcc.assembler.general.IncludePaths>
-          <ListValues>
-            <Value>../../../FirmwareLib/FirmwareLib</Value>
-          </ListValues>
-        </avrgcc.assembler.general.IncludePaths>
-        <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
-      </AvrGcc>
+  <avrgcc.common.outputfiles.hex>True</avrgcc.common.outputfiles.hex>
+  <avrgcc.common.outputfiles.lss>True</avrgcc.common.outputfiles.lss>
+  <avrgcc.common.outputfiles.eep>True</avrgcc.common.outputfiles.eep>
+  <avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>True</avrgcc.compiler.general.ChangeDefaultCharTypeUnsigned>
+  <avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>True</avrgcc.compiler.general.ChangeDefaultBitFieldUnsigned>
+  <avrgcc.compiler.symbols.DefSymbols>
+    <ListValues>
+      <Value>HIGHEST_STACK_LAYER=MAC</Value>
+      <Value>PAL_GENERIC_TYPE=XMEGA</Value>
+      <Value>PAL_TYPE=ATXMEGA256A3</Value>
+      <Value>TAL_TYPE=AT86RF212</Value>
+      <Value>DISABLE_IEEE_ADDR_CHECK</Value>
+      <Value>FFD</Value>
+    </ListValues>
+  </avrgcc.compiler.symbols.DefSymbols>
+  <avrgcc.compiler.directories.IncludePaths>
+    <ListValues>
+      <Value>../../../FirmwareLib/FirmwareLib</Value>
+      <Value>../../../FirmwareLib/FirmwareLib/MAC_v_2_4_2/MAC/Inc</Value>
+      <Value>../../../FirmwareLib/FirmwareLib/MAC_v_2_4_2/Include</Value>
+      <Value>../../../FirmwareLib/FirmwareLib/MAC_v_2_4_2/PAL/Inc</Value>
+      <Value>../../../FirmwareLib/FirmwareLib/MAC_v_2_4_2/PAL/XMEGA/Generic/Inc</Value>
+      <Value>../../../FirmwareLib/FirmwareLib/MAC_v_2_4_2/PAL/XMEGA/ATXMEGA256A3/Boards/SiFLEX</Value>
+      <Value>../../../FirmwareLib/FirmwareLib/MAC_v_2_4_2/TAL/Inc</Value>
+      <Value>../../../FirmwareLib/FirmwareLib/MAC_v_2_4_2/TAL/AT86RF212/Inc</Value>
+      <Value>../../../FirmwareLib/FirmwareLib/MAC_v_2_4_2/PAL/XMEGA/ATXMEGA256A3/Boards</Value>
+      <Value>../../../FirmwareLib/FirmwareLib/MAC_v_2_4_2/Resources/Buffer_Management/Inc</Value>
+      <Value>../../../FirmwareLib/FirmwareLib/MAC_v_2_4_2/Resources/Queue_Management/Inc</Value>
+      <Value>..</Value>
+      <Value>../MAC_Stack/APPLICATION</Value>
+    </ListValues>
+  </avrgcc.compiler.directories.IncludePaths>
+  <avrgcc.compiler.optimization.level>Optimize (-O1)</avrgcc.compiler.optimization.level>
+  <avrgcc.compiler.optimization.PackStructureMembers>True</avrgcc.compiler.optimization.PackStructureMembers>
+  <avrgcc.compiler.optimization.AllocateBytesNeededForEnum>True</avrgcc.compiler.optimization.AllocateBytesNeededForEnum>
+  <avrgcc.compiler.optimization.DebugLevel>Maximum (-g3)</avrgcc.compiler.optimization.DebugLevel>
+  <avrgcc.compiler.warnings.AllWarnings>True</avrgcc.compiler.warnings.AllWarnings>
+  <avrgcc.linker.libraries.Libraries>
+    <ListValues>
+      <Value>m</Value>
+    </ListValues>
+  </avrgcc.linker.libraries.Libraries>
+  <avrgcc.assembler.general.IncludePaths>
+    <ListValues>
+      <Value>../../../FirmwareLib/FirmwareLib</Value>
+    </ListValues>
+  </avrgcc.assembler.general.IncludePaths>
+  <avrgcc.assembler.debugging.DebugLevel>Default (-Wa,-g)</avrgcc.assembler.debugging.DebugLevel>
+</AvrGcc>
     </ToolchainSettings>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\FirmwareLib\FirmwareLib\ADC.h">
@@ -120,6 +144,250 @@
     <Compile Include="..\..\FirmwareLib\FirmwareLib\FRAM.h">
       <SubType>compile</SubType>
       <Link>FRAM.h</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\Applications\Src\SiFLEX02_Ping_Pong.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\APPLICATION\SiFLEX02_Ping_Pong.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\Applications\Src\SiFlex_IO.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\APPLICATION\SiFlex_IO.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_api.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_api.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_associate.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_associate.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_beacon.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_beacon.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_callback_wrapper.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_callback_wrapper.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_data_ind.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_data_ind.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_data_req.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_data_req.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_disassociate.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_disassociate.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_dispatcher.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_dispatcher.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_mcps_data.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_mcps_data.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_misc.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_misc.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_orphan.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_orphan.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_pib.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_pib.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_poll.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_poll.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_process_beacon_frame.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_process_beacon_frame.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_process_tal_tx_frame_status.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_process_tal_tx_frame_status.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_rx_enable.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_rx_enable.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_scan.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_scan.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_start.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_start.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_sync.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_sync.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\mac_tx_coord_realignment_command.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\mac_tx_coord_realignment_command.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mcps_data_conf.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mcps_data_conf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mcps_data_ind.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mcps_data_ind.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mcps_purge_conf.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mcps_purge_conf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_associate_conf.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_associate_conf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_associate_ind.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_associate_ind.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_beacon_notify_ind.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_beacon_notify_ind.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_comm_status_ind.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_comm_status_ind.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_disassociate_conf.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_disassociate_conf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_disassociate_ind.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_disassociate_ind.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_get_conf.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_get_conf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_orphan_ind.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_orphan_ind.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_poll_conf.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_poll_conf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_reset_conf.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_reset_conf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_rx_enable_conf.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_rx_enable_conf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_scan_conf.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_scan_conf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_set_conf.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_set_conf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_start_conf.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_start_conf.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\MAC\Src\usr_mlme_sync_loss_ind.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\MAC\usr_mlme_sync_loss_ind.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\PAL\XMEGA\ATXMEGA256A3\Boards\SiFLEX\pal_board.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\PAL\XMEGA\ATXMEGA256A3\SIFLEX\pal_board.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\PAL\XMEGA\ATXMEGA256A3\Boards\SiFLEX\pal_irq.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\PAL\XMEGA\ATXMEGA256A3\SIFLEX\pal_irq.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\PAL\XMEGA\ATXMEGA256A3\Src\pal_sio_hub.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\PAL\XMEGA\ATXMEGA256A3\pal_sio_hub.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\PAL\XMEGA\Generic\Src\pal.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\PAL\XMEGA\GENERIC\pal.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\PAL\XMEGA\Generic\Src\pal_timer.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\PAL\XMEGA\GENERIC\pal_timer.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\PAL\XMEGA\Generic\Src\pal_trx_access.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\PAL\XMEGA\GENERIC\pal_trx_access.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\PAL\XMEGA\Generic\Src\pal_uart.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\PAL\XMEGA\GENERIC\pal_uart.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\PAL\XMEGA\Generic\Src\pal_utils.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\PAL\XMEGA\GENERIC\pal_utils.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\Resources\Buffer_Management\Src\bmm.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\RESOURCES\BUFFER_MANAGEMENT\bmm.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\Resources\Queue_Management\Src\qmm.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\RESOURCES\QUEUE_MANAGEMENT\qmm.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\TAL\AT86RF212\Src\tal.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\TAL\AT86RF212\tal.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\TAL\AT86RF212\Src\tal_ed.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\TAL\AT86RF212\tal_ed.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\TAL\AT86RF212\Src\tal_init.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\TAL\AT86RF212\tal_init.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\TAL\AT86RF212\Src\tal_irq_handler.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\TAL\AT86RF212\tal_irq_handler.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\TAL\AT86RF212\Src\tal_pib.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\TAL\AT86RF212\tal_pib.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\TAL\AT86RF212\Src\TAL_PWR_MGMT.C">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\TAL\AT86RF212\TAL_PWR_MGMT.C</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\TAL\AT86RF212\Src\tal_rx.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\TAL\AT86RF212\tal_rx.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\TAL\AT86RF212\Src\tal_rx_enable.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\TAL\AT86RF212\tal_rx_enable.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\TAL\AT86RF212\Src\tal_slotted_csma.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\TAL\AT86RF212\tal_slotted_csma.c</Link>
+    </Compile>
+    <Compile Include="..\..\FirmwareLib\FirmwareLib\MAC_v_2_4_2\TAL\AT86RF212\Src\tal_tx.c">
+      <SubType>compile</SubType>
+      <Link>MAC_Stack\TAL\AT86RF212\tal_tx.c</Link>
     </Compile>
     <Compile Include="..\..\FirmwareLib\FirmwareLib\SD_Card.h">
       <SubType>compile</SubType>
@@ -147,18 +415,30 @@
       <SubType>compile</SubType>
       <Link>utility_functions.h</Link>
     </Compile>
+    <Compile Include="MAC_Stack\APPLICATION\app_config.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MAC_Stack\APPLICATION\SiFLEX02_Ping_Pong.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MAC_Stack\APPLICATION\SiFlex_IO.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="MAC_Stack\APPLICATION\types.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="Node.c">
       <SubType>compile</SubType>
     </Compile>
     <None Include="FRAM_test.c">
       <SubType>compile</SubType>
     </None>
-    <Compile Include="Synch.c">
+    <None Include="Synch.c">
       <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="Synch.h">
+    </None>
+    <None Include="Synch.h">
       <SubType>compile</SubType>
-    </Compile>
+    </None>
     <None Include="AccelSampler2.c">
       <SubType>compile</SubType>
     </None>
@@ -181,46 +461,46 @@
       <SubType>compile</SubType>
       <Link>avr_compiler.h</Link>
     </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb.c">
+    <None Include="..\..\FirmwareLib\FirmwareLib\chb.c">
       <SubType>compile</SubType>
       <Link>chb.c</Link>
-    </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb.h">
+    </None>
+    <None Include="..\..\FirmwareLib\FirmwareLib\chb.h">
       <SubType>compile</SubType>
       <Link>chb.h</Link>
-    </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_buf.c">
+    </None>
+    <None Include="..\..\FirmwareLib\FirmwareLib\chb_buf.c">
       <SubType>compile</SubType>
       <Link>chb_buf.c</Link>
-    </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_buf.h">
+    </None>
+    <None Include="..\..\FirmwareLib\FirmwareLib\chb_buf.h">
       <SubType>compile</SubType>
       <Link>chb_buf.h</Link>
-    </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_drvr.c">
+    </None>
+    <None Include="..\..\FirmwareLib\FirmwareLib\chb_drvr.c">
       <SubType>compile</SubType>
       <Link>chb_drvr.c</Link>
-    </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_drvr.h">
+    </None>
+    <None Include="..\..\FirmwareLib\FirmwareLib\chb_drvr.h">
       <SubType>compile</SubType>
       <Link>chb_drvr.h</Link>
-    </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_eeprom.c">
+    </None>
+    <None Include="..\..\FirmwareLib\FirmwareLib\chb_eeprom.c">
       <SubType>compile</SubType>
       <Link>chb_eeprom.c</Link>
-    </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_eeprom.h">
+    </None>
+    <None Include="..\..\FirmwareLib\FirmwareLib\chb_eeprom.h">
       <SubType>compile</SubType>
       <Link>chb_eeprom.h</Link>
-    </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_spi.c">
+    </None>
+    <None Include="..\..\FirmwareLib\FirmwareLib\chb_spi.c">
       <SubType>compile</SubType>
       <Link>chb_spi.c</Link>
-    </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\chb_spi.h">
+    </None>
+    <None Include="..\..\FirmwareLib\FirmwareLib\chb_spi.h">
       <SubType>compile</SubType>
       <Link>chb_spi.h</Link>
-    </Compile>
+    </None>
     <Compile Include="..\..\FirmwareLib\FirmwareLib\clksys_driver.c">
       <SubType>compile</SubType>
       <Link>clksys_driver.c</Link>
@@ -245,13 +525,28 @@
       <SubType>compile</SubType>
       <Link>SD_Card.c</Link>
     </Compile>
-    <Compile Include="..\..\FirmwareLib\FirmwareLib\types.h">
+    <None Include="..\..\FirmwareLib\FirmwareLib\types.h">
       <SubType>compile</SubType>
       <Link>types.h</Link>
-    </Compile>
+    </None>
     <None Include="AccelSampler.c">
       <SubType>compile</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MAC_Stack" />
+    <Folder Include="MAC_Stack\MAC" />
+    <Folder Include="MAC_Stack\APPLICATION" />
+    <Folder Include="MAC_Stack\TAL" />
+    <Folder Include="MAC_Stack\RESOURCES" />
+    <Folder Include="MAC_Stack\PAL" />
+    <Folder Include="MAC_Stack\PAL\XMEGA" />
+    <Folder Include="MAC_Stack\PAL\XMEGA\ATXMEGA256A3\SIFLEX" />
+    <Folder Include="MAC_Stack\PAL\XMEGA\GENERIC" />
+    <Folder Include="MAC_Stack\PAL\XMEGA\ATXMEGA256A3" />
+    <Folder Include="MAC_Stack\RESOURCES\BUFFER_MANAGEMENT" />
+    <Folder Include="MAC_Stack\RESOURCES\QUEUE_MANAGEMENT" />
+    <Folder Include="MAC_Stack\TAL\AT86RF212" />
   </ItemGroup>
   <Import Project="$(AVRSTUDIO_EXE_PATH)\\Vs\\Compiler.targets" />
 </Project>

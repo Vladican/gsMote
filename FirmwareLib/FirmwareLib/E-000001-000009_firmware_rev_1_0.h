@@ -2,18 +2,31 @@
 #ifndef FIRMWARE_HEADER
 #define FIRMWARE_HEADER
 
+// #define HIGHEST_STACK_LAYER MAC
+// #define PAL_GENERIC_TYPE XMEGA
+// #define PAL_TYPE ATXMEGA256A3
+// //#define BOARD_TYPE REB_5_0_STK600
+// #define TAL_TYPE AT86RF212
+// #define DISABLE_IEEE_ADDR_CHECK
+// #define FFD
+
 #include "constants_and_globals.h"
 #include "utility_functions.h"
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
 #include "FAT32.h"
-#include "chb.h"
-#include "chb_drvr.h"
+//#include "chb.h"
+//#include "chb_drvr.h"
 #include "ADC.h"
 #include "SD_Card.h"
 #include "SerialUSB.h"
 #include "FRAM.h"
+#include "app_config.h"
+#include "return_val.h"
+#include "pal.h"
+#include "tal.h"
+#include "mac_api.h"
 
 
 

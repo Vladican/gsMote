@@ -22,10 +22,14 @@ int main(){
 	uint8_t RadioMessageBuffer[20];
 	unsigned char ofile[] = {'o','u','t','p','u','t'};
 	set_32MHz();
-	chb_init();
-	chb_set_channel(1);
-	chb_set_short_addr(0x0001);
-	pcb_t* pcb = chb_get_pcb();
+	if(wpan_init() != MAC_SUCCESS){
+		//initialization failed	
+	}
+	wpan_task();
+	//chb_init();
+	//chb_set_channel(1);
+	//chb_set_short_addr(0x0001);
+	//pcb_t* pcb = chb_get_pcb();
 	//SD_init();
 	//getBootSectorData();
 	
@@ -38,9 +42,9 @@ int main(){
 	sei();
 
 	while(1){
-		if(pcb->data_rcv){
+		if(1 /*pcb->data_rcv*/){
 			//read the data
-			length = chb_read((chb_rx_data_t*)RadioMessageBuffer);
+			//length = chb_read((chb_rx_data_t*)RadioMessageBuffer);
 			//length should be >1 for setting gain/freq commands: the value is likely sent in a separate message
 				switch ( RadioMessageBuffer[0])
 				{
@@ -51,7 +55,7 @@ int main(){
 						CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, FALSE, 1, 2, 3, 4, 10000,(int32_t*)FRAMReadBuffer, FR_READ_BUFFER_SIZE/4, TRUE);
 					}
 					//send acknowledgment
-					chb_write(0x0000,(uint8_t*)(&ack),2);						
+					//chb_write(0x0000,(uint8_t*)(&ack),2);						
 					break;
 				case 'G':
 					//while(!pcb->data_rcv);
@@ -88,7 +92,7 @@ int main(){
 							break;
 					}
 					//send acknowledgment
-					chb_write(0x0000,(uint8_t*)(&ack),2);					
+					//chb_write(0x0000,(uint8_t*)(&ack),2);					
 					break;
 				case 'F':
 
@@ -97,7 +101,7 @@ int main(){
 					//set sampling frequency to what is specified
 					freq = (uint16_t)(*(int32_t*)(RadioMessageBuffer+1));
 					//send acknowledgment
-					chb_write(0x0000,(uint8_t*)(&ack),2);
+					//chb_write(0x0000,(uint8_t*)(&ack),2);
 					break;
 				case 'S':
 					//stop the ADC if it is not already
@@ -106,22 +110,22 @@ int main(){
 					}
 					//otherwise, the ADC has finished sampling on its own and the data is ready to be transmitted
 					//send acknowledgment
-					chb_write(0x0000,(uint8_t*)(&ack),2);
+					//chb_write(0x0000,(uint8_t*)(&ack),2);
 					break;
 				case 'T':
 					if(ADC_Sampling_Finished && DataAvailable){
 						//get number of data points collected
 						samples = ADC_Get_Num_Samples();
 						if(samples > 0){	
-							uint16_t NumMessages = ((samples*4)/CHB_MAX_PAYLOAD);
-							if ((samples*4)%CHB_MAX_PAYLOAD > 0) NumMessages++;
+							//uint16_t NumMessages = ((samples*4)/CHB_MAX_PAYLOAD);
+							//if ((samples*4)%CHB_MAX_PAYLOAD > 0) NumMessages++;
 							//start timeout timer
 							TCE0.CTRLA = 0x07;
 							TimedOut = 0;
 							//send the number of messages the base station should expect after this message
-							while(chb_write(0x0000,(uint8_t*)(&NumMessages),2) != CHB_SUCCESS){
+							//while(chb_write(0x0000,(uint8_t*)(&NumMessages),2) != CHB_SUCCESS){
 								if(TimedOut) break;
-							}
+							//}
 							if(TimedOut){
 								//stop timeout counter and go back to waiting for command
 								TimedOut = 0;
@@ -135,23 +139,23 @@ int main(){
 							for(uint16_t i =0; i<(samples*4);){	
 								if(samples*4 - i >= 100){
 									readFRAM(100,(FRAMAddress-(samples*4))+i);						
-									while(chb_write(0x0000,FRAMReadBuffer,100) != CHB_SUCCESS);
+									//while(chb_write(0x0000,FRAMReadBuffer,100) != CHB_SUCCESS);
 									i += 100;
 								}
 								else{
 									readFRAM(samples*4 - i,(FRAMAddress-(samples*4))+i);
-									while(chb_write(0x0000,FRAMReadBuffer,samples*4 - i) != CHB_SUCCESS);
+									//while(chb_write(0x0000,FRAMReadBuffer,samples*4 - i) != CHB_SUCCESS);
 									i += samples*4 - i;
 								}
 								//reset timeout timer
 								TimedOut = 0;
 								TCE0.CTRLFSET = 0x08;
-								while(!pcb->data_rcv){
+								//while(!pcb->data_rcv){
 									//break if timed out waiting for response
 									if(TimedOut) break;
-								}
+								//}
 								if(TimedOut) break;		
-								length = chb_read((chb_rx_data_t*)RadioMessageBuffer);							
+								//length = chb_read((chb_rx_data_t*)RadioMessageBuffer);							
 							}
 							//chb_write(0x0000,FRAMReadBuffer,samples*4);								
 							//write the data to SD card for good measure (make sure transmitted and collected data is the same)	
@@ -166,7 +170,7 @@ int main(){
 						DataAvailable = 0;
 					}
 					else {
-						while(chb_write(0x0000,(uint8_t*)(&ack),2) != CHB_SUCCESS);
+						//while(chb_write(0x0000,(uint8_t*)(&ack),2) != CHB_SUCCESS);
 					}
 					break;
 				}		

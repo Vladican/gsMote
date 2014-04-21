@@ -771,9 +771,9 @@ uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* Da
 }
 
 //first averaging point
-ISR(TCC0_CCA_vect) {
-	sampleCurrentChannel();
-}
+// ISR(TCC0_CCA_vect) {
+// 	sampleCurrentChannel();
+// }
 
 //second averaging point
 ISR(TCC0_CCB_vect) {
@@ -800,27 +800,27 @@ ISR(TCC0_CCD_vect) {
 }
 
 //consolidate the 4 averaging points
-ISR(TCC0_OVF_vect) {
-	volatile int64_t sum = 0;
-	volatile int32_t currentSample;
-		
-	for(uint8_t i = 0; i < 12; i+=3) {
-		if(SPIBuffer[i] & BIT7_bm) *(((uint8_t*)&currentSample) + 3) = 0xFF; // sign extension if negative
-		else *(((uint8_t*)&currentSample) + 3) = 0x00;
-		*(((uint8_t*)&currentSample) + 2) = SPIBuffer[i];
-		*(((uint8_t*)&currentSample) + 1) = SPIBuffer[i+1];
-		*(((uint8_t*)&currentSample) + 0) = SPIBuffer[i+2];
-		sum += currentSample;
-	}
-		
-	sum = sum / 4;
-	ADC_BUFFER[sampleCount%ADC_buffer_size] = (int32_t)(sum * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
-	if(write_to_FRAM){
-		writeFRAM((uint8_t*)(ADC_BUFFER+(sampleCount%ADC_buffer_size)), 4);
-	}
-	sampleCount++;
-
-}
+// ISR(TCC0_OVF_vect) {
+// 	volatile int64_t sum = 0;
+// 	volatile int32_t currentSample;
+// 		
+// 	for(uint8_t i = 0; i < 12; i+=3) {
+// 		if(SPIBuffer[i] & BIT7_bm) *(((uint8_t*)&currentSample) + 3) = 0xFF; // sign extension if negative
+// 		else *(((uint8_t*)&currentSample) + 3) = 0x00;
+// 		*(((uint8_t*)&currentSample) + 2) = SPIBuffer[i];
+// 		*(((uint8_t*)&currentSample) + 1) = SPIBuffer[i+1];
+// 		*(((uint8_t*)&currentSample) + 0) = SPIBuffer[i+2];
+// 		sum += currentSample;
+// 	}
+// 		
+// 	sum = sum / 4;
+// 	ADC_BUFFER[sampleCount%ADC_buffer_size] = (int32_t)(sum * ADC_VREF / ADC_MAX * ADC_DRIVER_GAIN_DENOMINATOR / ADC_DRIVER_GAIN_NUMERATOR);
+// 	if(write_to_FRAM){
+// 		writeFRAM((uint8_t*)(ADC_BUFFER+(sampleCount%ADC_buffer_size)), 4);
+// 	}
+// 	sampleCount++;
+// 
+// }
 
 void CO_collectSeismic1Channel(uint8_t channel, uint8_t gain, uint16_t subsamplesPerSecond, uint8_t subsamplesPerSample, uint8_t DCPassEnable, uint16_t averagingPtA,
 								uint16_t averagingPtB, uint16_t averagingPtC, uint16_t averagingPtD, uint16_t numOfSamples, int32_t* DataArray, uint16_t BufferSize, uint8_t use_FRAM) {

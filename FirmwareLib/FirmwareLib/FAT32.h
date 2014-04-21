@@ -112,8 +112,6 @@ unsigned long fileSize; //size of file in bytes
 #define VERIFY  1
 #define ADD		0
 #define REMOVE	1
-#define LOW		0
-#define HIGH	1	
 #define TOTAL_FREE   1
 #define NEXT_FREE    2
 #define GET_LIST     0
