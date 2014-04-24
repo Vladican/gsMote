@@ -307,7 +307,7 @@ static void chb_frame_read()
         {
             // we've overflowed the buffer. toss the data and do some housekeeping
             pcb_t *pcb = chb_get_pcb();
-            char buf[50];
+            //char buf[50];
 
             // read out the data and throw it away
             for (i=0; i<len; i++)
@@ -319,8 +319,8 @@ static void chb_frame_read()
             pcb->overflow++;
 
             // grab the message from flash & print it out
-            strcpy_P(buf, chb_err_overflow);
-            printf(buf);
+            //strcpy_P(buf, chb_err_overflow);
+            //printf(buf);
         }
     }
 
@@ -651,7 +651,7 @@ U8 chb_tx(U8 *hdr, U8 *data, U8 len)
     }
 
     // TODO: check why we need to transition to the off state before we go to tx_aret_on
-    chb_set_state(CHB_TRX_OFF);
+    //chb_set_state(CHB_TRX_OFF);
     chb_set_state(CHB_TX_ARET_ON);
 
     // TODO: try and start the frame transmission by writing TX_START command instead of toggling
@@ -661,6 +661,7 @@ U8 chb_tx(U8 *hdr, U8 *data, U8 len)
     chb_frame_write(hdr, CHB_HDR_SZ + 1, data, len);
 
     //Do frame transmission. 
+	pcb->tx_end = false;
     chb_reg_read_mod_write(TRX_STATE, CMD_TX_START, 0x1F);
 
     // wait for the transmission to end, signaled by the TRX END flag
@@ -722,10 +723,10 @@ static void chb_radio_init()
 
     // set radio cfg parameters
     // **note** uncomment if these will be set to something other than default
-    //chb_reg_read_mod_write(XAH_CTRL_0, CHB_MAX_FRAME_RETRIES << CHB_MAX_FRAME_RETRIES_POS, 0xF << CHB_MAX_FRAME_RETRIES_POS);
+    chb_reg_read_mod_write(XAH_CTRL_0, CHB_MAX_FRAME_RETRIES << CHB_MAX_FRAME_RETRIES_POS, 0xF << CHB_MAX_FRAME_RETRIES_POS);
     //chb_reg_read_mod_write(XAH_CTRL_0, CHB_MAX_CSMA_RETRIES << CHB_MAX_CSMA_RETIRES_POS, 0x7 << CHB_MAX_CSMA_RETIRES_POS);
     //chb_reg_read_mod_write(CSMA_SEED_1, CHB_CSMA_SEED1 << CHB_CSMA_SEED1_POS, 0x7 << CHB_CSMA_SEED1_POS);
-    //chb_ret_write(CSMA_SEED0, CHB_CSMA_SEED0);     
+    chb_reg_write(CSMA_SEED_0, CHB_CSMA_SEED0);     
     //chb_reg_read_mod_write(PHY_CC_CCA, CHB_CCA_MODE << CHB_CCA_MODE_POS,0x3 << CHB_CCA_MODE_POS);
     //chb_reg_write(CCA_THRES, CHB_CCA_ED_THRES);
 
@@ -843,8 +844,7 @@ ISR(CHB_RADIO_IRQ)
         {
             state = chb_get_state();
 
-            if ((state == CHB_RX_ON) || (state == CHB_RX_AACK_ON) || (state == CHB_BUSY_RX_AACK))
-            {
+            if ((state == CHB_RX_ON) || (state == CHB_RX_AACK_ON) || (state == CHB_BUSY_RX_AACK)){
                 // get the ed measurement
                 pcb->ed = chb_reg_read(PHY_ED_LEVEL);
 
@@ -863,12 +863,14 @@ ISR(CHB_RADIO_IRQ)
 					*/			
                 }
             }
-            else{
+            //else{
                 pcb->tx_end = true;
-            }
+            //}
             intp_src &= ~CHB_IRQ_TRX_END_MASK;
 			//go to receive state
-            while (chb_set_state(RX_STATE) != RADIO_SUCCESS);
+            while (chb_get_state() != RX_STATE){
+	            chb_set_state(RX_STATE);
+            }
         }
         else if (intp_src & CHB_IRQ_TRX_UR_MASK)
         {

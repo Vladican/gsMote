@@ -24,7 +24,8 @@ int main(){
 	set_32MHz();
 	chb_init();
 	chb_set_channel(1);
-	chb_set_short_addr(0x0001);
+	chb_set_short_addr(0x0003);
+	chb_set_pwr(0);
 	pcb_t* pcb = chb_get_pcb();
 	//SD_init();
 	//getBootSectorData();
@@ -42,17 +43,22 @@ int main(){
 			//read the data
 			length = chb_read((chb_rx_data_t*)RadioMessageBuffer);
 			//length should be >1 for setting gain/freq commands: the value is likely sent in a separate message
-				switch ( RadioMessageBuffer[0])
-				{
+			//process received message if it is from the base station (node id 0)
+			if(pcb->sender_addr == 0x0000){
+				switch ( RadioMessageBuffer[0]){
+					
 				case 'R':
 					//collect data if the ADC is not collecting any data right now
 					if(ADC_Sampling_Finished){
 						//CO_collectADC(ADC_CH_1_gc, gain, freq, 10000, (int32_t*)FRAMReadBuffer, FR_READ_BUFFER_SIZE/4, TRUE);
 						CO_collectSeismic1Channel(ADC_CH_8_gc, gain, freq, 6, FALSE, 1, 2, 3, 4, 10000,(int32_t*)FRAMReadBuffer, FR_READ_BUFFER_SIZE/4, TRUE);
 					}
-					//send acknowledgment
-					chb_write(0x0000,(uint8_t*)(&ack),2);						
+					//send acknowledgment if not a broadcast message
+					if(pcb->destination_addr != 0xFFFF){
+						chb_write(0x0000,(uint8_t*)(&ack),2);
+					}											
 					break;
+					
 				case 'G':
 					//while(!pcb->data_rcv);
 					//length = chb_read((chb_rx_data_t*)RadioMessageBuffer);
@@ -87,29 +93,38 @@ int main(){
 							//chb_write(0x0000,(uint8_t*)"invalid gain",strlen("invalid gain"));
 							break;
 					}
-					//send acknowledgment
-					chb_write(0x0000,(uint8_t*)(&ack),2);					
+					//send acknowledgment if not a broadcast message
+					if(pcb->destination_addr != 0xFFFF){
+						chb_write(0x0000,(uint8_t*)(&ack),2);
+					}					
 					break;
+					
 				case 'F':
 
 					//while(!pcb->data_rcv);
 					//length = chb_read((chb_rx_data_t*)RadioMessageBuffer);
 					//set sampling frequency to what is specified
 					freq = (uint16_t)(*(int32_t*)(RadioMessageBuffer+1));
-					//send acknowledgment
-					chb_write(0x0000,(uint8_t*)(&ack),2);
+					//send acknowledgment if not a broadcast message
+					if(pcb->destination_addr != 0xFFFF){
+						chb_write(0x0000,(uint8_t*)(&ack),2);
+					}
 					break;
+					
 				case 'S':
 					//stop the ADC if it is not already
 					if(!ADC_Sampling_Finished){
 						ADC_Stop_Sampling();
 					}
 					//otherwise, the ADC has finished sampling on its own and the data is ready to be transmitted
-					//send acknowledgment
-					chb_write(0x0000,(uint8_t*)(&ack),2);
+					//send acknowledgment if not a broadcast message
+					if(pcb->destination_addr != 0xFFFF){
+						chb_write(0x0000,(uint8_t*)(&ack),2);
+					}
 					break;
+					
 				case 'T':
-					if(ADC_Sampling_Finished && DataAvailable){
+					if(ADC_Sampling_Finished && DataAvailable && pcb->destination_addr != 0xFFFF){
 						//get number of data points collected
 						samples = ADC_Get_Num_Samples();
 						if(samples > 0){	
@@ -165,11 +180,9 @@ int main(){
 						}														
 						DataAvailable = 0;
 					}
-					else {
-						while(chb_write(0x0000,(uint8_t*)(&ack),2) != CHB_SUCCESS);
-					}
 					break;
-				}		
+				}	
+			}					
 		}		
 	}	
 }

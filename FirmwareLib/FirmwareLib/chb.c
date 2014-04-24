@@ -141,7 +141,7 @@ U8 chb_write(U16 addr, U8 *data, U32 len)
 		//rtry = 0;
 		//do{
         status = chb_tx(hdr, data+frm_offset, frm_len);			
-
+		if (status != CHB_SUCCESS){
              switch (status)
              {
              case RADIO_SUCCESS:
@@ -163,6 +163,8 @@ U8 chb_write(U16 addr, U8 *data, U32 len)
              default:
                  break;
              }
+			 return status;
+		}			 
 			//if(rtry>0) _delay_us(10);		//if not successfully sent the first time, wait some time and try again
 			//if(rtry==20) return status;;		//after 20 tries give up on sending the message	
 		//} while(status != CHB_SUCCESS);			
@@ -171,8 +173,7 @@ U8 chb_write(U16 addr, U8 *data, U32 len)
 		//if (len > CHB_MAX_PAYLOAD) _delay_ms(100);				//wait a little before sending next message
         len = len - frm_len;
     }
-	if(status == CHB_SUCCESS || CHB_SUCCESS_DATA_PENDING) return CHB_SUCCESS;
-	else return 1;
+	return CHB_SUCCESS;
 }
 
 /**************************************************************************/
@@ -216,8 +217,10 @@ U8 chb_read(chb_rx_data_t *rx)
     // parse the buffer and extract the dest and src addresses
     data_ptr = rx->data + 6;                // location of dest addr
     rx->dest_addr = *(U16 *)data_ptr;
+	pcb.destination_addr = rx->dest_addr;
     data_ptr += sizeof(U16);
     rx->src_addr = *(U16 *)data_ptr;
+	pcb.sender_addr = rx->src_addr;
     data_ptr += sizeof(U16);
 
     // if the data in the rx buf is 0, then clear the rx_flag. otherwise, keep it raised

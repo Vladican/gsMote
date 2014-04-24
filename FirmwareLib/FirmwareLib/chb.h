@@ -73,6 +73,8 @@ enum
 typedef struct
 {
     U16 src_addr;
+	U16 sender_addr;
+	U16 destination_addr;
     U8 seq;
     volatile bool data_rcv;
     volatile bool tx_end;

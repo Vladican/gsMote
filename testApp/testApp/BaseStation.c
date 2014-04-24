@@ -23,6 +23,7 @@ int main(){
 	chb_init();
 	chb_set_short_addr(0x0000);
 	chb_set_channel(1);
+	chb_set_pwr(0);
 	StartSerial((uint32_t)57600);
 
 	while(!chb_set_state(CHB_RX_AACK_ON) == RADIO_SUCCESS);
@@ -69,64 +70,66 @@ int main(){
 			TimedOut = 0;
 			//set prescalar of 1024... each timer tick is 512 micro seconds
 			//TCE0.CTRLA = 0x07;
-			//wait for response/data over radio
-			while(!pcb->data_rcv){
-				//no response detected so go back to waiting for next serial command
-				if(TimedOut) break;
-				//if(TCF0.CNT - TimeoutCount >= timeout) break;
-			}
- 			if(TimedOut) {
-				TCE0.CTRLA = 0x00;
-				TCE0.CTRLFSET = 0x08;
- 				continue;
- 			}			
-			//if(TCF0.CNT - TimeoutCount >= timeout) continue;
-			//read the data. expecting a 1 byte message containing number of messages that follow
-			length = chb_read((chb_rx_data_t*)FRAMReadBuffer);
-			if (length == 2){
-				length = 0;
-				NumReceivedMessages = 0;
-				//get the number of messages (2 bytes)
-				NumMessages = ((uint16_t*)FRAMReadBuffer)[0];
-				//start timeout clock
-				//TimeoutCount = TCF0.CNT;
-				//reset timer count
-				//TCE0.CTRLA = 0x00;
-				TCE0.CTRLFSET = 0x08;
-				//clear timeout flag
-				TimedOut = 0;
-				//TCE0.CTRLA = 0x07;
-				while(NumReceivedMessages <NumMessages){
-					//wait for all messages to come in
-					if(pcb->data_rcv){
-						length = chb_read((chb_rx_data_t*)(FRAMReadBuffer));
-						//pass the data to USB
-						SerialWriteBuffer(FRAMReadBuffer,length);
-						NumReceivedMessages++;
-						//reset timeout count
-						//TimeoutCount = TCF0.CNT;
-						//reset timer count
-						//TCE0.CTRLA = 0x00;
-						//send acknowledgment
-						TCE0.CTRLFSET = 0x08;
-						//clear timeout flag
-						TimedOut = 0;
-						while(chb_write(dest_addr,&ack,2) != CHB_SUCCESS){
-							if(TimedOut) break;	
-						}
-						TCE0.CTRLFSET = 0x08;
-						//clear timeout flag
-						TimedOut = 0;
-						//TCE0.CTRLA = 0x07;
-					}
+			//wait for response/data over radio if the message was sent to only 1 mote and not broadcast
+			if(dest_addr != 0xFFFF){
+				while(!pcb->data_rcv){
+					//no response detected so go back to waiting for next serial command
+					if(TimedOut) break;
 					//if(TCF0.CNT - TimeoutCount >= timeout) break;
-					if(TimedOut) break;		
 				}
-				//SerialWriteBuffer(FRAMReadBuffer,length);
-				//check if timed out
-				TCE0.CTRLA = 0x00;
-				TCE0.CTRLFSET = 0x08;
-			}	
+ 				if(TimedOut) {
+					TCE0.CTRLA = 0x00;
+					TCE0.CTRLFSET = 0x08;
+ 					continue;
+ 				}			
+				//if(TCF0.CNT - TimeoutCount >= timeout) continue;
+				//read the data. expecting a 1 byte message containing number of messages that follow
+				length = chb_read((chb_rx_data_t*)FRAMReadBuffer);
+				if (length == 2){
+					length = 0;
+					NumReceivedMessages = 0;
+					//get the number of messages (2 bytes)
+					NumMessages = ((uint16_t*)FRAMReadBuffer)[0];
+					//start timeout clock
+					//TimeoutCount = TCF0.CNT;
+					//reset timer count
+					//TCE0.CTRLA = 0x00;
+					TCE0.CTRLFSET = 0x08;
+					//clear timeout flag
+					TimedOut = 0;
+					//TCE0.CTRLA = 0x07;
+					while(NumReceivedMessages <NumMessages){
+						//wait for all messages to come in
+						if(pcb->data_rcv){
+							length = chb_read((chb_rx_data_t*)(FRAMReadBuffer));
+							//pass the data to USB
+							SerialWriteBuffer(FRAMReadBuffer,length);
+							NumReceivedMessages++;
+							//reset timeout count
+							//TimeoutCount = TCF0.CNT;
+							//reset timer count
+							//TCE0.CTRLA = 0x00;
+							//send acknowledgment
+							TCE0.CTRLFSET = 0x08;
+							//clear timeout flag
+							TimedOut = 0;
+							while(chb_write(dest_addr,&ack,2) != CHB_SUCCESS){
+								if(TimedOut) break;	
+							}
+							TCE0.CTRLFSET = 0x08;
+							//clear timeout flag
+							TimedOut = 0;
+							//TCE0.CTRLA = 0x07;
+						}
+						//if(TCF0.CNT - TimeoutCount >= timeout) break;
+						if(TimedOut) break;		
+					}
+					//SerialWriteBuffer(FRAMReadBuffer,length);
+					//check if timed out
+				}	
+			}			
+			TCE0.CTRLA = 0x00;
+			TCE0.CTRLFSET = 0x08;
 		}
 	}	
 }
