@@ -21,6 +21,7 @@ uint8_t ADC_POWER_ON;
 // Utility functions
 void set_16MHz();
 void set_32MHz();
+void set_32MHz_Calibrated();
 void setXOSC_32MHz();
 void PortEx_DIRSET(uint8_t portMask, uint8_t bank);
 void PortEx_DIRCLR(uint8_t portMask, uint8_t bank);

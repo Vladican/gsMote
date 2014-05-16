@@ -18,7 +18,7 @@ int main(){
 	//set timeout about 2 sec
 	uint16_t timeout = 4000;
 	
-	set_32MHz();
+	set_32MHz_Calibrated();
 	
 	chb_init();
 	chb_set_short_addr(0x0000);

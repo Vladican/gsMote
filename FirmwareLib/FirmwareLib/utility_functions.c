@@ -49,6 +49,26 @@ void set_16MHz() {
 	
 }
 
+void set_32MHz_Calibrated() {
+	
+	#define F_CPU 32000000UL
+	// select 32MHz Oscillator and prescale by 1
+	CLKSYS_Enable(OSC_RC32MEN_bm);
+	CLKSYS_Prescalers_Config( CLK_PSADIV_1_gc, CLK_PSBCDIV_1_1_gc );
+	// wait for signal to stabilize
+	do {} while (CLKSYS_IsReady(OSC_RC32MRDY_bm) == 0);
+	// Select 32kHz crystal and low power mode
+	CLKSYS_XOSC_Config( 0, true, OSC_XOSCSEL_32KHz_gc );
+	CLKSYS_Enable( OSC_XOSCEN_bm );
+	//wait for the 32kHz crystal to stabilize
+	do {} while (CLKSYS_IsReady(OSC_XOSCRDY_bm) == 0);
+	//set the 32kHz crystal to calibrate the 32MHz RC oscillator
+	CLKSYS_AutoCalibration_Enable( OSC_RC32MCREF_bm, true );
+	//set the calibrated 32MHz RC oscillator as system clock
+	CLKSYS_Main_ClockSource_Select( CLK_SCLKSEL_RC32M_gc );
+	CLKSYS_Disable( OSC_RC2MEN_bm );
+}
+
 
 // produces consistent but inaccurate clock period.
 void set_32MHz() {

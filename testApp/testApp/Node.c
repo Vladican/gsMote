@@ -21,10 +21,10 @@ int main(){
 	ADC_Sampling_Finished = 1;
 	uint8_t RadioMessageBuffer[20];
 	unsigned char ofile[] = {'o','u','t','p','u','t'};
-	set_32MHz();
+	set_32MHz_Calibrated();
 	chb_init();
 	chb_set_channel(1);
-	chb_set_short_addr(0x0003);
+	chb_set_short_addr(0x0001);
 	chb_set_pwr(0);
 	pcb_t* pcb = chb_get_pcb();
 	//SD_init();
