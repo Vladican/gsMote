@@ -22,10 +22,11 @@ int main(){
 	uint8_t RadioMessageBuffer[20];
 	unsigned char ofile[] = {'o','u','t','p','u','t'};
 	set_32MHz_Calibrated();
+	//chb_set_pwr(0xe1);
 	chb_init();
 	chb_set_channel(1);
 	chb_set_short_addr(0x0001);
-	chb_set_pwr(0);
+	//chb_set_pwr(0);
 	pcb_t* pcb = chb_get_pcb();
 	//SD_init();
 	//getBootSectorData();

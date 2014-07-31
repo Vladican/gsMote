@@ -20,10 +20,11 @@ int main(){
 	
 	set_32MHz_Calibrated();
 	
+	//chb_set_pwr(0xe1);
 	chb_init();
 	chb_set_short_addr(0x0000);
 	chb_set_channel(1);
-	chb_set_pwr(0);
+	//chb_set_pwr(0);
 	StartSerial((uint32_t)57600);
 
 	while(!chb_set_state(CHB_RX_AACK_ON) == RADIO_SUCCESS);

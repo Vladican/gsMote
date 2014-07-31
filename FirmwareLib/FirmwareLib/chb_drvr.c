@@ -746,7 +746,8 @@ static void chb_radio_init()
     chb_set_mode(CHB_INIT_MODE);
 
     chb_set_channel(CHB_CHANNEL);
-
+	
+	chb_set_pwr(0xE1);
     // set fsm state
     // put trx in rx auto ack mode
     chb_set_state(RX_STATE);
